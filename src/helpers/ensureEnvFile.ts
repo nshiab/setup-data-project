@@ -1,7 +1,13 @@
-import { existsSync, writeFileSync } from "node:fs";
+import { log } from "@clack/prompts";
+import { handleFileConflict } from "./handleFileConflict.ts";
 
-export function ensureEnvFile() {
-  if (!existsSync(".env")) {
-    writeFileSync(".env", "");
+export async function ensureEnvFile() {
+  const status = await handleFileConflict(".env", "");
+  if (status === "created") {
+    log.info("Created .env");
+  } else if (status === "updated") {
+    log.info("Updated .env");
+  } else {
+    log.warn(".env skipping creation.");
   }
 }

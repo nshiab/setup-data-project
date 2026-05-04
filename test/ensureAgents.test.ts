@@ -3,13 +3,13 @@ import { readFileSync } from "node:fs";
 import { ensureAgents } from "../src/helpers/ensureAgents.ts";
 import { createTestDir } from "./helpers/utils.ts";
 
-Deno.test("ensureAgents - should create AGENTS.md", () => {
+Deno.test("ensureAgents - should create AGENTS.md", async () => {
   const { tempDir, cleanup } = createTestDir();
   const originalCwd = Deno.cwd();
   Deno.chdir(tempDir);
 
   try {
-    ensureAgents({});
+    await ensureAgents({}, "deno");
     assertExists("AGENTS.md");
     const content = readFileSync("AGENTS.md", "utf-8");
     assert(
@@ -35,7 +35,7 @@ Deno.test("ensureAgents - should create AGENTS.md", () => {
   }
 });
 
-Deno.test("ensureAgents - should include journalism functions when present", () => {
+Deno.test("ensureAgents - should include journalism functions when present", async () => {
   const { tempDir, cleanup } = createTestDir();
   const originalCwd = Deno.cwd();
   Deno.chdir(tempDir);
@@ -45,7 +45,7 @@ Deno.test("ensureAgents - should include journalism functions when present", () 
       "@nshiab/journalism-format":
         "# API Reference\n## formatDate\n## camelCase",
     };
-    ensureAgents(docsMapping);
+    await ensureAgents(docsMapping, "deno");
     const content = readFileSync("AGENTS.md", "utf-8");
     assert(
       content.includes("### journalism-format"),
@@ -59,7 +59,7 @@ Deno.test("ensureAgents - should include journalism functions when present", () 
   }
 });
 
-Deno.test("ensureAgents - should include sda classes and methods when present", () => {
+Deno.test("ensureAgents - should include sda classes and methods when present", async () => {
   const { tempDir, cleanup } = createTestDir();
   const originalCwd = Deno.cwd();
   Deno.chdir(tempDir);
@@ -69,7 +69,7 @@ Deno.test("ensureAgents - should include sda classes and methods when present", 
       "@nshiab/simple-data-analysis":
         "# SDA\n## class SimpleDB\n#### constructor\n#### ai\n## class SimpleTable\n#### select\n#### filter",
     };
-    ensureAgents(docsMapping);
+    await ensureAgents(docsMapping, "deno");
     const content = readFileSync("AGENTS.md", "utf-8");
     assert(content.includes("SimpleDB"), "Should include class name");
     assert(content.includes("SimpleTable"), "Should include class name");

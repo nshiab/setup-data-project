@@ -1,7 +1,9 @@
-import { writeFileSync } from "node:fs";
+import { log } from "@clack/prompts";
+import { handleFileConflict } from "./handleFileConflict.ts";
 
-export function ensureAgents(
+export async function ensureAgents(
   docsMapping: Record<string, string>,
+  runtime: string,
 ) {
   let journalismFunctions = "";
   let sdaClassesAndMethods = "";
@@ -32,16 +34,22 @@ export function ensureAgents(
     }
   }
 
+  const configFile = runtime === "deno" ? "deno.json" : "package.json";
+  const runSda = runtime === "deno" ? "deno task sda" : "npm run sda";
+  const runClean = runtime === "deno" ? "deno task clean" : "npm run clean";
+
   let content =
-    `Always verify if there is a deno.json or package.json file in the root of the project and familiarize yourself with the scripts available in it and the libraries already installed in the project.
+    `Always verify if there is a ${configFile} file in the root of the project and familiarize yourself with the scripts available in it and the libraries already installed in the project.
 
-Always use "sda" task when available (e.g. \`deno task sda\`).
+Always use "sda" task when available (e.g. \`${runSda}\`).
 
-If it's a Deno project, you can also run \`deno run -A --node-modules-dir=auto --env-file --check sda/main.ts\` to test your code. Before handing off your work, run \`deno lint\` and \`deno fmt\` as well. Fix any errors or warnings triggered along the way.
+${
+      runtime === "deno"
+        ? "If it's a Deno project, you can also run `deno run -A --node-modules-dir=auto --env-file --check sda/main.ts` to test your code. Before handing off your work, run `deno lint` and `deno fmt` as well. Fix any errors or warnings triggered along the way."
+        : "If it's a Node.js project, you can also run `node --env-file=.env --experimental-strip-types --no-warnings sda/main.ts` to test your code. Before handing off your work, always fix any errors or warnings triggered along the way."
+    }
 
-If it's a Node.js project, you can also run \`node --env-file=.env --experimental-strip-types --no-warnings sda/main.ts\` to test your code. Before handing off your work, always fix any errors or warnings triggered along the way.
-
-Use the \`clean\` task (e.g. \`deno task clean\`) to remove the cache and other temporary files.
+Use the \`clean\` task (e.g. \`${runClean}\`) to remove the cache and other temporary files.
 
 Always use "sda/main.ts" as the entry point.
 
@@ -70,5 +78,12 @@ Here are the classes and their methods available in the "simple-data-analysis" l
 ${sdaClassesAndMethods}`;
   }
 
-  writeFileSync("AGENTS.md", content);
+  const status = await handleFileConflict("AGENTS.md", content);
+  if (status === "created") {
+    log.info("Created AGENTS.md");
+  } else if (status === "updated") {
+    log.info("Updated AGENTS.md");
+  } else {
+    log.warn("AGENTS.md skipping creation.");
+  }
 }

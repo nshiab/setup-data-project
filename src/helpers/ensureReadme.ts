@@ -1,8 +1,8 @@
-import { existsSync, writeFileSync } from "node:fs";
+import { log } from "@clack/prompts";
+import { handleFileConflict } from "./handleFileConflict.ts";
 
-export function ensureReadme(runtime: string) {
-  if (!existsSync("README.md")) {
-    const readmeContent = `This repository has been created with
+export async function ensureReadme(runtime: string) {
+  const readmeContent = `This repository has been created with
 [setup-data-project](https://github.com/nshiab/setup-data-project/).
 
 It's installing
@@ -20,19 +20,21 @@ Here's the recommended workflow:
 When working on your project, use the following command:
 
 - \`${
-      runtime === "deno"
-        ? "deno task"
-        : "npm run"
-    } sda\` will watch your \`sda/main.ts\` and its dependencies. Everytime
+    runtime === "deno" ? "deno task" : "npm run"
+  } sda\` will watch your \`sda/main.ts\` and its dependencies. Everytime
   you'll save some changes, the data will be reprocessed.
 - \`${
-      runtime === "deno"
-        ? "deno task"
-        : "npm run"
-    } clean\` will remove \`.sda-cache/\`, \`.journalism-cache/\` and \`.tmp/\`,
+    runtime === "deno" ? "deno task" : "npm run"
+  } clean\` will remove \`.sda-cache/\`, \`.journalism-cache/\` and \`.tmp/\`,
   if present.
 
 Have fun!`;
-    writeFileSync("README.md", readmeContent);
+  const status = await handleFileConflict("README.md", readmeContent);
+  if (status === "created") {
+    log.info("Created README.md");
+  } else if (status === "updated") {
+    log.info("Updated README.md");
+  } else {
+    log.warn("README.md skipping creation.");
   }
 }

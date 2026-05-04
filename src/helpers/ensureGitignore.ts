@@ -1,11 +1,14 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { log } from "@clack/prompts";
 import { GITIGNORE_ENTRIES } from "./gitignoreEntries.ts";
 
 export function ensureGitignore() {
   const path = ".gitignore";
   let content = "";
+  let exists = false;
   if (existsSync(path)) {
     content = readFileSync(path, "utf-8");
+    exists = true;
   }
 
   const lines = content.split("\n").map((l) => l.trim());
@@ -16,5 +19,12 @@ export function ensureGitignore() {
     const header = "\n# Added by setup-data-project\n";
     const newContent = prefix + header + toAdd.join("\n") + "\n";
     writeFileSync(path, content + newContent);
+    if (exists) {
+      log.info(`Updated ${path}`);
+    } else {
+      log.info(`Created ${path}`);
+    }
+  } else if (exists) {
+    log.warn(`${path} already up to date. Skipping.`);
   }
 }

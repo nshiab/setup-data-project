@@ -1,6 +1,6 @@
 {
   "name": "@nshiab/setup-data-project",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "exports": "./src/main.ts",
   "license": "MIT",
   "tasks": {

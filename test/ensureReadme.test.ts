@@ -3,13 +3,13 @@ import { readFileSync } from "node:fs";
 import { ensureReadme } from "../src/helpers/ensureReadme.ts";
 import { createTestDir } from "./helpers/utils.ts";
 
-Deno.test("ensureReadme - should create README.md if not exists", () => {
+Deno.test("ensureReadme - should create README.md if not exists", async () => {
   const { tempDir, cleanup } = createTestDir();
   const originalCwd = Deno.cwd();
   Deno.chdir(tempDir);
 
   try {
-    ensureReadme("deno");
+    await ensureReadme("deno");
     assertExists("README.md");
     const content = readFileSync("README.md", "utf-8");
     assert(
