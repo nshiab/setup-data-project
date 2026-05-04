@@ -9,7 +9,10 @@ export const commandRunner = {
   execSync: childProcess.execSync,
 };
 
-export async function installPackagesAndFetchDocs(selectedPackages: string[]) {
+export async function installPackagesAndFetchDocs(
+  selectedPackages: string[],
+  options: { silent?: boolean } = {},
+) {
   const runtime = getRuntime();
 
   if (Array.isArray(selectedPackages) && selectedPackages.length > 0) {
@@ -25,14 +28,20 @@ export async function installPackagesAndFetchDocs(selectedPackages: string[]) {
         ? `bun add ${pkg}`
         : `npm install ${pkg}`;
 
-      s.start(`Installing ${pkg} via ${runtime}...`);
+      if (!options.silent) {
+        s.start(`Installing ${pkg} via ${runtime}...`);
+      }
 
       try {
         commandRunner.execSync(installCmd, { stdio: "ignore" });
-        s.stop(`✅ ${pkg} installed!`);
+        if (!options.silent) {
+          s.stop(`✅ ${pkg} installed!`);
+        }
 
         const sFetch = spinner();
-        sFetch.start(`Fetching documentation for ${pkg}...`);
+        if (!options.silent) {
+          sFetch.start(`Fetching documentation for ${pkg}...`);
+        }
         const repoName = pkg.split("/")[1];
         const url =
           `https://raw.githubusercontent.com/nshiab/${repoName}/refs/heads/main/llm.md`;
@@ -41,12 +50,18 @@ export async function installPackagesAndFetchDocs(selectedPackages: string[]) {
         if (response.ok) {
           const docContent = await response.text();
           writeFileSync(join("docs", `${repoName}.md`), docContent);
-          sFetch.stop(`✅ Documentation for ${pkg} saved!`);
+          if (!options.silent) {
+            sFetch.stop(`✅ Documentation for ${pkg} saved!`);
+          }
         } else {
-          sFetch.stop(`❌ No documentation found for ${pkg}.`);
+          if (!options.silent) {
+            sFetch.stop(`❌ No documentation found for ${pkg}.`);
+          }
         }
       } catch (error) {
-        s.stop(`❌ Failed to install ${pkg}.`);
+        if (!options.silent) {
+          s.stop(`❌ Failed to install ${pkg}.`);
+        }
         console.error(error);
         process.exit(1);
       }

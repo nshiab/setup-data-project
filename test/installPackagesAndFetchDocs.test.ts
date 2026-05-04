@@ -30,7 +30,7 @@ Deno.test("installPackagesAndFetchDocs - should try to install packages and fetc
 
   try {
     const pkg = "@nshiab/simple-data-analysis";
-    await installPackagesAndFetchDocs([pkg]);
+    await installPackagesAndFetchDocs([pkg], { silent: true });
 
     // Check if docs directory and file were created
     const docPath = join("docs", "simple-data-analysis.md");
