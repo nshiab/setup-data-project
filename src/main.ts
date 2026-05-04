@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 import {
   cancel,
-  confirm,
   intro,
   isCancel,
   multiselect,
   outro,
+  select,
   spinner,
 } from "@clack/prompts";
 import process from "node:process";
@@ -27,10 +27,18 @@ async function main() {
   console.log();
   intro(`Hi! 👋 (Running on ${runtime})`);
 
+  const installedPackages = getInstalledPackages();
+  const options = PACKAGE_OPTIONS.map((opt) => ({
+    ...opt,
+    label: installedPackages.includes(opt.value)
+      ? `${opt.label} \x1b[2m(installed)\x1b[22m`
+      : opt.label,
+  }));
+
   const selectedPackages = (await multiselect({
     message:
-      "Which libraries would you like to install? (Space to select, arrows to navigate, enter to confirm)",
-    options: PACKAGE_OPTIONS,
+      "Which libraries would you like to install?\n\x1b[2m(space to select, arrows to navigate, enter to confirm)\x1b[22m\n",
+    options,
     required: false,
   })) as string[];
 
@@ -39,7 +47,6 @@ async function main() {
     process.exit(0);
   }
 
-  const installedPackages = getInstalledPackages();
   const alreadyInstalled = selectedPackages.filter((pkg) =>
     installedPackages.includes(pkg)
   );
@@ -48,17 +55,20 @@ async function main() {
 
   for (const pkg of selectedPackages) {
     if (alreadyInstalled.includes(pkg)) {
-      const update = await confirm({
-        message: `${pkg} is already installed. Do you want to update it?`,
-        initialValue: false,
+      const action = await select({
+        message: `${pkg} is already installed. What would you like to do?`,
+        options: [
+          { value: "skip", label: "Keep existing version" },
+          { value: "update", label: "Update to latest" },
+        ],
       });
 
-      if (isCancel(update)) {
+      if (isCancel(action)) {
         cancel("Installation cancelled.");
         process.exit(0);
       }
 
-      if (update) {
+      if (action === "update") {
         packagesToInstall.push(pkg);
       }
     } else {
@@ -67,17 +77,27 @@ async function main() {
   }
 
   const docsMapping: Record<string, string> = {};
+  const sInstall = spinner();
+  sInstall.start("Installing packages and fetching documentation...");
+
   for (const pkg of packagesToInstall) {
-    const doc = await installPackagesAndFetchDocs([pkg]);
-    if (typeof doc === "string") {
-      docsMapping[pkg] = doc;
+    try {
+      const doc = await installPackagesAndFetchDocs([pkg]);
+      if (typeof doc === "string") {
+        docsMapping[pkg] = doc;
+      }
+    } catch (error) {
+      sInstall.stop(`❌ Failed to install ${pkg}.`);
+      console.error(error);
+      process.exit(1);
     }
   }
+  sInstall.stop("✅ Packages installed and documentation fetched.");
 
   const s = spinner();
   s.start("Creating folder structure...");
   try {
-    const sdaFolder = createFolderStructure(packagesToInstall);
+    const sdaFolder = await createFolderStructure(packagesToInstall);
 
     ensureGitignore();
 
@@ -96,7 +116,7 @@ async function main() {
     process.exit(1);
   }
 
-  outro("You are all set! Check the README.md to get started. 🙌");
+  outro("You are all set! 🙌");
 }
 
 main().catch(console.error);

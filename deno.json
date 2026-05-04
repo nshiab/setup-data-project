@@ -1,10 +1,10 @@
 {
   "name": "@nshiab/setup-data-project",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "exports": "./src/main.ts",
   "license": "MIT",
   "tasks": {
-    "all-tests": "deno fmt --check && deno lint && deno check src/main.ts && deno publish --allow-dirty --dry-run && deno test -A --fail-fast",
+    "all-tests": "deno fmt --check && deno lint && deno check src/main.ts && deno publish --allow-dirty --dry-run && deno test -A --fail-fast -- --internal-test-mode",
     "patch": "deno task all-tests && deno run -A jsr:@nshiab/bump-version patch",
     "minor": "deno task all-tests && deno run -A jsr:@nshiab/bump-version minor",
     "major": "deno task all-tests && deno run -A jsr:@nshiab/bump-version major"

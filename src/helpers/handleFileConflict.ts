@@ -2,6 +2,12 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { isCancel, select } from "@clack/prompts";
 import process from "node:process";
 
+export const PROMPT_OVERRIDE: {
+  select: (config: unknown) => Promise<string | symbol>;
+} = {
+  select: select as unknown as (config: unknown) => Promise<string | symbol>,
+};
+
 export async function handleFileConflict(
   path: string,
   newContent: string,
@@ -11,13 +17,16 @@ export async function handleFileConflict(
     return "created";
   }
 
-  // Skip prompt in Deno tests
+  // Skip prompt in Deno tests if no override
   // @ts-ignore: Deno is not defined in type but present in runtime
-  if (globalThis.Deno) {
+  if (
+    globalThis.Deno?.args.includes("--internal-test-mode") &&
+    PROMPT_OVERRIDE.select === select
+  ) {
     return "skipped";
   }
 
-  const action = (await select({
+  const action = (await PROMPT_OVERRIDE.select({
     message: `${path} already exists. What would you like to do?`,
     options: [
       { value: "skip", label: "Skip", hint: "Keep existing file" },

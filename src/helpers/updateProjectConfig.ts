@@ -20,9 +20,19 @@ export function updateProjectConfig(tasks: Record<string, string>) {
   try {
     const content = readFileSync(configFile, "utf-8");
     const config = JSON.parse(content);
-    config[key] = { ...config[key], ...tasks };
+    config[key] = { ...(config[key] || {}), ...tasks };
     writeFileSync(configFile, JSON.stringify(config, null, 2), "utf-8");
-  } catch (_e) {
-    // Silent fail if config is invalid
+  } catch (e) {
+    if (e instanceof SyntaxError) {
+      console.error(
+        `❌ Error: Failed to parse ${configFile} as JSON. Please check its validity.`,
+      );
+    } else if (e instanceof Error) {
+      console.error(`❌ Error: Could not update ${configFile}: ${e.message}`);
+    } else {
+      console.error(
+        `❌ Error: An unexpected error occurred while updating ${configFile}.`,
+      );
+    }
   }
 }

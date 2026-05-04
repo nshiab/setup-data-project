@@ -2,7 +2,6 @@ import { spinner } from "@clack/prompts";
 import * as childProcess from "node:child_process";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import process from "node:process";
 import { getRuntime } from "./getRuntime.ts";
 
 export const commandRunner = {
@@ -57,15 +56,16 @@ export async function installPackagesAndFetchDocs(
           lastDoc = docContent;
         } else {
           if (!options.silent) {
-            sFetch.stop(`❌ No documentation found for ${pkg}.`);
+            sFetch.stop(
+              `⚠️  No documentation (llm.md) found for ${pkg}. Skipping doc fetch.`,
+            );
           }
         }
       } catch (error) {
         if (!options.silent) {
           s.stop(`❌ Failed to install ${pkg}.`);
         }
-        console.error(error);
-        process.exit(1);
+        throw error;
       }
     }
     return lastDoc;

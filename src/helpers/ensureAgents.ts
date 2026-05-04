@@ -1,5 +1,6 @@
 import { log } from "@clack/prompts";
 import { handleFileConflict } from "./handleFileConflict.ts";
+import { SUPPORTED_PACKAGES } from "./packageRegistry.ts";
 
 export async function ensureAgents(
   docsMapping: Record<string, string>,
@@ -9,27 +10,39 @@ export async function ensureAgents(
   let sdaClassesAndMethods = "";
 
   for (const [pkg, doc] of Object.entries(docsMapping)) {
-    if (pkg.includes("journalism")) {
+    const pkgConfig = SUPPORTED_PACKAGES.find((p) => p.value === pkg);
+    const pkgType = pkgConfig?.type || "other";
+
+    if (pkgType === "journalism") {
       const repoName = pkg.split("/")[1];
       journalismFunctions += `\n### ${repoName}\n\n`;
       journalismFunctions += doc
         .split("\n")
-        .filter((line) => line.startsWith("## "))
-        .map((line) => line.replace("## ", "").trim())
+        .filter((line) => line.trim().startsWith("#"))
+        .filter((line) => {
+          const depth = line.match(/^#+/)?.[0].length || 0;
+          return depth >= 2; // Match ##, ###, #### etc.
+        })
+        .map((line) => line.replace(/^#+\s+/, "").trim())
         .join("\n") + "\n";
-    } else if (pkg === "@nshiab/simple-data-analysis") {
+    } else if (pkgType === "sda") {
       sdaClassesAndMethods = doc
         .split("\n")
-        .filter((line) => line.startsWith("## ") || line.startsWith("#### "))
-        .map((line) =>
-          line.startsWith("## ")
-            ? "\n" + line.replace("## ", "").trim()
-            : line.replace("#### Parameters", "  - ").replace(
-              "#### ",
-              "  - ",
-            )
-              .replaceAll("`", "")
-        )
+        .filter((line) => line.trim().startsWith("#"))
+        .filter((line) => {
+          const depth = line.match(/^#+/)?.[0].length || 0;
+          return depth === 2 || depth === 4;
+        })
+        .map((line) => {
+          const depth = line.match(/^#+/)?.[0].length || 0;
+          if (depth === 2) {
+            return "\n" + line.replace(/^#+\s+/, "").trim();
+          } else {
+            return line.replace(/^#+\s+Parameters/, "  - ")
+              .replace(/^#+\s+/, "  - ")
+              .replaceAll("`", "");
+          }
+        })
         .join("\n");
     }
   }

@@ -1,8 +1,9 @@
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { log } from "@clack/prompts";
+import { handleFileConflict } from "./handleFileConflict.ts";
 
-export function createFolderStructure(selectedPackages: string[]) {
+export async function createFolderStructure(selectedPackages: string[]) {
   const sdaFolder = "sda";
   const folders = ["data", "helpers", "output"];
 
@@ -24,11 +25,11 @@ export function createFolderStructure(selectedPackages: string[]) {
   }
 
   const mainTsPath = join(sdaFolder, "main.ts");
-  if (!existsSync(mainTsPath)) {
-    let mainTsContent = 'console.log("Hello simple-data-analysis!");\n';
 
-    if (selectedPackages.includes("@nshiab/simple-data-analysis")) {
-      mainTsContent = `import { SimpleDB } from "@nshiab/simple-data-analysis";
+  let mainTsContent = 'console.log("Hello simple-data-analysis!");\n';
+
+  if (selectedPackages.includes("@nshiab/simple-data-analysis")) {
+    mainTsContent = `import { SimpleDB } from "@nshiab/simple-data-analysis";
 
 const sdb = new SimpleDB();
 const table = await sdb.newTable();
@@ -37,12 +38,15 @@ const table = await sdb.newTable();
 
 await sdb.done();
 `;
-    }
+  }
 
-    writeFileSync(mainTsPath, mainTsContent);
+  const status = await handleFileConflict(mainTsPath, mainTsContent);
+  if (status === "created") {
     log.info(`Created ${mainTsPath}`);
+  } else if (status === "updated") {
+    log.info(`Updated ${mainTsPath}`);
   } else {
-    log.warn(`${mainTsPath} already exists. Skipping creation.`);
+    log.warn(`${mainTsPath} skipping creation.`);
   }
 
   return sdaFolder;
