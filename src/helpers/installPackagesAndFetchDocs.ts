@@ -12,7 +12,7 @@ export const commandRunner = {
 export async function installPackagesAndFetchDocs(
   selectedPackages: string[],
   options: { silent?: boolean } = {},
-) {
+): Promise<string | void> {
   const runtime = getRuntime();
 
   if (Array.isArray(selectedPackages) && selectedPackages.length > 0) {
@@ -20,6 +20,7 @@ export async function installPackagesAndFetchDocs(
       mkdirSync("docs");
     }
 
+    let lastDoc = "";
     for (const pkg of selectedPackages) {
       const s = spinner();
       const installCmd = runtime === "deno"
@@ -53,6 +54,7 @@ export async function installPackagesAndFetchDocs(
           if (!options.silent) {
             sFetch.stop(`✅ Documentation for ${pkg} saved!`);
           }
+          lastDoc = docContent;
         } else {
           if (!options.silent) {
             sFetch.stop(`❌ No documentation found for ${pkg}.`);
@@ -66,5 +68,6 @@ export async function installPackagesAndFetchDocs(
         process.exit(1);
       }
     }
+    return lastDoc;
   }
 }

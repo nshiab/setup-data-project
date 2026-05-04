@@ -18,6 +18,7 @@ import { installPackagesAndFetchDocs } from "./helpers/installPackagesAndFetchDo
 import { getProjectTasks } from "./helpers/getProjectTasks.ts";
 import { createFolderStructure } from "./helpers/createFolderStructure.ts";
 import { ensureEnvFile } from "./helpers/ensureEnvFile.ts";
+import { ensureAgents } from "./helpers/ensureAgents.ts";
 
 async function main() {
   const runtime = getRuntime();
@@ -34,7 +35,13 @@ async function main() {
     process.exit(0);
   }
 
-  await installPackagesAndFetchDocs(selectedPackages);
+  const docsMapping: Record<string, string> = {};
+  for (const pkg of selectedPackages) {
+    const doc = await installPackagesAndFetchDocs([pkg]);
+    if (typeof doc === "string") {
+      docsMapping[pkg] = doc;
+    }
+  }
 
   const s = spinner();
   s.start("Creating folder structure...");
@@ -48,6 +55,8 @@ async function main() {
     updateProjectConfig(getProjectTasks());
 
     ensureReadme(runtime);
+
+    ensureAgents(docsMapping);
 
     s.stop(`✅ Folder structure created in ${sdaFolder}/`);
   } catch (error) {
