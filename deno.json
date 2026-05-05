@@ -1,6 +1,6 @@
 {
   "name": "@nshiab/setup-data-project",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Quickly kick off your data project using the simple-data-analysis and journalism libraries.",
   "repository": "https://github.com/nshiab/setup-data-project",
   "exports": "./src/main.ts",
@@ -16,5 +16,8 @@
     "@deno/dnt": "jsr:@deno/dnt@^0.42.3",
     "@std/assert": "jsr:@std/assert@1",
     "@std/testing": "jsr:@std/testing@1"
+  },
+  "bin": {
+    "setup-data-project": "./src/main.ts"
   }
 }
