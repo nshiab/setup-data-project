@@ -21,10 +21,6 @@ export function ensureGitignore() {
     writeFileSync(path, content + newContent);
     if (exists) {
       log.info(`Updated ${path}`);
-    } else {
-      log.info(`Created ${path}`);
     }
-  } else if (exists) {
-    log.warn(`${path} already up to date. Skipping.`);
   }
 }

@@ -30,11 +30,7 @@ When working on your project, use the following command:
 
 Have fun!`;
   const status = await handleFileConflict("README.md", readmeContent);
-  if (status === "created") {
-    log.info("Created README.md");
-  } else if (status === "updated") {
+  if (status === "updated") {
     log.info("Updated README.md");
-  } else {
-    log.warn("README.md skipping creation.");
   }
 }

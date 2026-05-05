@@ -9,18 +9,12 @@ export async function createFolderStructure(selectedPackages: string[]) {
 
   if (!existsSync(sdaFolder)) {
     mkdirSync(sdaFolder, { recursive: true });
-    log.info(`Created folder ${sdaFolder}/`);
-  } else {
-    log.warn(`Folder ${sdaFolder}/ already exists. Skipping creation.`);
   }
 
   for (const folder of folders) {
     const path = join(sdaFolder, folder);
     if (!existsSync(path)) {
       mkdirSync(path, { recursive: true });
-      log.info(`Created folder ${path}/`);
-    } else {
-      log.warn(`Folder ${path}/ already exists. Skipping creation.`);
     }
   }
 
@@ -41,12 +35,8 @@ await sdb.done();
   }
 
   const status = await handleFileConflict(mainTsPath, mainTsContent);
-  if (status === "created") {
-    log.info(`Created ${mainTsPath}`);
-  } else if (status === "updated") {
+  if (status === "updated") {
     log.info(`Updated ${mainTsPath}`);
-  } else {
-    log.warn(`${mainTsPath} skipping creation.`);
   }
 
   return sdaFolder;

@@ -82,7 +82,7 @@ async function main() {
 
   for (const pkg of packagesToInstall) {
     try {
-      const doc = await installPackagesAndFetchDocs([pkg]);
+      const doc = await installPackagesAndFetchDocs([pkg], { silent: true });
       if (typeof doc === "string") {
         docsMapping[pkg] = doc;
       }
@@ -94,27 +94,17 @@ async function main() {
   }
   sInstall.stop("✅ Packages installed and documentation fetched.");
 
-  const s = spinner();
-  s.start("Creating folder structure...");
-  try {
-    const sdaFolder = await createFolderStructure(packagesToInstall);
+  await createFolderStructure(packagesToInstall);
 
-    ensureGitignore();
+  ensureGitignore();
 
-    await ensureEnvFile();
+  await ensureEnvFile();
 
-    updateProjectConfig(getProjectTasks());
+  updateProjectConfig(getProjectTasks());
 
-    await ensureReadme(runtime);
+  await ensureReadme(runtime);
 
-    await ensureAgents(docsMapping, runtime);
-
-    s.stop(`✅ Folder structure created in ${sdaFolder}/`);
-  } catch (error) {
-    s.stop("❌ Failed to create folder structure.");
-    console.error(error);
-    process.exit(1);
-  }
+  await ensureAgents(docsMapping, runtime);
 
   outro("You are all set! 🙌");
 }

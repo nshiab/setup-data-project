@@ -58,7 +58,7 @@ Always use "sda" task when available (e.g. \`${runSda}\`).
 
 ${
       runtime === "deno"
-        ? "If it's a Deno project, you can also run `deno run -A --node-modules-dir=auto --env-file --check sda/main.ts` to test your code. Before handing off your work, run `deno lint` and `deno fmt` as well. Fix any errors or warnings triggered along the way."
+        ? "Before handing off your work, run `deno lint` and `deno fmt` as well. Fix any errors or warnings triggered along the way."
         : "If it's a Node.js project, you can also run `node --env-file=.env --experimental-strip-types --no-warnings sda/main.ts` to test your code. Before handing off your work, always fix any errors or warnings triggered along the way."
     }
 
@@ -92,11 +92,7 @@ ${sdaClassesAndMethods}`;
   }
 
   const status = await handleFileConflict("AGENTS.md", content);
-  if (status === "created") {
-    log.info("Created AGENTS.md");
-  } else if (status === "updated") {
+  if (status === "updated") {
     log.info("Updated AGENTS.md");
-  } else {
-    log.warn("AGENTS.md skipping creation.");
   }
 }
