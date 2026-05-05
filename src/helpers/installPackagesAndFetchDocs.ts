@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { getRuntime } from "./getRuntime.ts";
 
 export const commandRunner = {
-  execSync: childProcess.execSync,
+  exec: childProcess.exec,
 };
 
 export async function installPackagesAndFetchDocs(
@@ -33,7 +33,15 @@ export async function installPackagesAndFetchDocs(
       }
 
       try {
-        commandRunner.execSync(installCmd, { stdio: "ignore" });
+        await new Promise((resolve, reject) => {
+          commandRunner.exec(installCmd, (error) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(void 0);
+            }
+          });
+        });
         if (!options.silent) {
           s.stop(`✅ ${pkg} installed!`);
         }

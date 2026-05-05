@@ -26,9 +26,10 @@ export async function createFolderStructure(selectedPackages: string[]) {
     mainTsContent = `import { SimpleDB } from "@nshiab/simple-data-analysis";
 
 const sdb = new SimpleDB();
-const table = await sdb.newTable();
+const table = sdb.newTable();
 
 // Do your magic here!
+// await table.loadData("./sda/data/...");
 
 await sdb.done();
 `;

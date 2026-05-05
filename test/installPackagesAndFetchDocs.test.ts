@@ -14,8 +14,19 @@ Deno.test("installPackagesAndFetchDocs - should try to install packages and fetc
   const originalCwd = Deno.cwd();
   Deno.chdir(tempDir);
 
-  // Mock execSync to avoid real installation
-  const execStub = stub(commandRunner, "execSync");
+  // Mock exec to avoid real installation
+  const execStub = stub(
+    commandRunner,
+    "exec",
+    ((_cmd: string, callback: unknown) => {
+      if (typeof callback === "function") {
+        // @ts-ignore: Mocking Node.js callback
+        callback(null, "", "");
+      }
+      // @ts-ignore: Mocking ChildProcess return
+      return {};
+    }) as unknown as typeof commandRunner.exec,
+  );
 
   // Mock global fetch
   const originalFetch = globalThis.fetch;
@@ -56,7 +67,18 @@ Deno.test("installPackagesAndFetchDocs - should use npx jsr add for node runtime
   const originalCwd = Deno.cwd();
   Deno.chdir(tempDir);
 
-  const execStub = stub(commandRunner, "execSync");
+  const execStub = stub(
+    commandRunner,
+    "exec",
+    ((_cmd: string, callback: unknown) => {
+      if (typeof callback === "function") {
+        // @ts-ignore: Mocking Node.js callback
+        callback(null, "", "");
+      }
+      // @ts-ignore: Mocking ChildProcess return
+      return {};
+    }) as unknown as typeof commandRunner.exec,
+  );
   const runtimeStub = stub(runtimeConfig, "getRuntime", () => "node" as const);
   const originalFetch = globalThis.fetch;
   globalThis.fetch = ((() =>
@@ -87,7 +109,18 @@ Deno.test("installPackagesAndFetchDocs - should use bunx jsr add for bun runtime
   const originalCwd = Deno.cwd();
   Deno.chdir(tempDir);
 
-  const execStub = stub(commandRunner, "execSync");
+  const execStub = stub(
+    commandRunner,
+    "exec",
+    ((_cmd: string, callback: unknown) => {
+      if (typeof callback === "function") {
+        // @ts-ignore: Mocking Node.js callback
+        callback(null, "", "");
+      }
+      // @ts-ignore: Mocking ChildProcess return
+      return {};
+    }) as unknown as typeof commandRunner.exec,
+  );
   const runtimeStub = stub(runtimeConfig, "getRuntime", () => "bun" as const);
   const originalFetch = globalThis.fetch;
   globalThis.fetch = ((() =>
