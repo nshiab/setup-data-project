@@ -25,8 +25,8 @@ export async function installPackagesAndFetchDocs(
       const installCmd = runtime === "deno"
         ? `deno add jsr:${pkg}`
         : runtime === "bun"
-        ? `bunx jsr add ${pkg}`
-        : `npx jsr add ${pkg}`;
+        ? `bun add ${pkg}`
+        : `npm install ${pkg}`;
 
       if (!options.silent) {
         s.start(`Installing ${pkg} via ${runtime}...`);

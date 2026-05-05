@@ -62,7 +62,7 @@ Deno.test("installPackagesAndFetchDocs - should try to install packages and fetc
   }
 });
 
-Deno.test("installPackagesAndFetchDocs - should use npx jsr add for node runtime", async () => {
+Deno.test("installPackagesAndFetchDocs - should use npm install for node runtime", async () => {
   const { tempDir, cleanup } = createTestDir();
   const originalCwd = Deno.cwd();
   Deno.chdir(tempDir);
@@ -93,7 +93,7 @@ Deno.test("installPackagesAndFetchDocs - should use npx jsr add for node runtime
 
     assertEquals(
       execStub.calls[0].args[0],
-      "npx jsr add @nshiab/simple-data-analysis",
+      "npm install @nshiab/simple-data-analysis",
     );
   } finally {
     runtimeStub.restore();
@@ -104,7 +104,7 @@ Deno.test("installPackagesAndFetchDocs - should use npx jsr add for node runtime
   }
 });
 
-Deno.test("installPackagesAndFetchDocs - should use bunx jsr add for bun runtime", async () => {
+Deno.test("installPackagesAndFetchDocs - should use bun add for bun runtime", async () => {
   const { tempDir, cleanup } = createTestDir();
   const originalCwd = Deno.cwd();
   Deno.chdir(tempDir);
@@ -135,7 +135,7 @@ Deno.test("installPackagesAndFetchDocs - should use bunx jsr add for bun runtime
 
     assertEquals(
       execStub.calls[0].args[0],
-      "bunx jsr add @nshiab/simple-data-analysis",
+      "bun add @nshiab/simple-data-analysis",
     );
   } finally {
     runtimeStub.restore();
