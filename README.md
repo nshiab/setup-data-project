@@ -7,8 +7,10 @@ configurations, and documentation.
 # Deno
 deno run -A jsr:@nshiab/setup-data-project
 
+# Node
 npx @nshiab/setup-data-project
 
+# Bun
 bunx @nshiab/setup-data-project
 ```
 
