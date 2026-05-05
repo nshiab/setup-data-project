@@ -22,8 +22,14 @@ export async function createFolderStructure(selectedPackages: string[]) {
 
   let mainTsContent = 'console.log("Hello simple-data-analysis!");\n';
 
-  if (selectedPackages.includes("@nshiab/simple-data-analysis")) {
-    mainTsContent = `import { SimpleDB } from "@nshiab/simple-data-analysis";
+  if (
+    selectedPackages.includes("@nshiab/simple-data-analysis") ||
+    selectedPackages.includes("@nshiab/simple-data-analysis-core")
+  ) {
+    const pkg = selectedPackages.includes("@nshiab/simple-data-analysis")
+      ? "@nshiab/simple-data-analysis"
+      : "@nshiab/simple-data-analysis-core";
+    mainTsContent = `import { SimpleDB } from "${pkg}";
 
 const sdb = new SimpleDB();
 const table = sdb.newTable();
