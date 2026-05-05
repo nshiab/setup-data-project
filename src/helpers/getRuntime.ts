@@ -2,11 +2,15 @@ import process from "node:process";
 
 export const runtimeConfig = {
   getRuntime: () => {
-    if ("Deno" in globalThis) return "deno";
-    if ("Bun" in globalThis) return "bun";
-    if (typeof process !== "undefined" && process?.versions?.node) {
+    if (
+      typeof process !== "undefined" &&
+      process?.versions?.node &&
+      !process?.versions?.deno
+    ) {
       return "node";
     }
+    if ("Bun" in globalThis) return "bun";
+    if ("Deno" in globalThis) return "deno";
     return "node";
   },
 };

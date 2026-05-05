@@ -47,8 +47,9 @@ if (denoConfig.bin) {
 await build({
   entryPoints: entryPoints,
   outDir: "./npm",
+  typeCheck: false,
   shims: {
-    deno: true,
+    deno: false,
   },
   // Disable tests so it doesn't fail on newer @std/assert methods
   test: false,

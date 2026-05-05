@@ -1,10 +1,27 @@
 {
   "name": "@nshiab/setup-data-project",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Quickly kick off your data project using the simple-data-analysis and journalism libraries.",
   "repository": "https://github.com/nshiab/setup-data-project",
   "exports": "./src/main.ts",
   "license": "MIT",
+  "fmt": {
+    "exclude": [
+      "npm/"
+    ]
+  },
+  "lint": {
+    "exclude": [
+      "npm/"
+    ]
+  },
+  "publish": {
+    "exclude": [
+      "npm/",
+      "test/",
+      "buildNPM.ts"
+    ]
+  },
   "tasks": {
     "all-tests": "deno fmt --check && deno lint && deno check src/main.ts && deno publish --allow-dirty --dry-run && deno test -A --fail-fast -- --internal-test-mode",
     "patch": "deno task all-tests && deno run -A jsr:@nshiab/bump-version patch",

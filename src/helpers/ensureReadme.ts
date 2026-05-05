@@ -2,6 +2,13 @@ import { log } from "@clack/prompts";
 import { handleFileConflict } from "./handleFileConflict.ts";
 
 export async function ensureReadme(runtime: string) {
+  let runCommand = "npm run";
+  if (runtime === "deno") {
+    runCommand = "deno task";
+  } else if (runtime === "bun") {
+    runCommand = "bun run";
+  }
+
   const readmeContent = `This repository has been created with
 [setup-data-project](https://github.com/nshiab/setup-data-project/).
 
@@ -19,13 +26,9 @@ Here's the recommended workflow:
 
 When working on your project, use the following command:
 
-- \`${
-    runtime === "deno" ? "deno task" : "npm run"
-  } sda\` will watch your \`sda/main.ts\` and its dependencies. Everytime
+- \`${runCommand} sda\` will watch your \`sda/main.ts\` and its dependencies. Everytime
   you'll save some changes, the data will be reprocessed.
-- \`${
-    runtime === "deno" ? "deno task" : "npm run"
-  } clean\` will remove \`.sda-cache/\`, \`.journalism-cache/\` and \`.tmp/\`,
+- \`${runCommand} clean\` will remove \`.sda-cache/\`, \`.journalism-cache/\` and \`.tmp/\`,
   if present.
 
 Have fun!`;
