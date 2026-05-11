@@ -123,7 +123,7 @@ Deno.test("updateProjectConfig - Node runtime simulation in nested folder", asyn
     );
 
     // Mock commandRunner.exec to simulate package installation
-    const execStub = stub(
+    const _execStub = stub(
       commandRunner,
       "exec",
       ((_cmd: string, callback: unknown) => {
@@ -149,22 +149,18 @@ Deno.test("updateProjectConfig - Node runtime simulation in nested folder", asyn
 
     try {
       // 1. Run in root (an empty folder)
-      // In reality, if it's an empty folder, npm install will look for a package.json upwards.
-      // If it finds one in a parent directory, it will install there and NOT create one in the current folder.
-      // This is likely the "bug" or behavior causing issues in nested folders.
-
       const pkg = "@nshiab/simple-data-analysis";
 
-      // Simulate running the script in root (tempDir)
-      await installPackagesAndFetchDocs([pkg], { silent: true });
+      // We FIRST call updateProjectConfig to ensure package.json exists
       updateProjectConfig({ "sda": "node sda/main.ts" });
-
-      // In root, package.json should exist because it's the "start"
       assertEquals(
         existsSync(join(tempDir, "package.json")),
         true,
-        "package.json should exist in root",
+        "package.json should exist in root after updateProjectConfig",
       );
+
+      // THEN we call installation, which should now find the local package.json
+      await installPackagesAndFetchDocs([pkg], { silent: true });
 
       // 2. Create a new folder in it.
       const nestedDir = join(tempDir, "nested");
@@ -174,43 +170,19 @@ Deno.test("updateProjectConfig - Node runtime simulation in nested folder", asyn
       Deno.chdir(nestedDir);
 
       // 4. Call the script again.
-      // We simulate a behavior where npm install DOES NOT create a package.json because it found one in the parent.
-      // In our mock, we need to reflect that.
-
-      // Redefine execStub to simulate "finding parent package.json" behavior
-      execStub.restore();
-      const execStubNested = stub(
-        commandRunner,
-        "exec",
-        ((_cmd: string, callback: unknown) => {
-          // Simulate npm behavior: if package.json exists in parent, it doesn't create one here.
-          // We don't create it here.
-          if (typeof callback === "function") {
-            // @ts-ignore: Mocking Node.js callback
-            callback(null, "", "");
-          }
-          // @ts-ignore: Mocking ChildProcess return
-          return {};
-        }) as unknown as typeof commandRunner.exec,
+      // FIRST create the config in nested folder
+      updateProjectConfig({ "sda": "node sda/main.ts" });
+      assertEquals(
+        existsSync(join(nestedDir, "package.json")),
+        true,
+        "package.json should be created in nested folder by updateProjectConfig",
       );
 
-      try {
-        await installPackagesAndFetchDocs([pkg], { silent: true });
-        updateProjectConfig({ "sda": "node sda/main.ts" });
-
-        // This is where the failure should happen if the user's report is correct.
-        // Our current updateProjectConfig returns early if package.json doesn't exist.
-        assertEquals(
-          existsSync(join(nestedDir, "package.json")),
-          true,
-          "package.json should be created in nested folder even if npm didn't create it",
-        );
-      } finally {
-        execStubNested.restore();
-      }
+      // THEN install - it should now use the nested package.json
+      await installPackagesAndFetchDocs([pkg], { silent: true });
     } finally {
       runtimeStub.restore();
-      // execStub.restore(); // This is the duplicate one
+      _execStub.restore();
       globalThis.fetch = originalFetch;
     }
   } finally {

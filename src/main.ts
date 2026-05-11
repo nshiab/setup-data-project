@@ -94,13 +94,13 @@ async function main() {
   }
   sInstall.stop("✅ Packages installed and documentation fetched.");
 
+  updateProjectConfig(getProjectTasks());
+
   await createFolderStructure(packagesToInstall);
 
   ensureGitignore();
 
   await ensureEnvFile();
-
-  updateProjectConfig(getProjectTasks());
 
   await ensureReadme(runtime);
 
