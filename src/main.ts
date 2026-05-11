@@ -27,6 +27,8 @@ async function main() {
   console.log();
   intro(`Hi! 👋 (Running on ${runtime})`);
 
+  updateProjectConfig(getProjectTasks());
+
   const installedPackages = getInstalledPackages();
   const options = PACKAGE_OPTIONS.map((opt) => ({
     ...opt,
