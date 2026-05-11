@@ -9,12 +9,24 @@ export function updateProjectConfig(tasks: Record<string, string>) {
   if (existsSync("deno.json")) {
     configFile = "deno.json";
     key = "tasks";
-  } else if (!existsSync("package.json") && runtime === "deno") {
+  } else if (existsSync("package.json")) {
+    configFile = "package.json";
+    key = "scripts";
+  } else if (runtime === "deno") {
     configFile = "deno.json";
     key = "tasks";
     writeFileSync(configFile, JSON.stringify({ [key]: {} }, null, 2));
-  } else if (!existsSync("package.json")) {
-    return;
+  } else {
+    configFile = "package.json";
+    key = "scripts";
+    writeFileSync(
+      configFile,
+      JSON.stringify(
+        { name: "data-project", type: "module", [key]: {} },
+        null,
+        2,
+      ),
+    );
   }
 
   try {
