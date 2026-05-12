@@ -22,58 +22,83 @@ export async function installPackagesAndFetchDocs(
     let lastDoc = "";
     for (const pkg of selectedPackages) {
       const s = spinner();
-      const installCmd = runtime === "deno"
-        ? `deno add jsr:${pkg}`
-        : runtime === "bun"
-        ? `bun add ${pkg}`
-        : `npm install ${pkg}`;
 
-      if (!options.silent) {
-        s.start(`Installing ${pkg} via ${runtime}...`);
+      const pkgsToInstall = [pkg];
+      if (
+        pkg === "@nshiab/simple-data-analysis" ||
+        pkg === "@nshiab/journalism-dataviz"
+      ) {
+        pkgsToInstall.push("@observablehq/plot");
       }
 
-      try {
-        await new Promise((resolve, reject) => {
-          commandRunner.exec(installCmd, (error) => {
-            if (error) {
-              reject(error);
-            } else {
-              resolve(void 0);
-            }
-          });
-        });
+      for (const p of pkgsToInstall) {
+        const isObservablePlot = p === "@observablehq/plot";
+        const installCmd = runtime === "deno"
+          ? (isObservablePlot ? "deno add npm:" + p : "deno add jsr:" + p)
+          : runtime === "bun"
+          ? "bun add " + p
+          : "npm install " + p;
+
         if (!options.silent) {
-          s.stop(`✅ ${pkg} installed!`);
+          s.start("Installing " + p + " via " + runtime + "...");
         }
 
-        const sFetch = spinner();
+        try {
+          await new Promise((resolve, reject) => {
+            commandRunner.exec(installCmd, (error) => {
+              if (error) {
+                reject(error);
+              } else {
+                resolve(void 0);
+              }
+            });
+          });
+          if (!options.silent) {
+            s.stop("✅ " + p + " installed!");
+          }
+        } catch (error) {
+          if (!options.silent) {
+            s.stop("❌ Failed to install " + p + ".");
+          }
+          throw error;
+        }
+      }
+
+      // Documentation logic
+      if (pkg === "@observablehq/plot") {
+        continue;
+      }
+
+      const sFetch = spinner();
+      try {
         if (!options.silent) {
-          sFetch.start(`Fetching documentation for ${pkg}...`);
+          sFetch.start("Fetching documentation for " + pkg + "...");
         }
         const repoName = pkg.split("/")[1];
-        const url =
-          `https://raw.githubusercontent.com/nshiab/${repoName}/refs/heads/main/llm.md`;
+        const url = "https://raw.githubusercontent.com/nshiab/" + repoName +
+          "/refs/heads/main/llm.md";
 
         const response = await fetch(url);
         if (response.ok) {
           const docContent = await response.text();
-          writeFileSync(join("docs", `${repoName}.md`), docContent);
+          writeFileSync(join("docs", repoName + ".md"), docContent);
           if (!options.silent) {
-            sFetch.stop(`✅ Documentation for ${pkg} saved!`);
+            sFetch.stop("✅ Documentation for " + pkg + " saved!");
           }
           lastDoc = docContent;
         } else {
           if (!options.silent) {
             sFetch.stop(
-              `⚠️  No documentation (llm.md) found for ${pkg}. Skipping doc fetch.`,
+              "⚠️  No documentation (llm.md) found for " + pkg +
+                ". Skipping doc fetch.",
             );
           }
         }
       } catch (error) {
         if (!options.silent) {
-          s.stop(`❌ Failed to install ${pkg}.`);
+          sFetch.stop("❌ Failed to fetch documentation for " + pkg + ".");
         }
-        throw error;
+        console.error(error);
       }
     }
     return lastDoc;
