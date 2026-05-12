@@ -54,6 +54,10 @@ Deno.test("installPackagesAndFetchDocs - should try to install packages and fetc
       execStub.calls[0].args[0],
       "deno add jsr:@nshiab/simple-data-analysis",
     );
+    assertEquals(
+      execStub.calls[1].args[0],
+      "deno add npm:@observablehq/plot",
+    );
   } finally {
     execStub.restore();
     globalThis.fetch = originalFetch;
@@ -94,6 +98,10 @@ Deno.test("installPackagesAndFetchDocs - should use npm install for node runtime
     assertEquals(
       execStub.calls[0].args[0],
       "npm install @nshiab/simple-data-analysis",
+    );
+    assertEquals(
+      execStub.calls[1].args[0],
+      "npm install @observablehq/plot",
     );
   } finally {
     runtimeStub.restore();
