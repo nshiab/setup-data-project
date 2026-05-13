@@ -37,6 +37,8 @@ const table = sdb.newTable();
 // Do your magic here!
 // await table.loadData("./sda/data/...");
 
+await table.logTable();
+
 await sdb.done();
 `;
   }

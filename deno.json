@@ -1,6 +1,6 @@
 {
   "name": "@nshiab/setup-data-project",
-  "version": "1.0.25",
+  "version": "1.0.26",
   "description": "Quickly kick off your data project using the simple-data-analysis and journalism libraries.",
   "repository": "https://github.com/nshiab/setup-data-project",
   "exports": "./src/main.ts",
