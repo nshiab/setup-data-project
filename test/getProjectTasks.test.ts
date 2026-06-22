@@ -27,7 +27,7 @@ Deno.test("getProjectTasks - should return correct tasks for Node", () => {
     const tasks = getProjectTasks();
     assertEquals(
       tasks.sda,
-      "node --env-file=.env --watch --experimental-strip-types sda/main.ts",
+      "node --env-file-if-exists=.env --watch --experimental-strip-types sda/main.ts",
     );
   } finally {
     getRuntimeStub.restore();
