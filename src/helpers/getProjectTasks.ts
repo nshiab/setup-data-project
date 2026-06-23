@@ -5,7 +5,7 @@ export function getProjectTasks() {
 
   return {
     sda: runtime === "deno"
-      ? "deno run -A --env --watch sda/main.ts"
+      ? "deno run -A --env --watch --check sda/main.ts"
       : runtime === "bun"
       ? "bun run --watch sda/main.ts"
       : "node --env-file-if-exists=.env --watch --experimental-strip-types sda/main.ts",
