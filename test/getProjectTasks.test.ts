@@ -11,7 +11,7 @@ Deno.test("getProjectTasks - should return correct tasks for Deno", () => {
   );
   try {
     const tasks = getProjectTasks();
-    assertEquals(tasks.sda, "deno run -A --env --watch sda/main.ts");
+    assertEquals(tasks.sda, "deno run -A --env --watch --check sda/main.ts");
   } finally {
     getRuntimeStub.restore();
   }
