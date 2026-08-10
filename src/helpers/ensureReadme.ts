@@ -1,6 +1,6 @@
 import { log } from "@clack/prompts";
 import { ensureManagedSection } from "./ensureManagedSection.ts";
-import { SUPPORTED_PACKAGES } from "./packageRegistry.ts";
+import { getInstalledPackageConfigs } from "./packageRegistry.ts";
 
 export function ensureReadme(
   runtime: string,
@@ -13,8 +13,8 @@ export function ensureReadme(
     runCommand = "bun run";
   }
 
-  const installedPackageConfigs = SUPPORTED_PACKAGES.filter((pkg) =>
-    installedPackages.includes(pkg.value)
+  const installedPackageConfigs = getInstalledPackageConfigs(
+    installedPackages,
   );
   const hasSda = installedPackageConfigs.some((pkg) => pkg.type === "sda");
   const hasJournalism = installedPackageConfigs.some((pkg) =>

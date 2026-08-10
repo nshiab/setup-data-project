@@ -1,6 +1,9 @@
 import { log } from "@clack/prompts";
 import { ensureManagedSection } from "./ensureManagedSection.ts";
-import { SUPPORTED_PACKAGES } from "./packageRegistry.ts";
+import {
+  getInstalledPackageConfigs,
+  SUPPORTED_PACKAGES,
+} from "./packageRegistry.ts";
 
 export function ensureAgents(
   docsMapping: Record<string, string>,
@@ -52,8 +55,8 @@ export function ensureAgents(
   const runSda = runtime === "deno" ? "deno task sda" : "npm run sda";
   const runClean = runtime === "deno" ? "deno task clean" : "npm run clean";
 
-  const installedPackageConfigs = SUPPORTED_PACKAGES.filter((pkg) =>
-    installedPackages.includes(pkg.value)
+  const installedPackageConfigs = getInstalledPackageConfigs(
+    installedPackages,
   );
   const importExamples = installedPackageConfigs.map((pkg) => {
     const repoName = pkg.value.split("/")[1];
