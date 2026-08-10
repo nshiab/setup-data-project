@@ -12,6 +12,8 @@ export function ensureAgents(
 ) {
   let journalismFunctions = "";
   let sdaClassesAndMethods = "";
+  let sdaDocsPath = "";
+  let sdaLibraryName = "";
 
   for (const [pkg, doc] of Object.entries(docsMapping)) {
     const pkgConfig = SUPPORTED_PACKAGES.find((p) => p.value === pkg);
@@ -30,6 +32,9 @@ export function ensureAgents(
         .map((line) => line.replace(/^#+\s+/, "").trim())
         .join("\n") + "\n";
     } else if (pkgType === "sda") {
+      const repoName = pkg.split("/")[1];
+      sdaDocsPath = `./docs/${repoName}.md`;
+      sdaLibraryName = pkgConfig?.label || repoName;
       sdaClassesAndMethods = doc
         .split("\n")
         .filter((line) => line.trim().startsWith("#"))
@@ -109,7 +114,7 @@ ${journalismFunctions}`;
 
   if (sdaClassesAndMethods !== "") {
     content += `
-Here are the classes and their methods available in the "simple-data-analysis" library. If one of the classes or methods might be relevant, read the complete documentation at "./docs/simple-data-analysis.md" to properly use it. Remember that almost all methods are asynchronous, so you need to use \`await\` when calling them.
+Here are the classes and their methods available in the "${sdaLibraryName}" library. If one of the classes or methods might be relevant, read the complete documentation at "${sdaDocsPath}" to properly use it. Remember that almost all methods are asynchronous, so you need to use \`await\` when calling them.
 ${sdaClassesAndMethods}`;
   }
 

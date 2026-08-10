@@ -81,6 +81,32 @@ Deno.test("ensureAgents - should include sda classes and methods when present", 
   }
 });
 
+Deno.test("ensureAgents - should link to the installed SDA package docs", async () => {
+  const { tempDir, cleanup } = createTestDir();
+  const originalCwd = Deno.cwd();
+  Deno.chdir(tempDir);
+
+  try {
+    const docsMapping = {
+      "@nshiab/simple-data-analysis-core":
+        "# SDA Core\n## class SimpleDB\n#### select",
+    };
+    await ensureAgents(
+      docsMapping,
+      "deno",
+      ["@nshiab/simple-data-analysis-core"],
+    );
+    const content = readFileSync("AGENTS.md", "utf-8");
+    assert(content.includes('"simple-data-analysis-core" library'));
+    assert(
+      content.includes('"./docs/simple-data-analysis-core.md"'),
+    );
+  } finally {
+    Deno.chdir(originalCwd);
+    cleanup();
+  }
+});
+
 Deno.test("ensureAgents - should rebuild all installed APIs across runs", async () => {
   const { tempDir, cleanup } = createTestDir();
   const originalCwd = Deno.cwd();

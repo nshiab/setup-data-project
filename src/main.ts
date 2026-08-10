@@ -11,9 +11,7 @@ import {
 import process from "node:process";
 
 import { getRuntime } from "./helpers/getRuntime.ts";
-import { getInstalledPackages } from "./helpers/getInstalledPackages.ts";
 import { PACKAGE_OPTIONS } from "./helpers/packageOptions.ts";
-import { updateProjectConfig } from "./helpers/updateProjectConfig.ts";
 import { ensureGitignore } from "./helpers/ensureGitignore.ts";
 import { ensureReadme } from "./helpers/ensureReadme.ts";
 import { installPackagesAndFetchDocs } from "./helpers/installPackagesAndFetchDocs.ts";
@@ -21,7 +19,8 @@ import { getProjectTasks } from "./helpers/getProjectTasks.ts";
 import { createFolderStructure } from "./helpers/createFolderStructure.ts";
 import { ensureEnvFile } from "./helpers/ensureEnvFile.ts";
 import { ensureAgents } from "./helpers/ensureAgents.ts";
-import { SUPPORTED_PACKAGES } from "./helpers/packageRegistry.ts";
+import { getInstalledPackageConfigs } from "./helpers/packageRegistry.ts";
+import { ProjectManifest } from "./helpers/projectManifest.ts";
 import { syncPackageDocs } from "./helpers/syncPackageDocs.ts";
 
 async function main() {
@@ -29,9 +28,10 @@ async function main() {
   console.log();
   intro(`Hi! 👋 (Running on ${runtime})`);
 
-  updateProjectConfig(getProjectTasks());
+  const projectManifest = ProjectManifest.open(runtime);
+  projectManifest.updateTasks(getProjectTasks());
 
-  const installedPackages = getInstalledPackages();
+  const installedPackages = projectManifest.getInstalledPackages();
   const options = PACKAGE_OPTIONS.map((opt) => ({
     ...opt,
     label: installedPackages.includes(opt.value)
@@ -94,20 +94,18 @@ async function main() {
   }
   sInstall.stop("✅ Packages installed and documentation fetched.");
 
-  updateProjectConfig(getProjectTasks());
+  projectManifest.reload();
+  projectManifest.updateTasks(getProjectTasks());
 
-  const supportedPackageNames = new Set(
-    SUPPORTED_PACKAGES.map((pkg) => pkg.value),
-  );
-  const finalInstalledPackages = getInstalledPackages().filter((pkg) =>
-    supportedPackageNames.has(pkg)
-  );
+  const finalInstalledPackages = getInstalledPackageConfigs(
+    projectManifest.getInstalledPackages(),
+  ).map((pkg) => pkg.value);
   const docsMapping = await syncPackageDocs(
     finalInstalledPackages,
     packagesToInstall,
   );
 
-  await createFolderStructure(packagesToInstall);
+  await createFolderStructure(finalInstalledPackages);
 
   ensureGitignore();
 
@@ -120,4 +118,8 @@ async function main() {
   outro("You are all set! 🙌");
 }
 
-main().catch(console.error);
+main().catch((error) => {
+  const message = error instanceof Error ? error.message : String(error);
+  console.error(`❌ Error: ${message}`);
+  process.exitCode = 1;
+});
