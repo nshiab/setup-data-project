@@ -13,6 +13,7 @@ Deno.test("ensureGitignore - should create and update .gitignore", () => {
     ensureGitignore();
     const content = readFileSync(".gitignore", "utf-8");
     assert(content.includes("sda/data"), "Should include sda/data");
+    assert(content.includes("sda/output"), "Should include sda/output");
     assert(
       content.includes("# Added by setup-data-project"),
       "Should include header",
@@ -26,6 +27,10 @@ Deno.test("ensureGitignore - should create and update .gitignore", () => {
     assert(
       updatedContent.includes("sda/data"),
       "Should still include sda/data",
+    );
+    assert(
+      updatedContent.includes("sda/output"),
+      "Should still include sda/output",
     );
   } finally {
     Deno.chdir(originalCwd);

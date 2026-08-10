@@ -1,7 +1,11 @@
 import { log } from "@clack/prompts";
-import { handleFileConflict } from "./handleFileConflict.ts";
+import { ensureManagedSection } from "./ensureManagedSection.ts";
+import { getInstalledPackageConfigs } from "./packageRegistry.ts";
 
-export async function ensureReadme(runtime: string) {
+export function ensureReadme(
+  runtime: string,
+  installedPackages: string[] = [],
+) {
   let runCommand = "npm run";
   if (runtime === "deno") {
     runCommand = "deno task";
@@ -9,13 +13,34 @@ export async function ensureReadme(runtime: string) {
     runCommand = "bun run";
   }
 
-  const readmeContent = `This repository has been created with
+  const installedPackageConfigs = getInstalledPackageConfigs(
+    installedPackages,
+  );
+  const hasSda = installedPackageConfigs.some((pkg) => pkg.type === "sda");
+  const hasJournalism = installedPackageConfigs.some((pkg) =>
+    pkg.type === "journalism"
+  );
+
+  const libraryLinks = [
+    hasSda
+      ? "[simple-data-analysis](https://github.com/nshiab/simple-data-analysis)"
+      : "",
+    hasJournalism ? "[journalism](https://github.com/nshiab/journalism)" : "",
+  ].filter(Boolean);
+  const librarySection = libraryLinks.length === 0
+    ? ""
+    : `It's installing ${libraryLinks.join(" and ")} libraries, with up-to-date
+documentation and AI agent instructions.`;
+
+  const status = ensureManagedSection({
+    path: "README.md",
+    name: "libraries",
+    content: librarySection,
+    createContent: (managedSection) =>
+      `This repository has been created with
 [setup-data-project](https://github.com/nshiab/setup-data-project/).
 
-It's installing
-[simple-data-analysis](https://github.com/nshiab/simple-data-analysis) and
-[journalism](https://github.com/nshiab/journalism) libraries, with up-to-date
-documentation and AI agent instructions.
+${managedSection}
 
 Here's the recommended workflow:
 
@@ -28,12 +53,11 @@ When working on your project, use the following command:
 
 - \`${runCommand} sda\` will watch your \`sda/main.ts\` and its dependencies. Everytime
   you'll save some changes, the data will be reprocessed.
-- \`${runCommand} clean\` will remove \`.sda-cache/\`, \`.journalism-cache/\` and \`.tmp/\`,
-  if present.
+- \`${runCommand} clean\` will remove cache and temporary files, if present.
 
-Have fun!`;
-  const status = await handleFileConflict("README.md", readmeContent);
-  if (status === "updated") {
+Have fun!`,
+  });
+  if (status === "created" || status === "updated") {
     log.info("Updated README.md");
   }
 }

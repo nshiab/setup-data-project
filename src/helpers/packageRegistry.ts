@@ -94,3 +94,10 @@ export const SUPPORTED_PACKAGES: PackageConfig[] = [
       "Functions to zip/unzip, sleep, reencode files, create nested directories...",
   },
 ];
+
+export function getInstalledPackageConfigs(
+  installedPackages: string[],
+): PackageConfig[] {
+  const installedSet = new Set(installedPackages);
+  return SUPPORTED_PACKAGES.filter((pkg) => installedSet.has(pkg.value));
+}

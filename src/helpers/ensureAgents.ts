@@ -1,10 +1,14 @@
 import { log } from "@clack/prompts";
-import { handleFileConflict } from "./handleFileConflict.ts";
-import { SUPPORTED_PACKAGES } from "./packageRegistry.ts";
+import { ensureManagedSection } from "./ensureManagedSection.ts";
+import {
+  getInstalledPackageConfigs,
+  SUPPORTED_PACKAGES,
+} from "./packageRegistry.ts";
 
-export async function ensureAgents(
+export function ensureAgents(
   docsMapping: Record<string, string>,
   runtime: string,
+  installedPackages: string[] = Object.keys(docsMapping),
 ) {
   let journalismFunctions = "";
   let sdaClassesAndMethods = "";
@@ -51,6 +55,30 @@ export async function ensureAgents(
   const runSda = runtime === "deno" ? "deno task sda" : "npm run sda";
   const runClean = runtime === "deno" ? "deno task clean" : "npm run clean";
 
+  const installedPackageConfigs = getInstalledPackageConfigs(
+    installedPackages,
+  );
+  const importExamples = installedPackageConfigs.map((pkg) => {
+    const repoName = pkg.value.split("/")[1];
+    const identifier = repoName.replace(
+      /-([a-z])/g,
+      (_, letter: string) => letter.toUpperCase(),
+    );
+    return `import * as ${identifier} from "${pkg.value}";`;
+  });
+
+  let libraryGuidance = "";
+  if (installedPackageConfigs.length > 0) {
+    const libraryNames = installedPackageConfigs.map((pkg) => `"${pkg.label}"`)
+      .join(", ");
+    libraryGuidance = `
+Always prioritize the installed ${libraryNames} libraries when relevant. They can be imported directly like this:
+\`\`\`typescript
+${importExamples.join("\n")}
+\`\`\`
+`;
+  }
+
   let content =
     `Always verify if there is a ${configFile} file in the root of the project and familiarize yourself with the scripts available in it and the libraries already installed in the project.
 
@@ -71,13 +99,7 @@ If you need to create other TypeScript files, create them in the "sda/helpers" f
 If you need to download data, always put the files in the "sda/data" folder, which is gitignored. 
 
 If you need to output data to a file, always put the file in the "sda/output" folder.
-
-Always prioritize the use of the "journalism" and "simple-data-analysis" libraries when they are installed. These libraries can be used directly like this:
-\`\`\`typescript
-import { formatDate } from "@nshiab/journalism-format";
-import { SimpleDB } from "@nshiab/simple-data-analysis";
-\`\`\`
-`;
+${libraryGuidance}`;
 
   if (journalismFunctions !== "") {
     content += `
@@ -91,8 +113,13 @@ Here are the classes and their methods available in the "simple-data-analysis" l
 ${sdaClassesAndMethods}`;
   }
 
-  const status = await handleFileConflict("AGENTS.md", content);
-  if (status === "updated") {
+  const status = ensureManagedSection({
+    path: "AGENTS.md",
+    name: "agents",
+    content,
+    createContent: (managedSection) => managedSection,
+  });
+  if (status === "created" || status === "updated") {
     log.info("Updated AGENTS.md");
   }
 }

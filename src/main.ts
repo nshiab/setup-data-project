@@ -21,6 +21,8 @@ import { getProjectTasks } from "./helpers/getProjectTasks.ts";
 import { createFolderStructure } from "./helpers/createFolderStructure.ts";
 import { ensureEnvFile } from "./helpers/ensureEnvFile.ts";
 import { ensureAgents } from "./helpers/ensureAgents.ts";
+import { SUPPORTED_PACKAGES } from "./helpers/packageRegistry.ts";
+import { syncPackageDocs } from "./helpers/syncPackageDocs.ts";
 
 async function main() {
   const runtime = getRuntime();
@@ -78,16 +80,12 @@ async function main() {
     }
   }
 
-  const docsMapping: Record<string, string> = {};
   const sInstall = spinner();
   sInstall.start("Installing packages and fetching documentation...");
 
   for (const pkg of packagesToInstall) {
     try {
-      const doc = await installPackagesAndFetchDocs([pkg], { silent: true });
-      if (typeof doc === "string") {
-        docsMapping[pkg] = doc;
-      }
+      await installPackagesAndFetchDocs([pkg], { silent: true });
     } catch (error) {
       sInstall.stop(`❌ Failed to install ${pkg}.`);
       console.error(error);
@@ -98,15 +96,26 @@ async function main() {
 
   updateProjectConfig(getProjectTasks());
 
+  const supportedPackageNames = new Set(
+    SUPPORTED_PACKAGES.map((pkg) => pkg.value),
+  );
+  const finalInstalledPackages = getInstalledPackages().filter((pkg) =>
+    supportedPackageNames.has(pkg)
+  );
+  const docsMapping = await syncPackageDocs(
+    finalInstalledPackages,
+    packagesToInstall,
+  );
+
   await createFolderStructure(packagesToInstall);
 
   ensureGitignore();
 
   await ensureEnvFile();
 
-  await ensureReadme(runtime);
+  await ensureReadme(runtime, finalInstalledPackages);
 
-  await ensureAgents(docsMapping, runtime);
+  await ensureAgents(docsMapping, runtime, finalInstalledPackages);
 
   outro("You are all set! 🙌");
 }
