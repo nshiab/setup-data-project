@@ -16,6 +16,8 @@ Deno.test("ensureReadme - should create README.md if not exists", async () => {
       content.includes("setup-data-project"),
       "Should include link to project",
     );
+    assert(content.includes("This repository was created with"));
+    assert(content.includes("ignored by Git"));
     assert(
       content.includes(
         "<!-- Do not remove / setup-data-project:libraries:start -->",
@@ -51,6 +53,8 @@ Deno.test("ensureReadme - should update installed library families across runs",
     const content = readFileSync("README.md", "utf-8");
     assert(content.includes("[simple-data-analysis]"));
     assert(content.includes("[journalism]"));
+    assert(content.includes("It has installed"));
+    assert(content.includes("Whenever you save changes"));
     assert(content.endsWith("Custom"));
     assertEquals(
       content.match(/setup-data-project:libraries:start/g)?.length,

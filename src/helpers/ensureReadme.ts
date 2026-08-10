@@ -29,15 +29,15 @@ export function ensureReadme(
   ].filter(Boolean);
   const librarySection = libraryLinks.length === 0
     ? ""
-    : `It's installing ${libraryLinks.join(" and ")} libraries, with up-to-date
-documentation and AI agent instructions.`;
+    : `It has installed ${libraryLinks.join(" and ")} libraries, along with
+up-to-date documentation and AI agent instructions.`;
 
   const status = ensureManagedSection({
     path: "README.md",
     name: "libraries",
     content: librarySection,
     createContent: (managedSection) =>
-      `This repository has been created with
+      `This repository was created with
 [setup-data-project](https://github.com/nshiab/setup-data-project/).
 
 ${managedSection}
@@ -45,14 +45,14 @@ ${managedSection}
 Here's the recommended workflow:
 
 - Put your raw data in the \`sda/data\` folder. Note that this folder is
-  gitignored.
+  ignored by Git.
 - Use the \`sda/main.ts\` file to clean and process your raw data. Write the
   results to the \`sda/output\` folder.
 
 When working on your project, use the following command:
 
-- \`${runCommand} sda\` will watch your \`sda/main.ts\` and its dependencies. Everytime
-  you'll save some changes, the data will be reprocessed.
+- \`${runCommand} sda\` will watch your \`sda/main.ts\` and its dependencies.
+  Whenever you save changes, the data will be reprocessed.
 - \`${runCommand} clean\` will remove cache and temporary files, if present.
 
 Have fun!`,
