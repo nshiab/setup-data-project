@@ -16,6 +16,16 @@ Deno.test("ensureAgents - should create AGENTS.md", async () => {
       content.includes('Always use "sda/main.ts"'),
       "Should include basic instructions",
     );
+    assert(
+      content.includes(
+        "<!-- Do not remove / setup-data-project:agents:start -->",
+      ),
+    );
+    assert(
+      content.includes(
+        "<!-- Do not remove / setup-data-project:agents:end -->",
+      ),
+    );
     // Only check if it contains the header text which is part of the conditional section
     assert(
       !content.includes(
@@ -148,7 +158,11 @@ Deno.test("ensureAgents - should omit library guidance with no installed package
     await ensureAgents({}, "deno", []);
     const content = readFileSync("AGENTS.md", "utf-8");
     assert(!content.includes("@nshiab/"));
-    assert(content.includes("setup-data-project:agents:start"));
+    assert(
+      content.includes(
+        "<!-- Do not remove / setup-data-project:agents:start -->",
+      ),
+    );
   } finally {
     Deno.chdir(originalCwd);
     cleanup();

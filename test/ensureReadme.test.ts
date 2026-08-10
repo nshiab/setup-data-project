@@ -16,6 +16,16 @@ Deno.test("ensureReadme - should create README.md if not exists", async () => {
       content.includes("setup-data-project"),
       "Should include link to project",
     );
+    assert(
+      content.includes(
+        "<!-- Do not remove / setup-data-project:libraries:start -->",
+      ),
+    );
+    assert(
+      content.includes(
+        "<!-- Do not remove / setup-data-project:libraries:end -->",
+      ),
+    );
     assert(!content.includes("[journalism]"));
     assert(!content.includes("[simple-data-analysis]"));
   } finally {

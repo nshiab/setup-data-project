@@ -11,8 +11,10 @@ interface ManagedSectionOptions {
 export function ensureManagedSection(
   options: ManagedSectionOptions,
 ): "created" | "updated" | "unchanged" | "missing-markers" {
-  const startMarker = `<!-- setup-data-project:${options.name}:start -->`;
-  const endMarker = `<!-- setup-data-project:${options.name}:end -->`;
+  const startMarker =
+    `<!-- Do not remove / setup-data-project:${options.name}:start -->`;
+  const endMarker =
+    `<!-- Do not remove / setup-data-project:${options.name}:end -->`;
   const trimmedContent = options.content.trim();
   const section = trimmedContent === ""
     ? `${startMarker}\n${endMarker}`
