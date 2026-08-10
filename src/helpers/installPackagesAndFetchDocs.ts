@@ -1,4 +1,4 @@
-import { spinner } from "@clack/prompts";
+import { log, spinner } from "@clack/prompts";
 import * as childProcess from "node:child_process";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -7,6 +7,55 @@ import { getRuntime } from "./getRuntime.ts";
 export const commandRunner = {
   exec: childProcess.exec,
 };
+
+export async function fetchPackageDocs(
+  pkg: string,
+  options: { silent?: boolean } = {},
+): Promise<string | undefined> {
+  if (!existsSync("docs")) {
+    mkdirSync("docs");
+  }
+
+  const sFetch = spinner();
+  if (!options.silent) {
+    sFetch.start("Fetching documentation for " + pkg + "...");
+  }
+
+  try {
+    const repoName = pkg.split("/")[1];
+    const url = "https://raw.githubusercontent.com/nshiab/" + repoName +
+      "/refs/heads/main/llm.md";
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      if (!options.silent) {
+        sFetch.stop("⚠️  No documentation (llm.md) found for " + pkg + ".");
+      }
+      log.warn(
+        `Documentation for ${pkg} could not be refreshed. Rerun the script ` +
+          "later to try again.",
+      );
+      return undefined;
+    }
+
+    const docContent = await response.text();
+    writeFileSync(join("docs", repoName + ".md"), docContent);
+    if (!options.silent) {
+      sFetch.stop("✅ Documentation for " + pkg + " saved!");
+    }
+    return docContent;
+  } catch (error) {
+    if (!options.silent) {
+      sFetch.stop("❌ Failed to fetch documentation for " + pkg + ".");
+    }
+    log.warn(
+      `Documentation for ${pkg} could not be refreshed. Rerun the script ` +
+        "later to try again.",
+    );
+    console.error(error);
+    return undefined;
+  }
+}
 
 export async function installPackagesAndFetchDocs(
   selectedPackages: string[],
@@ -64,41 +113,9 @@ export async function installPackagesAndFetchDocs(
         }
       }
 
-      // Documentation logic
-      if (pkg === "@observablehq/plot") {
-        continue;
-      }
-
-      const sFetch = spinner();
-      try {
-        if (!options.silent) {
-          sFetch.start("Fetching documentation for " + pkg + "...");
-        }
-        const repoName = pkg.split("/")[1];
-        const url = "https://raw.githubusercontent.com/nshiab/" + repoName +
-          "/refs/heads/main/llm.md";
-
-        const response = await fetch(url);
-        if (response.ok) {
-          const docContent = await response.text();
-          writeFileSync(join("docs", repoName + ".md"), docContent);
-          if (!options.silent) {
-            sFetch.stop("✅ Documentation for " + pkg + " saved!");
-          }
-          lastDoc = docContent;
-        } else {
-          if (!options.silent) {
-            sFetch.stop(
-              "⚠️  No documentation (llm.md) found for " + pkg +
-                ". Skipping doc fetch.",
-            );
-          }
-        }
-      } catch (error) {
-        if (!options.silent) {
-          sFetch.stop("❌ Failed to fetch documentation for " + pkg + ".");
-        }
-        console.error(error);
+      const docContent = await fetchPackageDocs(pkg, options);
+      if (docContent !== undefined) {
+        lastDoc = docContent;
       }
     }
     return lastDoc;

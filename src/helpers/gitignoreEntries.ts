@@ -4,6 +4,7 @@ export const GITIGNORE_ENTRIES = [
   ".sda-cache",
   ".journalism-cache",
   "sda/data",
+  "sda/output",
   ".env",
   ".DS_Store",
 ];

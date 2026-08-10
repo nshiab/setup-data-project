@@ -1,4 +1,4 @@
-import { assertExists } from "@std/assert";
+import { assertEquals, assertExists } from "@std/assert";
 import { readFileSync } from "node:fs";
 import { ensureAgents } from "../src/helpers/ensureAgents.ts";
 import { createTestDir } from "./helpers/utils.ts";
@@ -75,6 +75,54 @@ Deno.test("ensureAgents - should include sda classes and methods when present", 
     assert(content.includes("SimpleTable"), "Should include class name");
     assert(content.includes("- ai"), "Should include method names");
     assert(content.includes("- select"), "Should include method names");
+  } finally {
+    Deno.chdir(originalCwd);
+    cleanup();
+  }
+});
+
+Deno.test("ensureAgents - should rebuild all installed APIs across runs", async () => {
+  const { tempDir, cleanup } = createTestDir();
+  const originalCwd = Deno.cwd();
+  Deno.chdir(tempDir);
+
+  try {
+    await ensureAgents(
+      { "@nshiab/simple-data-analysis": "## class SimpleDB\n#### select" },
+      "deno",
+      ["@nshiab/simple-data-analysis"],
+    );
+    await ensureAgents(
+      {
+        "@nshiab/simple-data-analysis": "## class SimpleDB\n#### select",
+        "@nshiab/journalism-format": "## formatDate",
+      },
+      "deno",
+      ["@nshiab/simple-data-analysis", "@nshiab/journalism-format"],
+    );
+
+    const content = readFileSync("AGENTS.md", "utf-8");
+    assert(content.includes("SimpleDB"));
+    assert(content.includes("formatDate"));
+    assert(content.includes("@nshiab/simple-data-analysis"));
+    assert(content.includes("@nshiab/journalism-format"));
+    assertEquals(content.match(/Always verify if there is a/g)?.length, 1);
+  } finally {
+    Deno.chdir(originalCwd);
+    cleanup();
+  }
+});
+
+Deno.test("ensureAgents - should omit library guidance with no installed packages", async () => {
+  const { tempDir, cleanup } = createTestDir();
+  const originalCwd = Deno.cwd();
+  Deno.chdir(tempDir);
+
+  try {
+    await ensureAgents({}, "deno", []);
+    const content = readFileSync("AGENTS.md", "utf-8");
+    assert(!content.includes("@nshiab/"));
+    assert(content.includes("setup-data-project:agents:start"));
   } finally {
     Deno.chdir(originalCwd);
     cleanup();
