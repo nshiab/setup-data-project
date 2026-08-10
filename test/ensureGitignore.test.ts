@@ -1,4 +1,5 @@
 import { assertEquals } from "@std/assert";
+import { log } from "@clack/prompts";
 import { readFileSync, symlinkSync, writeFileSync } from "node:fs";
 import {
   ensureGitignore,
@@ -13,11 +14,15 @@ Deno.test("ensureGitignore - should create .gitignore without a leading blank li
   Deno.chdir(tempDir);
 
   try {
+    const messages: string[] = [];
+    log.info = (message) => messages.push(message);
+
     ensureGitignore();
     assertEquals(
       readFileSync(".gitignore", "utf-8"),
       `${GITIGNORE_SENTINEL}\n${GITIGNORE_ENTRIES.join("\n")}\n`,
     );
+    assertEquals(messages, ["Created .gitignore"]);
   } finally {
     Deno.chdir(originalCwd);
     cleanup();
@@ -30,6 +35,8 @@ Deno.test("ensureGitignore - should append the complete block when the sentinel 
   Deno.chdir(tempDir);
 
   try {
+    const messages: string[] = [];
+    log.info = (message) => messages.push(message);
     writeFileSync(".gitignore", "node_modules\ncustom-entry\n");
 
     ensureGitignore();
@@ -40,6 +47,7 @@ Deno.test("ensureGitignore - should append the complete block when the sentinel 
         GITIGNORE_ENTRIES.join("\n")
       }\n`,
     );
+    assertEquals(messages, ["Updated .gitignore"]);
   } finally {
     Deno.chdir(originalCwd);
     cleanup();

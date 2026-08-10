@@ -1,5 +1,6 @@
 import { existsSync, lstatSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { log } from "@clack/prompts";
 
 export function createFolderStructure(selectedPackages: string[]) {
   const sdaFolder = "sda";
@@ -43,6 +44,7 @@ await sdb.done();
 
   if (lstatSync(mainTsPath, { throwIfNoEntry: false }) === undefined) {
     writeFileSync(mainTsPath, mainTsContent);
+    log.info(`Created ${mainTsPath}`);
   }
 
   return sdaFolder;

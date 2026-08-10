@@ -1,4 +1,5 @@
 import { assertEquals, assertExists } from "@std/assert";
+import { log } from "@clack/prompts";
 import { readFileSync, writeFileSync } from "node:fs";
 import { ensureReadme } from "../src/helpers/ensureReadme.ts";
 import { createTestDir } from "./helpers/utils.ts";
@@ -9,6 +10,9 @@ Deno.test("ensureReadme - should create README.md if not exists", async () => {
   Deno.chdir(tempDir);
 
   try {
+    const messages: string[] = [];
+    log.info = (message) => messages.push(message);
+
     await ensureReadme("deno");
     assertExists("README.md");
     const content = readFileSync("README.md", "utf-8");
@@ -30,6 +34,7 @@ Deno.test("ensureReadme - should create README.md if not exists", async () => {
     );
     assert(!content.includes("[journalism]"));
     assert(!content.includes("[simple-data-analysis]"));
+    assertEquals(messages, ["Created README.md"]);
   } finally {
     Deno.chdir(originalCwd);
     cleanup();
@@ -42,6 +47,9 @@ Deno.test("ensureReadme - should update installed library families across runs",
   Deno.chdir(tempDir);
 
   try {
+    const messages: string[] = [];
+    log.info = (message) => messages.push(message);
+
     await ensureReadme("deno", ["@nshiab/simple-data-analysis"]);
     writeFileSync("README.md", readFileSync("README.md", "utf-8") + "\nCustom");
 
@@ -60,6 +68,7 @@ Deno.test("ensureReadme - should update installed library families across runs",
       content.match(/setup-data-project:libraries:start/g)?.length,
       1,
     );
+    assertEquals(messages, ["Created README.md", "Updated README.md"]);
   } finally {
     Deno.chdir(originalCwd);
     cleanup();

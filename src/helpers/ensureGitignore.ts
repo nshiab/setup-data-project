@@ -30,7 +30,5 @@ export function ensureGitignore() {
   const block = `${GITIGNORE_SENTINEL}\n${GITIGNORE_ENTRIES.join("\n")}\n`;
   writeFileSync(path, content + separator + block);
 
-  if (stats !== undefined) {
-    log.info(`Updated ${path}`);
-  }
+  log.info(`${stats === undefined ? "Created" : "Updated"} ${path}`);
 }

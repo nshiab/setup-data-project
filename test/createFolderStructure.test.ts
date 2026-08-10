@@ -1,4 +1,5 @@
 import { assertEquals, assertExists } from "@std/assert";
+import { log } from "@clack/prompts";
 import { join } from "node:path";
 import { readFileSync, symlinkSync, writeFileSync } from "node:fs";
 import { createFolderStructure } from "../src/helpers/createFolderStructure.ts";
@@ -10,11 +11,15 @@ Deno.test("createFolderStructure - should create the correct files and folders",
   Deno.chdir(tempDir);
 
   try {
+    const messages: string[] = [];
+    log.info = (message) => messages.push(message);
+
     createFolderStructure([]);
     assertExists(join("sda", "data"));
     assertExists(join("sda", "helpers"));
     assertExists(join("sda", "output"));
     assertExists(join("sda", "main.ts"));
+    assertEquals(messages, ["Created sda/main.ts"]);
   } finally {
     Deno.chdir(originalCwd);
     cleanup();

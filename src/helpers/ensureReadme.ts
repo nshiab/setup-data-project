@@ -57,7 +57,9 @@ When working on your project, use the following command:
 
 Have fun!`,
   });
-  if (status === "created" || status === "updated") {
+  if (status === "created") {
+    log.info("Created README.md");
+  } else if (status === "updated") {
     log.info("Updated README.md");
   }
 }

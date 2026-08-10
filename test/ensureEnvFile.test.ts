@@ -1,4 +1,5 @@
 import { assertEquals, assertExists } from "@std/assert";
+import { log } from "@clack/prompts";
 import { readFileSync, symlinkSync, writeFileSync } from "node:fs";
 import { ensureEnvFile } from "../src/helpers/ensureEnvFile.ts";
 import { createTestDir } from "./helpers/utils.ts";
@@ -9,8 +10,12 @@ Deno.test("ensureEnvFile - should create .env if it does not exist", () => {
   Deno.chdir(tempDir);
 
   try {
+    const messages: string[] = [];
+    log.info = (message) => messages.push(message);
+
     ensureEnvFile();
     assertExists(".env");
+    assertEquals(messages, ["Created .env"]);
   } finally {
     Deno.chdir(originalCwd);
     cleanup();
@@ -23,9 +28,14 @@ Deno.test("ensureEnvFile - should not overwrite .env if it already exists", () =
   Deno.chdir(tempDir);
 
   try {
+    const messages: string[] = [];
+    log.info = (message) => messages.push(message);
     writeFileSync(".env", "MY_VAR=hello");
+
     ensureEnvFile();
+
     assertEquals(readFileSync(".env", "utf-8"), "MY_VAR=hello");
+    assertEquals(messages, []);
   } finally {
     Deno.chdir(originalCwd);
     cleanup();

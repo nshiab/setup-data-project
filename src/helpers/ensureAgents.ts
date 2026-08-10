@@ -124,7 +124,9 @@ ${sdaClassesAndMethods}`;
     content,
     createContent: (managedSection) => managedSection,
   });
-  if (status === "created" || status === "updated") {
+  if (status === "created") {
+    log.info("Created AGENTS.md");
+  } else if (status === "updated") {
     log.info("Updated AGENTS.md");
   }
 }

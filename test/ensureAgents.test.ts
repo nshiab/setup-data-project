@@ -1,4 +1,5 @@
 import { assertEquals, assertExists } from "@std/assert";
+import { log } from "@clack/prompts";
 import { readFileSync } from "node:fs";
 import { ensureAgents } from "../src/helpers/ensureAgents.ts";
 import { createTestDir } from "./helpers/utils.ts";
@@ -9,6 +10,9 @@ Deno.test("ensureAgents - should create AGENTS.md", async () => {
   Deno.chdir(tempDir);
 
   try {
+    const messages: string[] = [];
+    log.info = (message) => messages.push(message);
+
     await ensureAgents({}, "deno");
     assertExists("AGENTS.md");
     const content = readFileSync("AGENTS.md", "utf-8");
@@ -39,6 +43,7 @@ Deno.test("ensureAgents - should create AGENTS.md", async () => {
       ),
       "Should not include SDA header if empty",
     );
+    assertEquals(messages, ["Created AGENTS.md"]);
   } finally {
     Deno.chdir(originalCwd);
     cleanup();
@@ -123,6 +128,9 @@ Deno.test("ensureAgents - should rebuild all installed APIs across runs", async 
   Deno.chdir(tempDir);
 
   try {
+    const messages: string[] = [];
+    log.info = (message) => messages.push(message);
+
     await ensureAgents(
       { "@nshiab/simple-data-analysis": "## class SimpleDB\n#### select" },
       "deno",
@@ -143,6 +151,7 @@ Deno.test("ensureAgents - should rebuild all installed APIs across runs", async 
     assert(content.includes("@nshiab/simple-data-analysis"));
     assert(content.includes("@nshiab/journalism-format"));
     assertEquals(content.match(/Always verify if there is a/g)?.length, 1);
+    assertEquals(messages, ["Created AGENTS.md", "Updated AGENTS.md"]);
   } finally {
     Deno.chdir(originalCwd);
     cleanup();
