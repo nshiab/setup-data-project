@@ -105,11 +105,11 @@ async function main() {
     packagesToInstall,
   );
 
-  await createFolderStructure(finalInstalledPackages);
+  createFolderStructure(finalInstalledPackages);
 
   ensureGitignore();
 
-  await ensureEnvFile();
+  ensureEnvFile();
 
   await ensureReadme(runtime, finalInstalledPackages);
 

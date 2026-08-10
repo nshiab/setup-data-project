@@ -1,9 +1,7 @@
-import { log } from "@clack/prompts";
-import { handleFileConflict } from "./handleFileConflict.ts";
+import { lstatSync, writeFileSync } from "node:fs";
 
-export async function ensureEnvFile() {
-  const status = await handleFileConflict(".env", "");
-  if (status === "updated") {
-    log.info("Updated .env");
+export function ensureEnvFile() {
+  if (lstatSync(".env", { throwIfNoEntry: false }) === undefined) {
+    writeFileSync(".env", "");
   }
 }

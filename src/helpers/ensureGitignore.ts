@@ -1,26 +1,36 @@
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { lstatSync, readFileSync, writeFileSync } from "node:fs";
 import { log } from "@clack/prompts";
 import { GITIGNORE_ENTRIES } from "./gitignoreEntries.ts";
 
+export const GITIGNORE_SENTINEL =
+  "# Added by setup-data-project. Do not remove this line.";
+
 export function ensureGitignore() {
   const path = ".gitignore";
-  let content = "";
-  let exists = false;
-  if (existsSync(path)) {
-    content = readFileSync(path, "utf-8");
-    exists = true;
+  const stats = lstatSync(path, { throwIfNoEntry: false });
+
+  if (stats?.isSymbolicLink()) {
+    return;
   }
 
-  const lines = content.split("\n").map((l) => l.trim());
-  const toAdd = GITIGNORE_ENTRIES.filter((e) => !lines.includes(e));
+  const content = stats === undefined ? "" : readFileSync(path, "utf-8");
+  const hasSentinel = content.split("\n").some((line) =>
+    line.trim() === GITIGNORE_SENTINEL
+  );
 
-  if (toAdd.length > 0) {
-    const prefix = content.endsWith("\n") || content === "" ? "" : "\n";
-    const header = "\n# Added by setup-data-project\n";
-    const newContent = prefix + header + toAdd.join("\n") + "\n";
-    writeFileSync(path, content + newContent);
-    if (exists) {
-      log.info(`Updated ${path}`);
-    }
+  if (hasSentinel) {
+    return;
+  }
+
+  const separator = content === ""
+    ? ""
+    : content.endsWith("\n")
+    ? "\n"
+    : "\n\n";
+  const block = `${GITIGNORE_SENTINEL}\n${GITIGNORE_ENTRIES.join("\n")}\n`;
+  writeFileSync(path, content + separator + block);
+
+  if (stats !== undefined) {
+    log.info(`Updated ${path}`);
   }
 }

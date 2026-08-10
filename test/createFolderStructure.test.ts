@@ -1,16 +1,16 @@
 import { assertEquals, assertExists } from "@std/assert";
 import { join } from "node:path";
-import { readFileSync } from "node:fs";
+import { readFileSync, symlinkSync, writeFileSync } from "node:fs";
 import { createFolderStructure } from "../src/helpers/createFolderStructure.ts";
 import { createTestDir } from "./helpers/utils.ts";
 
-Deno.test("createFolderStructure - should create the correct files and folders", async () => {
+Deno.test("createFolderStructure - should create the correct files and folders", () => {
   const { tempDir, cleanup } = createTestDir();
   const originalCwd = Deno.cwd();
   Deno.chdir(tempDir);
 
   try {
-    await createFolderStructure([]);
+    createFolderStructure([]);
     assertExists(join("sda", "data"));
     assertExists(join("sda", "helpers"));
     assertExists(join("sda", "output"));
@@ -21,13 +21,13 @@ Deno.test("createFolderStructure - should create the correct files and folders",
   }
 });
 
-Deno.test("createFolderStructure - should use @nshiab/simple-data-analysis-core if selected", async () => {
+Deno.test("createFolderStructure - should use @nshiab/simple-data-analysis-core if selected", () => {
   const { tempDir, cleanup } = createTestDir();
   const originalCwd = Deno.cwd();
   Deno.chdir(tempDir);
 
   try {
-    await createFolderStructure(["@nshiab/simple-data-analysis-core"]);
+    createFolderStructure(["@nshiab/simple-data-analysis-core"]);
     const content = readFileSync(join("sda", "main.ts"), "utf-8");
     assertEquals(
       content.includes(
@@ -35,6 +35,46 @@ Deno.test("createFolderStructure - should use @nshiab/simple-data-analysis-core 
       ),
       true,
     );
+  } finally {
+    Deno.chdir(originalCwd);
+    cleanup();
+  }
+});
+
+Deno.test("createFolderStructure - should preserve an existing main.ts", () => {
+  const { tempDir, cleanup } = createTestDir();
+  const originalCwd = Deno.cwd();
+  Deno.chdir(tempDir);
+
+  try {
+    Deno.mkdirSync("sda");
+    writeFileSync(join("sda", "main.ts"), "// Keep my code\n");
+
+    createFolderStructure(["@nshiab/simple-data-analysis"]);
+
+    assertEquals(
+      readFileSync(join("sda", "main.ts"), "utf-8"),
+      "// Keep my code\n",
+    );
+  } finally {
+    Deno.chdir(originalCwd);
+    cleanup();
+  }
+});
+
+Deno.test("createFolderStructure - should preserve a symlinked main.ts", () => {
+  const { tempDir, cleanup } = createTestDir();
+  const originalCwd = Deno.cwd();
+  Deno.chdir(tempDir);
+
+  try {
+    Deno.mkdirSync("sda");
+    writeFileSync("linked-main.ts", "// Linked code\n");
+    symlinkSync(join("..", "linked-main.ts"), join("sda", "main.ts"));
+
+    createFolderStructure([]);
+
+    assertEquals(readFileSync("linked-main.ts", "utf-8"), "// Linked code\n");
   } finally {
     Deno.chdir(originalCwd);
     cleanup();

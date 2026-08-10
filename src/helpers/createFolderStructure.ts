@@ -1,9 +1,7 @@
-import { existsSync, mkdirSync } from "node:fs";
+import { existsSync, lstatSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { log } from "@clack/prompts";
-import { handleFileConflict } from "./handleFileConflict.ts";
 
-export async function createFolderStructure(selectedPackages: string[]) {
+export function createFolderStructure(selectedPackages: string[]) {
   const sdaFolder = "sda";
   const folders = ["data", "helpers", "output"];
 
@@ -43,9 +41,8 @@ await sdb.done();
 `;
   }
 
-  const status = await handleFileConflict(mainTsPath, mainTsContent);
-  if (status === "updated") {
-    log.info(`Updated ${mainTsPath}`);
+  if (lstatSync(mainTsPath, { throwIfNoEntry: false }) === undefined) {
+    writeFileSync(mainTsPath, mainTsContent);
   }
 
   return sdaFolder;

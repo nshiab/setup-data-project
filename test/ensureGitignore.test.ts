@@ -1,36 +1,22 @@
 import { assertEquals } from "@std/assert";
-import { readFileSync, writeFileSync } from "node:fs";
-import { ensureGitignore } from "../src/helpers/ensureGitignore.ts";
+import { readFileSync, symlinkSync, writeFileSync } from "node:fs";
+import {
+  ensureGitignore,
+  GITIGNORE_SENTINEL,
+} from "../src/helpers/ensureGitignore.ts";
+import { GITIGNORE_ENTRIES } from "../src/helpers/gitignoreEntries.ts";
 import { createTestDir } from "./helpers/utils.ts";
 
-Deno.test("ensureGitignore - should create and update .gitignore", () => {
+Deno.test("ensureGitignore - should create .gitignore without a leading blank line", () => {
   const { tempDir, cleanup } = createTestDir();
   const originalCwd = Deno.cwd();
   Deno.chdir(tempDir);
 
   try {
-    // Test creation
     ensureGitignore();
-    const content = readFileSync(".gitignore", "utf-8");
-    assert(content.includes("sda/data"), "Should include sda/data");
-    assert(content.includes("sda/output"), "Should include sda/output");
-    assert(
-      content.includes("# Added by setup-data-project"),
-      "Should include header",
-    );
-
-    // Test idempotency/appending
-    writeFileSync(".gitignore", "my_custom_ignored_file\n");
-    ensureGitignore();
-    const updatedContent = readFileSync(".gitignore", "utf-8");
-    assertEquals(updatedContent.startsWith("my_custom_ignored_file\n"), true);
-    assert(
-      updatedContent.includes("sda/data"),
-      "Should still include sda/data",
-    );
-    assert(
-      updatedContent.includes("sda/output"),
-      "Should still include sda/output",
+    assertEquals(
+      readFileSync(".gitignore", "utf-8"),
+      `${GITIGNORE_SENTINEL}\n${GITIGNORE_ENTRIES.join("\n")}\n`,
     );
   } finally {
     Deno.chdir(originalCwd);
@@ -38,8 +24,81 @@ Deno.test("ensureGitignore - should create and update .gitignore", () => {
   }
 });
 
-function assert(condition: boolean, msg?: string) {
-  if (!condition) {
-    throw new Error(msg || "Assertion failed");
+Deno.test("ensureGitignore - should append the complete block when the sentinel is absent", () => {
+  const { tempDir, cleanup } = createTestDir();
+  const originalCwd = Deno.cwd();
+  Deno.chdir(tempDir);
+
+  try {
+    writeFileSync(".gitignore", "node_modules\ncustom-entry\n");
+
+    ensureGitignore();
+
+    assertEquals(
+      readFileSync(".gitignore", "utf-8"),
+      `node_modules\ncustom-entry\n\n${GITIGNORE_SENTINEL}\n${
+        GITIGNORE_ENTRIES.join("\n")
+      }\n`,
+    );
+  } finally {
+    Deno.chdir(originalCwd);
+    cleanup();
   }
-}
+});
+
+Deno.test("ensureGitignore - should preserve any file containing the sentinel", () => {
+  const { tempDir, cleanup } = createTestDir();
+  const originalCwd = Deno.cwd();
+  Deno.chdir(tempDir);
+
+  try {
+    const content = `custom-entry\n  ${GITIGNORE_SENTINEL}  \n`;
+    writeFileSync(".gitignore", content);
+
+    ensureGitignore();
+
+    assertEquals(readFileSync(".gitignore", "utf-8"), content);
+  } finally {
+    Deno.chdir(originalCwd);
+    cleanup();
+  }
+});
+
+Deno.test("ensureGitignore - should not recognize the old sentinel", () => {
+  const { tempDir, cleanup } = createTestDir();
+  const originalCwd = Deno.cwd();
+  Deno.chdir(tempDir);
+
+  try {
+    writeFileSync(".gitignore", "# Added by setup-data-project\n");
+
+    ensureGitignore();
+
+    const content = readFileSync(".gitignore", "utf-8");
+    assertEquals(content.includes(GITIGNORE_SENTINEL), true);
+  } finally {
+    Deno.chdir(originalCwd);
+    cleanup();
+  }
+});
+
+Deno.test("ensureGitignore - should preserve a symlinked .gitignore", () => {
+  const { tempDir, cleanup } = createTestDir();
+  const originalCwd = Deno.cwd();
+  Deno.chdir(tempDir);
+
+  try {
+    writeFileSync("shared.gitignore", "custom-entry\n");
+    symlinkSync("shared.gitignore", ".gitignore");
+
+    ensureGitignore();
+
+    assertEquals(
+      readFileSync("shared.gitignore", "utf-8"),
+      "custom-entry\n",
+    );
+  } finally {
+    Deno.chdir(originalCwd);
+    cleanup();
+  }
+});
