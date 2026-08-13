@@ -57,7 +57,11 @@ export function ensureAgents(
   }
 
   const configFile = runtime === "deno" ? "deno.json" : "package.json";
-  const runSda = runtime === "deno" ? "deno task sda" : "npm run sda";
+  const runSdaOnce = runtime === "deno"
+    ? "deno run -A --env --check sda/main.ts"
+    : runtime === "bun"
+    ? "bun run sda/main.ts"
+    : "node --env-file-if-exists=.env --experimental-strip-types sda/main.ts";
   const runClean = runtime === "deno" ? "deno task clean" : "npm run clean";
 
   const installedPackageConfigs = getInstalledPackageConfigs(
@@ -87,15 +91,15 @@ ${importExamples.join("\n")}
   let content =
     `Always verify if there is a ${configFile} file in the root of the project and familiarize yourself with the scripts available in it and the libraries already installed in the project.
 
-Always use "sda" task when available (e.g. \`${runSda}\`).
+Run \`sda/main.ts\` with \`${runSdaOnce}\`. Do not use the \`sda\` task for agent-driven checks because it runs in watch mode and will keep waiting for file changes.
 
 ${
       runtime === "deno"
         ? "Before handing off your work, run `deno lint` and `deno fmt` as well. Fix any errors or warnings triggered along the way."
-        : "If it's a Node.js project, you can also run `node --env-file=.env --experimental-strip-types --no-warnings sda/main.ts` to test your code. Before handing off your work, always fix any errors or warnings triggered along the way."
+        : "Before handing off your work, always fix any errors or warnings triggered along the way."
     }
 
-Use the \`clean\` task (e.g. \`${runClean}\`) to remove the cache and other temporary files.
+The \`clean\` task (e.g. \`${runClean}\`) removes caches and other temporary files. Do not run it routinely: first consider whether the cached data truly needs to be removed, because caches are valuable and can be expensive to rebuild.
 
 Always use "sda/main.ts" as the entry point.
 

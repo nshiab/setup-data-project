@@ -50,6 +50,61 @@ Deno.test("ensureAgents - should create AGENTS.md", async () => {
   }
 });
 
+Deno.test("ensureAgents - should recommend a one-shot SDA command", async () => {
+  const cases = [
+    {
+      runtime: "deno",
+      command: "deno run -A --env --check sda/main.ts",
+      watchedCommand: "deno task sda",
+    },
+    {
+      runtime: "bun",
+      command: "bun run sda/main.ts",
+      watchedCommand: "npm run sda",
+    },
+    {
+      runtime: "node",
+      command:
+        "node --env-file-if-exists=.env --experimental-strip-types sda/main.ts",
+      watchedCommand: "npm run sda",
+    },
+  ];
+
+  for (const { runtime, command, watchedCommand } of cases) {
+    const { tempDir, cleanup } = createTestDir();
+    const originalCwd = Deno.cwd();
+    Deno.chdir(tempDir);
+
+    try {
+      await ensureAgents({}, runtime);
+      const content = readFileSync("AGENTS.md", "utf-8");
+      assert(content.includes(`\`${command}\``));
+      assert(!content.includes(`\`${watchedCommand}\``));
+      assert(content.includes("watch mode"));
+    } finally {
+      Deno.chdir(originalCwd);
+      cleanup();
+    }
+  }
+});
+
+Deno.test("ensureAgents - should caution against unnecessary cache cleaning", async () => {
+  const { tempDir, cleanup } = createTestDir();
+  const originalCwd = Deno.cwd();
+  Deno.chdir(tempDir);
+
+  try {
+    await ensureAgents({}, "deno");
+    const content = readFileSync("AGENTS.md", "utf-8");
+    assert(content.includes("`deno task clean`"));
+    assert(content.includes("Do not run it routinely"));
+    assert(content.includes("expensive to rebuild"));
+  } finally {
+    Deno.chdir(originalCwd);
+    cleanup();
+  }
+});
+
 Deno.test("ensureAgents - should include journalism functions when present", async () => {
   const { tempDir, cleanup } = createTestDir();
   const originalCwd = Deno.cwd();
