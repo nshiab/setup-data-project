@@ -4,7 +4,7 @@ import { log } from "@clack/prompts";
 
 export function createFolderStructure(selectedPackages: string[]) {
   const sdaFolder = "sda";
-  const folders = ["data", "helpers", "output"];
+  const folders = ["data", "helpers", "output", "tests"];
 
   if (!existsSync(sdaFolder)) {
     mkdirSync(sdaFolder, { recursive: true });

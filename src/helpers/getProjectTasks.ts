@@ -9,6 +9,11 @@ export function getProjectTasks() {
       : runtime === "bun"
       ? "bun run --watch sda/main.ts"
       : "node --env-file-if-exists=.env --watch --experimental-strip-types sda/main.ts",
+    "all-tests": runtime === "deno"
+      ? "deno fmt --check && deno lint && deno check sda/main.ts && deno test -A"
+      : runtime === "bun"
+      ? "bun test --pass-with-no-tests"
+      : "node --env-file-if-exists=.env --experimental-strip-types --test",
     clean: "rm -rf .sda-cache .journalism-cache .tmp",
   };
 }

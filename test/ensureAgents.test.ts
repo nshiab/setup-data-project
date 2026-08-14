@@ -97,11 +97,52 @@ Deno.test("ensureAgents - should caution against unnecessary cache cleaning", as
     await ensureAgents({}, "deno");
     const content = readFileSync("AGENTS.md", "utf-8");
     assert(content.includes("`deno task clean`"));
-    assert(content.includes("Do not run it routinely"));
-    assert(content.includes("expensive to rebuild"));
+    assert(
+      content.includes(
+        "Do not run it routinely. Cached results can be especially valuable for computationally expensive operations or API calls.",
+      ),
+    );
+    assert(
+      content.includes(
+        "If you are unsure whether the caches should be removed, ask the user first.",
+      ),
+    );
   } finally {
     Deno.chdir(originalCwd);
     cleanup();
+  }
+});
+
+Deno.test("ensureAgents - should recommend tests for each runtime", async () => {
+  const cases = [
+    { runtime: "deno", command: "deno task all-tests" },
+    { runtime: "bun", command: "bun run all-tests" },
+    { runtime: "node", command: "npm run all-tests" },
+  ];
+
+  for (const { runtime, command } of cases) {
+    const { tempDir, cleanup } = createTestDir();
+    const originalCwd = Deno.cwd();
+    Deno.chdir(tempDir);
+
+    try {
+      await ensureAgents({}, runtime);
+      const content = readFileSync("AGENTS.md", "utf-8");
+      assert(
+        content.includes(
+          `Before handing off your work, always run \`${command}\`, even if no tests have been added yet. Fix any errors or warnings it reports.`,
+        ),
+      );
+      assert(
+        content.includes(
+          'Put tests in the "sda/tests" folder. Write focused tests for reusable helpers and important data transformations when appropriate.',
+        ),
+      );
+      assertEquals(content.split(command).length - 1, 1);
+    } finally {
+      Deno.chdir(originalCwd);
+      cleanup();
+    }
   }
 });
 

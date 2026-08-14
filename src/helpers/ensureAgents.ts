@@ -63,6 +63,11 @@ export function ensureAgents(
     ? "bun run sda/main.ts"
     : "node --env-file-if-exists=.env --experimental-strip-types sda/main.ts";
   const runClean = runtime === "deno" ? "deno task clean" : "npm run clean";
+  const runAllTests = runtime === "deno"
+    ? "deno task all-tests"
+    : runtime === "bun"
+    ? "bun run all-tests"
+    : "npm run all-tests";
 
   const installedPackageConfigs = getInstalledPackageConfigs(
     installedPackages,
@@ -93,17 +98,15 @@ ${importExamples.join("\n")}
 
 Run \`sda/main.ts\` with \`${runSdaOnce}\`. Do not use the \`sda\` task for agent-driven checks because it runs in watch mode and will keep waiting for file changes.
 
-${
-      runtime === "deno"
-        ? "Before handing off your work, run `deno lint` and `deno fmt` as well. Fix any errors or warnings triggered along the way."
-        : "Before handing off your work, always fix any errors or warnings triggered along the way."
-    }
+Before handing off your work, always run \`${runAllTests}\`, even if no tests have been added yet. Fix any errors or warnings it reports.
 
-The \`clean\` task (e.g. \`${runClean}\`) removes caches and other temporary files. Do not run it routinely: first consider whether the cached data truly needs to be removed, because caches are valuable and can be expensive to rebuild.
+The \`clean\` task (e.g. \`${runClean}\`) removes caches and other temporary files. Do not run it routinely. Cached results can be especially valuable for computationally expensive operations or API calls. If you are unsure whether the caches should be removed, ask the user first.
 
 Always use "sda/main.ts" as the entry point.
 
 If you need to create other TypeScript files, create them in the "sda/helpers" folder. Prioritize the use of helper functions to keep the code well organized and maintainable, with one helper function per file, with the file named after the function. Prioritize default exports for helper functions.
+
+Put tests in the "sda/tests" folder. Write focused tests for reusable helpers and important data transformations when appropriate.
 
 If you need to download data, always put the files in the "sda/data" folder, which is gitignored. 
 

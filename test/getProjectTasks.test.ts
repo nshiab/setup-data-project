@@ -12,6 +12,10 @@ Deno.test("getProjectTasks - should return correct tasks for Deno", () => {
   try {
     const tasks = getProjectTasks();
     assertEquals(tasks.sda, "deno run -A --env --watch --check sda/main.ts");
+    assertEquals(
+      tasks["all-tests"],
+      "deno fmt --check && deno lint && deno check sda/main.ts && deno test -A",
+    );
   } finally {
     getRuntimeStub.restore();
   }
@@ -29,6 +33,10 @@ Deno.test("getProjectTasks - should return correct tasks for Node", () => {
       tasks.sda,
       "node --env-file-if-exists=.env --watch --experimental-strip-types sda/main.ts",
     );
+    assertEquals(
+      tasks["all-tests"],
+      "node --env-file-if-exists=.env --experimental-strip-types --test",
+    );
   } finally {
     getRuntimeStub.restore();
   }
@@ -43,6 +51,7 @@ Deno.test("getProjectTasks - should return correct tasks for Bun", () => {
   try {
     const tasks = getProjectTasks();
     assertEquals(tasks.sda, "bun run --watch sda/main.ts");
+    assertEquals(tasks["all-tests"], "bun test --pass-with-no-tests");
   } finally {
     getRuntimeStub.restore();
   }

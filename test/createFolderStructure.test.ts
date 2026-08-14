@@ -18,6 +18,7 @@ Deno.test("createFolderStructure - should create the correct files and folders",
     assertExists(join("sda", "data"));
     assertExists(join("sda", "helpers"));
     assertExists(join("sda", "output"));
+    assertExists(join("sda", "tests"));
     assertExists(join("sda", "main.ts"));
     assertEquals(messages, ["Created sda/main.ts"]);
   } finally {
