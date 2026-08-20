@@ -30,6 +30,16 @@ Deno.test("ensureAgents - should create AGENTS.md", async () => {
         "<!-- Do not remove / setup-data-project:agents:end -->",
       ),
     );
+    assert(
+      content.includes(
+        '"sda/data" folder, which is ignored by Git.',
+      ),
+    );
+    assert(
+      content.includes(
+        '"sda/output" folder, which is also ignored by Git.',
+      ),
+    );
     // Only check if it contains the header text which is part of the conditional section
     assert(
       !content.includes(

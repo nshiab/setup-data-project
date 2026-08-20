@@ -21,7 +21,11 @@ Deno.test("ensureReadme - should create README.md if not exists", async () => {
       "Should include link to project",
     );
     assert(content.includes("This repository was created with"));
-    assert(content.includes("ignored by Git"));
+    assert(
+      content.includes(
+        "results to the `sda/output` folder, which is also ignored by Git.",
+      ),
+    );
     assert(
       content.includes(
         "<!-- Do not remove / setup-data-project:libraries:start -->",

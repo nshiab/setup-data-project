@@ -47,7 +47,7 @@ Here's the recommended workflow:
 - Put your raw data in the \`sda/data\` folder. Note that this folder is
   ignored by Git.
 - Use the \`sda/main.ts\` file to process your raw data. Write the
-  results to the \`sda/output\` folder.
+  results to the \`sda/output\` folder, which is also ignored by Git.
 
 When working on your project, use the following command:
 

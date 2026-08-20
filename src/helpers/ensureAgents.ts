@@ -108,9 +108,9 @@ If you need to create other TypeScript files, create them in the "sda/helpers" f
 
 Put tests in the "sda/tests" folder. Write focused tests for reusable helpers and important data transformations when appropriate.
 
-If you need to download data, always put the files in the "sda/data" folder, which is gitignored. 
+If you need to download data, always put the files in the "sda/data" folder, which is ignored by Git.
 
-If you need to output data to a file, always put the file in the "sda/output" folder.
+If you need to output data to a file, always put the file in the "sda/output" folder, which is also ignored by Git.
 ${libraryGuidance}`;
 
   if (journalismFunctions !== "") {
