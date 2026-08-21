@@ -26,6 +26,12 @@ Deno.test("ensureReadme - should create README.md if not exists", async () => {
         "results to the `sda/output` folder, which is also ignored by Git.",
       ),
     );
+    assert(content.includes("Put your tests in the `sda/tests` folder."));
+    assert(
+      content.includes(
+        "`deno task all-tests` will run the project's test command.",
+      ),
+    );
     assert(
       content.includes(
         "<!-- Do not remove / setup-data-project:libraries:start -->",
@@ -42,6 +48,33 @@ Deno.test("ensureReadme - should create README.md if not exists", async () => {
   } finally {
     Deno.chdir(originalCwd);
     cleanup();
+  }
+});
+
+Deno.test("ensureReadme - should document the test command for each runtime", async () => {
+  const cases = [
+    { runtime: "deno", command: "deno task all-tests" },
+    { runtime: "bun", command: "bun run all-tests" },
+    { runtime: "node", command: "npm run all-tests" },
+  ];
+
+  for (const { runtime, command } of cases) {
+    const { tempDir, cleanup } = createTestDir();
+    const originalCwd = Deno.cwd();
+    Deno.chdir(tempDir);
+
+    try {
+      await ensureReadme(runtime);
+      const content = readFileSync("README.md", "utf-8");
+      assert(
+        content.includes(
+          `\`${command}\` will run the project's test command.`,
+        ),
+      );
+    } finally {
+      Deno.chdir(originalCwd);
+      cleanup();
+    }
   }
 });
 

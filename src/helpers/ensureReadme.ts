@@ -48,11 +48,13 @@ Here's the recommended workflow:
   ignored by Git.
 - Use the \`sda/main.ts\` file to process your raw data. Write the
   results to the \`sda/output\` folder, which is also ignored by Git.
+- Put your tests in the \`sda/tests\` folder.
 
-When working on your project, use the following command:
+When working on your project, use the following commands:
 
 - \`${runCommand} sda\` will watch your \`sda/main.ts\` and its dependencies.
   Whenever you save changes, the data will be reprocessed.
+- \`${runCommand} all-tests\` will run the project's test command.
 - \`${runCommand} clean\` will remove cache and temporary files, if present.
 
 Have fun!`,

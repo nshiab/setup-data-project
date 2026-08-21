@@ -145,7 +145,7 @@ Deno.test("ensureAgents - should recommend tests for each runtime", async () => 
       );
       assert(
         content.includes(
-          'Put tests in the "sda/tests" folder. Write focused tests for reusable helpers and important data transformations when appropriate.',
+          'Put tests in the "sda/tests" folder. Write focused tests for reusable helpers and important data transformations when appropriate. When testing a helper from "sda/helpers/functionName.ts", name its test file "sda/tests/functionName.test.ts".',
         ),
       );
       assertEquals(content.split(command).length - 1, 1);

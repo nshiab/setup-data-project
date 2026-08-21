@@ -106,7 +106,7 @@ Always use "sda/main.ts" as the entry point.
 
 If you need to create other TypeScript files, create them in the "sda/helpers" folder. Prioritize the use of helper functions to keep the code well organized and maintainable, with one helper function per file, with the file named after the function. Prioritize default exports for helper functions.
 
-Put tests in the "sda/tests" folder. Write focused tests for reusable helpers and important data transformations when appropriate.
+Put tests in the "sda/tests" folder. Write focused tests for reusable helpers and important data transformations when appropriate. When testing a helper from "sda/helpers/functionName.ts", name its test file "sda/tests/functionName.test.ts".
 
 If you need to download data, always put the files in the "sda/data" folder, which is ignored by Git.
 
