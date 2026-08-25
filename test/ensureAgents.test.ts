@@ -180,6 +180,41 @@ Deno.test("ensureAgents - should include journalism functions when present", asy
   }
 });
 
+Deno.test("ensureAgents - should exclude journalism function documentation headings", async () => {
+  const { tempDir, cleanup } = createTestDir();
+  const originalCwd = Deno.cwd();
+  Deno.chdir(tempDir);
+
+  try {
+    const docsMapping = {
+      "@nshiab/journalism-ai": [
+        "# API Reference",
+        "## askGemini",
+        "### Signature",
+        "### Parameters",
+        "### Examples",
+        "## askGeminiPool",
+        "### Signature",
+        "### Parameters",
+        "### Returns",
+        "### Examples",
+      ].join("\n"),
+    };
+    await ensureAgents(docsMapping, "deno");
+    const content = readFileSync("AGENTS.md", "utf-8");
+
+    assert(content.includes("askGemini"));
+    assert(content.includes("askGeminiPool"));
+    assert(!content.includes("Signature"));
+    assert(!content.includes("Parameters"));
+    assert(!content.includes("Returns"));
+    assert(!content.includes("Examples"));
+  } finally {
+    Deno.chdir(originalCwd);
+    cleanup();
+  }
+});
+
 Deno.test("ensureAgents - should include sda classes and methods when present", async () => {
   const { tempDir, cleanup } = createTestDir();
   const originalCwd = Deno.cwd();

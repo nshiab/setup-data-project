@@ -27,7 +27,7 @@ export function ensureAgents(
         .filter((line) => line.trim().startsWith("#"))
         .filter((line) => {
           const depth = line.match(/^#+/)?.[0].length || 0;
-          return depth >= 2; // Match ##, ###, #### etc.
+          return depth === 2;
         })
         .map((line) => line.replace(/^#+\s+/, "").trim())
         .join("\n") + "\n";
