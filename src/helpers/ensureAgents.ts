@@ -14,6 +14,7 @@ export function ensureAgents(
   let sdaClassesAndMethods = "";
   let sdaDocsPath = "";
   let sdaLibraryName = "";
+  const journalismFunctionsByPackage = new Map<string, string[]>();
 
   for (const [pkg, doc] of Object.entries(docsMapping)) {
     const pkgConfig = SUPPORTED_PACKAGES.find((p) => p.value === pkg);
@@ -21,16 +22,17 @@ export function ensureAgents(
 
     if (pkgType === "journalism") {
       const repoName = pkg.split("/")[1];
-      journalismFunctions += `\n### ${repoName}\n\n`;
-      journalismFunctions += doc
+      const functions = doc
         .split("\n")
         .filter((line) => line.trim().startsWith("#"))
         .filter((line) => {
           const depth = line.match(/^#+/)?.[0].length || 0;
           return depth === 2;
         })
-        .map((line) => line.replace(/^#+\s+/, "").trim())
-        .join("\n") + "\n";
+        .map((line) => line.replace(/^#+\s+/, "").trim());
+      journalismFunctionsByPackage.set(pkg, functions);
+      journalismFunctions += `\n### ${repoName}\n\n`;
+      journalismFunctions += functions.join("\n") + "\n";
     } else if (pkgType === "sda") {
       const repoName = pkg.split("/")[1];
       sdaDocsPath = `./docs/${repoName}.md`;
@@ -75,25 +77,36 @@ export function ensureAgents(
   const installedPackageConfigs = getInstalledPackageConfigs(
     installedPackages,
   );
-  const importExamples = installedPackageConfigs.map((pkg) => {
-    const repoName = pkg.value.split("/")[1];
-    const identifier = repoName.replace(
-      /-([a-z])/g,
-      (_, letter: string) => letter.toUpperCase(),
-    );
-    return `import * as ${identifier} from "${pkg.value}";`;
+  const importExamples = installedPackageConfigs.flatMap((pkg) => {
+    if (pkg.type === "sda") {
+      return [`import { SimpleDB } from "${pkg.value}";`];
+    }
+
+    const functionName = journalismFunctionsByPackage.get(pkg.value)
+      ?.map((name) => name.replaceAll("`", ""))
+      .find((name) => /^[A-Za-z_$][\w$]*$/.test(name));
+    return functionName
+      ? [`import { ${functionName} } from "${pkg.value}";`]
+      : [];
   });
 
   let libraryGuidance = "";
   if (installedPackageConfigs.length > 0) {
-    const libraryNames = installedPackageConfigs.map((pkg) => `"${pkg.label}"`)
+    const libraryNames = installedPackageConfigs.map((pkg) => `"${pkg.value}"`)
       .join(", ");
+    const libraryNoun = installedPackageConfigs.length === 1
+      ? "library"
+      : "libraries";
     libraryGuidance = `
-Always prioritize the installed ${libraryNames} libraries when relevant. They can be imported directly like this:
+Always prioritize the installed ${libraryNames} ${libraryNoun} when relevant.
+`;
+    if (importExamples.length > 0) {
+      libraryGuidance += `APIs can be imported with named imports like this:
 \`\`\`typescript
 ${importExamples.join("\n")}
 \`\`\`
 `;
+    }
   }
 
   let content =

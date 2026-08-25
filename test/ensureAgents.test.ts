@@ -285,6 +285,72 @@ Deno.test("ensureAgents - should link to the installed SDA package docs", async 
   }
 });
 
+Deno.test("ensureAgents - should show full package names and named imports", async () => {
+  const { tempDir, cleanup } = createTestDir();
+  const originalCwd = Deno.cwd();
+  Deno.chdir(tempDir);
+
+  try {
+    const docsMapping = {
+      "@nshiab/simple-data-analysis-core": "## class SimpleDB",
+      "@nshiab/simple-data-analysis": "## class SimpleDB",
+      "@nshiab/journalism-format": "## formatDate\n### Parameters",
+    };
+    await ensureAgents(docsMapping, "deno", Object.keys(docsMapping));
+    const content = readFileSync("AGENTS.md", "utf-8");
+
+    assert(
+      content.includes(
+        'installed "@nshiab/simple-data-analysis-core", "@nshiab/simple-data-analysis", "@nshiab/journalism-format" libraries',
+      ),
+    );
+    assert(
+      content.includes(
+        'import { SimpleDB } from "@nshiab/simple-data-analysis-core";',
+      ),
+    );
+    assert(
+      content.includes(
+        'import { SimpleDB } from "@nshiab/simple-data-analysis";',
+      ),
+    );
+    assert(
+      content.includes(
+        'import { formatDate } from "@nshiab/journalism-format";',
+      ),
+    );
+    assert(!content.includes("import * as"));
+  } finally {
+    Deno.chdir(originalCwd);
+    cleanup();
+  }
+});
+
+Deno.test("ensureAgents - should not invent a journalism import example", async () => {
+  const { tempDir, cleanup } = createTestDir();
+  const originalCwd = Deno.cwd();
+  Deno.chdir(tempDir);
+
+  try {
+    const docsMapping = {
+      "@nshiab/journalism-format": "# API Reference\n### Examples",
+    };
+    await ensureAgents(
+      docsMapping,
+      "deno",
+      ["@nshiab/journalism-format"],
+    );
+    const content = readFileSync("AGENTS.md", "utf-8");
+
+    assert(content.includes('installed "@nshiab/journalism-format" library'));
+    assert(!content.includes("```typescript"));
+    assert(!content.includes('from "@nshiab/journalism-format"'));
+  } finally {
+    Deno.chdir(originalCwd);
+    cleanup();
+  }
+});
+
 Deno.test("ensureAgents - should rebuild all installed APIs across runs", async () => {
   const { tempDir, cleanup } = createTestDir();
   const originalCwd = Deno.cwd();
