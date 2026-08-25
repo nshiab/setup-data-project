@@ -180,6 +180,34 @@ Deno.test("ensureAgents - should include journalism functions when present", asy
   }
 });
 
+Deno.test("ensureAgents - should render journalism functions as bullets", async () => {
+  const { tempDir, cleanup } = createTestDir();
+  const originalCwd = Deno.cwd();
+  Deno.chdir(tempDir);
+
+  try {
+    const docsMapping = {
+      "@nshiab/journalism-web-scraping": [
+        "# API Reference",
+        "## downloadFile",
+        "## getHtmlTable",
+        "## getStatCanTable",
+      ].join("\n"),
+    };
+    await ensureAgents(docsMapping, "deno");
+    const content = readFileSync("AGENTS.md", "utf-8");
+
+    assert(
+      content.includes(
+        "### journalism-web-scraping\n\n- downloadFile\n- getHtmlTable\n- getStatCanTable",
+      ),
+    );
+  } finally {
+    Deno.chdir(originalCwd);
+    cleanup();
+  }
+});
+
 Deno.test("ensureAgents - should exclude journalism function documentation headings", async () => {
   const { tempDir, cleanup } = createTestDir();
   const originalCwd = Deno.cwd();

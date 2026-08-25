@@ -32,7 +32,8 @@ export function ensureAgents(
         .map((line) => line.replace(/^#+\s+/, "").trim());
       journalismFunctionsByPackage.set(pkg, functions);
       journalismFunctions += `\n### ${repoName}\n\n`;
-      journalismFunctions += functions.join("\n") + "\n";
+      journalismFunctions += functions.map((name) => `- ${name}`).join("\n") +
+        "\n";
     } else if (pkgType === "sda") {
       const repoName = pkg.split("/")[1];
       sdaDocsPath = `./docs/${repoName}.md`;
