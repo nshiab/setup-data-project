@@ -237,6 +237,28 @@ Deno.test("ensureAgents - should include sda classes and methods when present", 
   }
 });
 
+Deno.test("ensureAgents - should not create empty bullets for SDA parameter headings", async () => {
+  const { tempDir, cleanup } = createTestDir();
+  const originalCwd = Deno.cwd();
+  Deno.chdir(tempDir);
+
+  try {
+    const docsMapping = {
+      "@nshiab/simple-data-analysis":
+        "## class SimpleDB\n#### Parameters\n#### newTable",
+    };
+    await ensureAgents(docsMapping, "deno");
+    const content = readFileSync("AGENTS.md", "utf-8");
+
+    assert(content.includes("class SimpleDB"));
+    assert(content.includes("  - newTable"));
+    assert(!content.includes("\n  - \n"));
+  } finally {
+    Deno.chdir(originalCwd);
+    cleanup();
+  }
+});
+
 Deno.test("ensureAgents - should link to the installed SDA package docs", async () => {
   const { tempDir, cleanup } = createTestDir();
   const originalCwd = Deno.cwd();

@@ -40,15 +40,18 @@ export function ensureAgents(
         .filter((line) => line.trim().startsWith("#"))
         .filter((line) => {
           const depth = line.match(/^#+/)?.[0].length || 0;
-          return depth === 2 || depth === 4;
+          if (depth === 2) return true;
+          if (depth !== 4) return false;
+          const heading = line.replace(/^#+\s+/, "").replaceAll("`", "")
+            .trim();
+          return heading !== "Parameters";
         })
         .map((line) => {
           const depth = line.match(/^#+/)?.[0].length || 0;
           if (depth === 2) {
             return "\n" + line.replace(/^#+\s+/, "").trim();
           } else {
-            return line.replace(/^#+\s+Parameters/, "  - ")
-              .replace(/^#+\s+/, "  - ")
+            return line.replace(/^#+\s+/, "  - ")
               .replaceAll("`", "");
           }
         })
