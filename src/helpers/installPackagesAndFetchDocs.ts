@@ -8,6 +8,13 @@ export const commandRunner = {
   exec: childProcess.exec,
 };
 
+// Temporary: remove this bypass after the 2.0 release window.
+// https://github.com/nshiab/setup-data-project/issues/15
+const PACKAGES_WITH_FRESH_DENO_RELEASES = new Set([
+  "@nshiab/simple-data-analysis-core",
+  "@nshiab/simple-data-analysis",
+]);
+
 export async function fetchPackageDocs(
   pkg: string,
   options: { silent?: boolean } = {},
@@ -82,8 +89,12 @@ export async function installPackagesAndFetchDocs(
 
       for (const p of pkgsToInstall) {
         const isObservablePlot = p === "@observablehq/plot";
+        const minimumDependencyAgeOption =
+          PACKAGES_WITH_FRESH_DENO_RELEASES.has(p) ? " --min-dep-age=0" : "";
         const installCmd = runtime === "deno"
-          ? (isObservablePlot ? "deno add npm:" + p : "deno add jsr:" + p)
+          ? (isObservablePlot
+            ? "deno add npm:" + p
+            : "deno add" + minimumDependencyAgeOption + " jsr:" + p)
           : runtime === "bun"
           ? "bun add " + p
           : "npm install " + p;

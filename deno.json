@@ -1,7 +1,7 @@
 {
   "name": "@nshiab/setup-data-project",
   "version": "1.0.39",
-  "description": "Quickly kick off your data project using the simple-data-analysis and journalism libraries.",
+  "description": "Quickly kick off a project using simple-data-analysis-core, simple-data-analysis, and journalism libraries.",
   "repository": "https://github.com/nshiab/setup-data-project",
   "exports": "./src/main.ts",
   "license": "MIT",
@@ -17,9 +17,9 @@
   },
   "tasks": {
     "all-tests": "deno fmt --check && deno lint && deno check src/main.ts && deno publish --allow-dirty --dry-run && deno test -A --fail-fast -- --internal-test-mode",
-    "patch": "deno task all-tests && deno run -A jsr:@nshiab/bump-version patch",
-    "minor": "deno task all-tests && deno run -A jsr:@nshiab/bump-version minor",
-    "major": "deno task all-tests && deno run -A jsr:@nshiab/bump-version major"
+    "patch": "deno task all-tests && deno run --no-lock -A jsr:@nshiab/bump-version patch",
+    "minor": "deno task all-tests && deno run --no-lock -A jsr:@nshiab/bump-version minor",
+    "major": "deno task all-tests && deno run --no-lock -A jsr:@nshiab/bump-version major"
   },
   "imports": {
     "@clack/prompts": "npm:@clack/prompts@^1.3.0",

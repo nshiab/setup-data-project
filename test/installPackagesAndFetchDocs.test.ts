@@ -52,7 +52,7 @@ Deno.test("installPackagesAndFetchDocs - should try to install packages and fetc
     // Check if execSync was called with the correct command (for Deno runtime)
     assertEquals(
       execStub.calls[0].args[0],
-      "deno add jsr:@nshiab/simple-data-analysis",
+      "deno add --min-dep-age=0 jsr:@nshiab/simple-data-analysis",
     );
     assertEquals(
       execStub.calls[1].args[0],

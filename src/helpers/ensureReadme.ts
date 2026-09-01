@@ -16,20 +16,30 @@ export function ensureReadme(
   const installedPackageConfigs = getInstalledPackageConfigs(
     installedPackages,
   );
-  const hasSda = installedPackageConfigs.some((pkg) => pkg.type === "sda");
+  const hasSdaCore = installedPackageConfigs.some((pkg) =>
+    pkg.value === "@nshiab/simple-data-analysis-core"
+  );
+  const hasFullSda = installedPackageConfigs.some((pkg) =>
+    pkg.value === "@nshiab/simple-data-analysis"
+  );
   const hasJournalism = installedPackageConfigs.some((pkg) =>
     pkg.type === "journalism"
   );
 
   const libraryLinks = [
-    hasSda
+    hasSdaCore
+      ? "[simple-data-analysis-core](https://github.com/nshiab/simple-data-analysis-core)"
+      : "",
+    hasFullSda
       ? "[simple-data-analysis](https://github.com/nshiab/simple-data-analysis)"
       : "",
     hasJournalism ? "[journalism](https://github.com/nshiab/journalism)" : "",
   ].filter(Boolean);
   const librarySection = libraryLinks.length === 0
     ? ""
-    : `It has installed ${libraryLinks.join(" and ")} libraries, along with
+    : `It has installed ${libraryLinks.join(" and ")} ${
+      libraryLinks.length === 1 ? "library" : "libraries"
+    }, along with
 up-to-date documentation and AI agent instructions.`;
 
   const status = ensureManagedSection({

@@ -78,7 +78,11 @@ export class ProjectManifest {
       : {};
 
     this.#config[this.#taskKey] = { ...existingTasks, ...tasks };
-    writeFileSync(this.#path, JSON.stringify(this.#config, null, 2), "utf-8");
+    writeFileSync(
+      this.#path,
+      JSON.stringify(this.#config, null, 2) + "\n",
+      "utf-8",
+    );
   }
 }
 

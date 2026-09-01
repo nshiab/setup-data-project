@@ -14,7 +14,7 @@ Deno.test("getProjectTasks - should return correct tasks for Deno", () => {
     assertEquals(tasks.sda, "deno run -A --env --watch --check sda/main.ts");
     assertEquals(
       tasks["all-tests"],
-      "deno fmt --check && deno lint && deno check sda/main.ts && deno test -A",
+      "deno fmt --check sda && deno lint && deno check sda/main.ts && deno test -A --permit-no-files",
     );
   } finally {
     getRuntimeStub.restore();

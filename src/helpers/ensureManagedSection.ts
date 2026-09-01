@@ -21,7 +21,10 @@ export function ensureManagedSection(
     : `${startMarker}\n${trimmedContent}\n${endMarker}`;
 
   if (!existsSync(options.path)) {
-    writeFileSync(options.path, options.createContent(section));
+    writeFileSync(
+      options.path,
+      ensureFinalNewline(options.createContent(section)),
+    );
     return "created";
   }
 
@@ -45,6 +48,10 @@ export function ensureManagedSection(
     return "unchanged";
   }
 
-  writeFileSync(options.path, nextContent);
+  writeFileSync(options.path, ensureFinalNewline(nextContent));
   return "updated";
+}
+
+function ensureFinalNewline(content: string): string {
+  return content.endsWith("\n") ? content : content + "\n";
 }

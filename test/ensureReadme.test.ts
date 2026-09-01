@@ -100,7 +100,7 @@ Deno.test("ensureReadme - should update installed library families across runs",
     assert(content.includes("[journalism]"));
     assert(content.includes("It has installed"));
     assert(content.includes("Whenever you save changes"));
-    assert(content.endsWith("Custom"));
+    assert(content.endsWith("Custom\n"));
     assertEquals(
       content.match(/setup-data-project:libraries:start/g)?.length,
       1,
