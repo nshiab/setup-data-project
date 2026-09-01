@@ -10,7 +10,7 @@ export function getProjectTasks() {
       ? "bun run --watch sda/main.ts"
       : "node --env-file-if-exists=.env --watch --experimental-strip-types sda/main.ts",
     "all-tests": runtime === "deno"
-      ? "deno fmt --check && deno lint && deno check sda/main.ts && deno test -A"
+      ? "deno fmt --check sda && deno lint && deno check sda/main.ts && deno test -A --permit-no-files"
       : runtime === "bun"
       ? "bun test --pass-with-no-tests"
       : "node --env-file-if-exists=.env --experimental-strip-types --test",
