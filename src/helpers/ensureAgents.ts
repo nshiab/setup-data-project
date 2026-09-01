@@ -140,7 +140,7 @@ ${journalismFunctions}`;
     content += `
 Here are the classes and their methods available in the "${sdaLibraryName}" library. If one of the classes or methods might be relevant, read the complete documentation at "${sdaDocsPath}" to properly use it.
 
-Most data-loading and transformation methods are synchronous, chainable builders. Do not \`await\` each builder. Await the final asynchronous observer or export method, such as \`log()\`, \`getData()\`, or \`writeData()\`, to execute the queued operations. If a chain ends without an observer, call \`run()\`. Always call \`await sdb.close()\` when the database is no longer needed. Extended methods that return an answer or export to an external service can remain asynchronous, so verify their complete documentation before calling them.
+Most data-loading and transformation methods are synchronous, chainable builders. Await the final asynchronous observer or export method, such as \`log()\`, \`getData()\`, or \`writeData()\`, to execute the queued operations. If a chain ends without an observer, call \`run()\`. Always call \`await sdb.close()\` when the database is no longer needed. Methods that return an answer or export to an external service can be asynchronous, so verify their documentation before calling them.
 ${sdaClassesAndMethods}`;
   }
 
