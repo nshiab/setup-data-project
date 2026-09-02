@@ -1,50 +1,69 @@
 import { assertEquals } from "@std/assert";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { fetchPackageDocs } from "../src/helpers/installPackagesAndFetchDocs.ts";
+import { fetchPackageDocs } from "../src/helpers/fetchPackageDocs.ts";
 import { syncPackageDocs } from "../src/helpers/syncPackageDocs.ts";
 import { createTestDir } from "./helpers/utils.ts";
 
-Deno.test("syncPackageDocs - should fetch missing, load existing, and remove stale docs", async () => {
+Deno.test("syncPackageDocs - should refresh exact versions and remove stale docs", async () => {
   const { tempDir, cleanup } = createTestDir();
   const originalCwd = Deno.cwd();
   const originalFetch = globalThis.fetch;
   Deno.chdir(tempDir);
   mkdirSync(join("docs", "simple-data-analysis"), { recursive: true });
   writeFileSync(
-    join("docs", "simple-data-analysis", "README.md"),
-    "# Simple Data Analysis",
-  );
-  writeFileSync(
     join("docs", "simple-data-analysis", "llm.md"),
-    "## SimpleDB",
+    "## old SimpleDB",
   );
   mkdirSync(join("docs", "journalism-ai"), { recursive: true });
   writeFileSync(join("docs", "journalism-ai", "llm.md"), "## stale");
-  globalThis.fetch = (((url: string) =>
-    Promise.resolve({
+  const fetchedUrls: string[] = [];
+  globalThis.fetch = (((url: string) => {
+    fetchedUrls.push(url);
+    const repoName = url.includes("simple-data-analysis")
+      ? "Simple Data Analysis"
+      : "Format";
+    return Promise.resolve({
       ok: true,
       text: () =>
         Promise.resolve(
-          url.endsWith("/README.md") ? "# Format" : "## formatDate",
+          url.endsWith("/README.md") ? `# ${repoName}` : `## ${repoName} API`,
         ),
-    })) as unknown) as typeof fetch;
+    });
+  }) as unknown) as typeof fetch;
 
   try {
-    const mapping = await syncPackageDocs([
-      "@nshiab/simple-data-analysis",
-      "@nshiab/journalism-format",
-    ]);
-
-    assertEquals(
-      mapping["@nshiab/simple-data-analysis"],
-      "## SimpleDB",
+    const mapping = await syncPackageDocs(
+      [
+        "@nshiab/simple-data-analysis",
+        "@nshiab/journalism-format",
+      ],
+      {
+        "@nshiab/simple-data-analysis": "6.0.2",
+        "@nshiab/journalism-format": "1.1.10",
+      },
     );
-    assertEquals(mapping["@nshiab/journalism-format"], "## formatDate");
+
+    assertEquals(mapping["@nshiab/simple-data-analysis"], {
+      readme: "# Simple Data Analysis",
+      llm: "## Simple Data Analysis API",
+    });
+    assertEquals(mapping["@nshiab/journalism-format"], {
+      readme: "# Format",
+      llm: "## Format API",
+    });
     assertEquals(existsSync(join("docs", "journalism-ai")), false);
     assertEquals(
-      readFileSync(join("docs", "journalism-format", "README.md"), "utf-8"),
-      "# Format",
+      fetchedUrls.includes(
+        "https://raw.githubusercontent.com/nshiab/simple-data-analysis/refs/tags/v6.0.2/llm.md",
+      ),
+      true,
+    );
+    assertEquals(
+      fetchedUrls.includes(
+        "https://raw.githubusercontent.com/nshiab/journalism-format/refs/tags/v1.1.10/README.md",
+      ),
+      true,
     );
   } finally {
     globalThis.fetch = originalFetch;
@@ -53,7 +72,7 @@ Deno.test("syncPackageDocs - should fetch missing, load existing, and remove sta
   }
 });
 
-Deno.test("fetchPackageDocs - should preserve old docs when refresh fails", async () => {
+Deno.test("fetchPackageDocs - should preserve but exclude files when refresh fails", async () => {
   const { tempDir, cleanup } = createTestDir();
   const originalCwd = Deno.cwd();
   const originalFetch = globalThis.fetch;
@@ -68,7 +87,12 @@ Deno.test("fetchPackageDocs - should preserve old docs when refresh fails", asyn
     ((() => Promise.resolve({ ok: false })) as unknown) as typeof fetch;
 
   try {
-    await fetchPackageDocs("@nshiab/journalism-format", { silent: true });
+    const docs = await fetchPackageDocs(
+      "@nshiab/journalism-format",
+      "1.1.10",
+      { silent: true },
+    );
+    assertEquals(docs, {});
     assertEquals(readFileSync(readmePath, "utf-8"), "old README");
     assertEquals(readFileSync(llmDocsPath, "utf-8"), "old docs");
   } finally {
@@ -78,7 +102,7 @@ Deno.test("fetchPackageDocs - should preserve old docs when refresh fails", asyn
   }
 });
 
-Deno.test("syncPackageDocs - should migrate legacy API docs", async () => {
+Deno.test("syncPackageDocs - should expose only files fetched successfully", async () => {
   const { tempDir, cleanup } = createTestDir();
   const originalCwd = Deno.cwd();
   const originalFetch = globalThis.fetch;
@@ -97,15 +121,49 @@ Deno.test("syncPackageDocs - should migrate legacy API docs", async () => {
     )) as unknown) as typeof fetch;
 
   try {
-    const mapping = await syncPackageDocs(["@nshiab/journalism-format"]);
+    const mapping = await syncPackageDocs(
+      ["@nshiab/journalism-format"],
+      { "@nshiab/journalism-format": "1.1.10" },
+    );
     const llmDocsPath = join("docs", "journalism-format", "llm.md");
 
-    assertEquals(mapping["@nshiab/journalism-format"], "## legacyFormatDate");
+    assertEquals(mapping["@nshiab/journalism-format"], {
+      readme: "# Format README",
+    });
     assertEquals(existsSync(legacyPath), false);
     assertEquals(readFileSync(llmDocsPath, "utf-8"), "## legacyFormatDate");
+  } finally {
+    globalThis.fetch = originalFetch;
+    Deno.chdir(originalCwd);
+    cleanup();
+  }
+});
+
+Deno.test("syncPackageDocs - should exclude docs without an exact version", async () => {
+  const { tempDir, cleanup } = createTestDir();
+  const originalCwd = Deno.cwd();
+  const originalFetch = globalThis.fetch;
+  Deno.chdir(tempDir);
+  const docsDirectory = join("docs", "journalism-format");
+  mkdirSync(docsDirectory, { recursive: true });
+  writeFileSync(join(docsDirectory, "llm.md"), "## possibly stale");
+  let fetched = false;
+  globalThis.fetch = ((() => {
+    fetched = true;
+    return Promise.resolve({ ok: true });
+  }) as unknown) as typeof fetch;
+
+  try {
+    const mapping = await syncPackageDocs(
+      ["@nshiab/journalism-format"],
+      {},
+    );
+
+    assertEquals(mapping, {});
+    assertEquals(fetched, false);
     assertEquals(
-      readFileSync(join("docs", "journalism-format", "README.md"), "utf-8"),
-      "# Format README",
+      readFileSync(join(docsDirectory, "llm.md"), "utf-8"),
+      "## possibly stale",
     );
   } finally {
     globalThis.fetch = originalFetch;

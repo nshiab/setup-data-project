@@ -30,6 +30,9 @@ Deno.test("ProjectManifest - should update Deno tasks and read imports", () => {
     assertEquals(manifest.getInstalledPackages(), [
       "@nshiab/simple-data-analysis",
     ]);
+    assertEquals(manifest.getInstalledPackageSpecifiers(), {
+      "@nshiab/simple-data-analysis": "jsr:@nshiab/simple-data-analysis",
+    });
   } finally {
     Deno.chdir(originalCwd);
     cleanup();

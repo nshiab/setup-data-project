@@ -1,4 +1,5 @@
 import { log } from "@clack/prompts";
+import type { PackageDocs } from "./fetchPackageDocs.ts";
 import { ensureManagedSection } from "./ensureManagedSection.ts";
 import {
   getInstalledPackageConfigs,
@@ -6,7 +7,7 @@ import {
 } from "./packageRegistry.ts";
 
 export function ensureAgents(
-  docsMapping: Record<string, string>,
+  docsMapping: Record<string, PackageDocs>,
   runtime: string,
   installedPackages: string[] = Object.keys(docsMapping),
 ) {
@@ -17,9 +18,12 @@ export function ensureAgents(
   let sdaLibraryName = "";
   const journalismFunctionsByPackage = new Map<string, string[]>();
 
-  for (const [pkg, doc] of Object.entries(docsMapping)) {
+  for (const [pkg, docs] of Object.entries(docsMapping)) {
     const pkgConfig = SUPPORTED_PACKAGES.find((p) => p.value === pkg);
     const pkgType = pkgConfig?.type || "other";
+    const doc = docs.llm;
+
+    if (doc === undefined) continue;
 
     if (pkgType === "journalism") {
       const repoName = pkg.split("/")[1];
@@ -38,7 +42,9 @@ export function ensureAgents(
     } else if (pkgType === "sda") {
       const repoName = pkg.split("/")[1];
       sdaDocsPath = `./docs/${repoName}/llm.md`;
-      sdaReadmePath = `./docs/${repoName}/README.md`;
+      sdaReadmePath = docs.readme === undefined
+        ? ""
+        : `./docs/${repoName}/README.md`;
       sdaLibraryName = pkgConfig?.label || repoName;
       sdaClassesAndMethods = doc
         .split("\n")
@@ -102,9 +108,31 @@ export function ensureAgents(
       : "libraries";
     libraryGuidance = `
 Always prioritize the installed ${libraryNames} ${libraryNoun} when relevant.
-
-Each installed library has local documentation in \`./docs/<library-name>/\`. Its \`README.md\` provides an overview and practical examples, while its \`llm.md\` contains the complete API documentation. Consult the relevant README when an overview or examples would be helpful, and search the relevant llm.md for exact API details.
 `;
+
+    const documentationGuidance = installedPackageConfigs.flatMap((pkg) => {
+      const docs = docsMapping[pkg.value];
+      if (!docs) return [];
+      const repoName = pkg.value.split("/")[1];
+      const availableDocs = [
+        docs.readme === undefined
+          ? ""
+          : `overview and practical examples at \`./docs/${repoName}/README.md\``,
+        docs.llm === undefined
+          ? ""
+          : `complete API documentation at \`./docs/${repoName}/llm.md\``,
+      ].filter(Boolean);
+      return availableDocs.length === 0
+        ? []
+        : [`- \`${pkg.value}\`: ${availableDocs.join("; ")}`];
+    });
+    if (documentationGuidance.length > 0) {
+      libraryGuidance += `
+The following documentation was fetched for the exact installed library versions. Consult it when relevant:
+
+${documentationGuidance.join("\n")}
+`;
+    }
     if (importExamples.length > 0) {
       libraryGuidance += `APIs can be imported with named imports like this:
 \`\`\`typescript
@@ -141,8 +169,11 @@ ${journalismFunctions}`;
   }
 
   if (sdaClassesAndMethods !== "") {
+    const readmeGuidance = sdaReadmePath === ""
+      ? ""
+      : ` An overview and practical examples are available at "${sdaReadmePath}".`;
     content += `
-Here are the classes and their methods available in the "${sdaLibraryName}" library. An overview and practical examples are available at "${sdaReadmePath}". If one of the classes or methods might be relevant, search the complete API documentation at "${sdaDocsPath}" to properly use it.
+Here are the classes and their methods available in the "${sdaLibraryName}" library.${readmeGuidance} If one of the classes or methods might be relevant, search the complete API documentation at "${sdaDocsPath}" to properly use it.
 
 Most data-loading and transformation methods are synchronous, chainable builders. Await the final asynchronous observer or export method, such as \`log()\`, \`getData()\`, or \`writeData()\`, to execute the queued operations. If a chain ends without an observer, call \`run()\`. Always call \`await sdb.close()\` when the database is no longer needed. Methods that return an answer or export to an external service can be asynchronous, so verify their documentation before calling them.
 ${sdaClassesAndMethods}`;

@@ -14,7 +14,7 @@ import { getRuntime } from "./helpers/getRuntime.ts";
 import { PACKAGE_OPTIONS } from "./helpers/packageOptions.ts";
 import { ensureGitignore } from "./helpers/ensureGitignore.ts";
 import { ensureReadme } from "./helpers/ensureReadme.ts";
-import { installPackagesAndFetchDocs } from "./helpers/installPackagesAndFetchDocs.ts";
+import { installPackages } from "./helpers/installPackages.ts";
 import { getProjectTasks } from "./helpers/getProjectTasks.ts";
 import { createFolderStructure } from "./helpers/createFolderStructure.ts";
 import { ensureEnvFile } from "./helpers/ensureEnvFile.ts";
@@ -22,6 +22,7 @@ import { ensureAgents } from "./helpers/ensureAgents.ts";
 import { getInstalledPackageConfigs } from "./helpers/packageRegistry.ts";
 import { ProjectManifest } from "./helpers/projectManifest.ts";
 import { syncPackageDocs } from "./helpers/syncPackageDocs.ts";
+import { getInstalledPackageVersions } from "./helpers/getInstalledPackageVersions.ts";
 
 async function main() {
   const runtime = getRuntime();
@@ -81,18 +82,18 @@ async function main() {
   }
 
   const sInstall = spinner();
-  sInstall.start("Installing packages and fetching documentation...");
+  sInstall.start("Installing packages...");
 
   for (const pkg of packagesToInstall) {
     try {
-      await installPackagesAndFetchDocs([pkg], { silent: true });
+      await installPackages([pkg], { silent: true });
     } catch (error) {
       sInstall.stop(`❌ Failed to install ${pkg}.`);
       console.error(error);
       process.exit(1);
     }
   }
-  sInstall.stop("✅ Packages installed and documentation fetched.");
+  sInstall.stop("✅ Package installation complete.");
 
   projectManifest.reload();
   projectManifest.updateTasks(getProjectTasks());
@@ -100,10 +101,16 @@ async function main() {
   const finalInstalledPackages = getInstalledPackageConfigs(
     projectManifest.getInstalledPackages(),
   ).map((pkg) => pkg.value);
+  const finalInstalledVersions = getInstalledPackageVersions(
+    projectManifest.getInstalledPackageSpecifiers(),
+  );
+  const sDocs = spinner();
+  sDocs.start("Fetching documentation for installed package versions...");
   const docsMapping = await syncPackageDocs(
     finalInstalledPackages,
-    packagesToInstall,
+    finalInstalledVersions,
   );
+  sDocs.stop("✅ Documentation synchronization complete.");
 
   createFolderStructure(finalInstalledPackages);
 

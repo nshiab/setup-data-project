@@ -163,8 +163,9 @@ Deno.test("ensureAgents - should include journalism functions when present", asy
 
   try {
     const docsMapping = {
-      "@nshiab/journalism-format":
-        "# API Reference\n## formatDate\n## camelCase",
+      "@nshiab/journalism-format": {
+        llm: "# API Reference\n## formatDate\n## camelCase",
+      },
     };
     await ensureAgents(docsMapping, "deno");
     const content = readFileSync("AGENTS.md", "utf-8");
@@ -187,12 +188,14 @@ Deno.test("ensureAgents - should render journalism functions as bullets", async 
 
   try {
     const docsMapping = {
-      "@nshiab/journalism-web-scraping": [
-        "# API Reference",
-        "## downloadFile",
-        "## getHtmlTable",
-        "## getStatCanTable",
-      ].join("\n"),
+      "@nshiab/journalism-web-scraping": {
+        llm: [
+          "# API Reference",
+          "## downloadFile",
+          "## getHtmlTable",
+          "## getStatCanTable",
+        ].join("\n"),
+      },
     };
     await ensureAgents(docsMapping, "deno");
     const content = readFileSync("AGENTS.md", "utf-8");
@@ -215,18 +218,20 @@ Deno.test("ensureAgents - should exclude journalism function documentation headi
 
   try {
     const docsMapping = {
-      "@nshiab/journalism-ai": [
-        "# API Reference",
-        "## askGemini",
-        "### Signature",
-        "### Parameters",
-        "### Examples",
-        "## askGeminiPool",
-        "### Signature",
-        "### Parameters",
-        "### Returns",
-        "### Examples",
-      ].join("\n"),
+      "@nshiab/journalism-ai": {
+        llm: [
+          "# API Reference",
+          "## askGemini",
+          "### Signature",
+          "### Parameters",
+          "### Examples",
+          "## askGeminiPool",
+          "### Signature",
+          "### Parameters",
+          "### Returns",
+          "### Examples",
+        ].join("\n"),
+      },
     };
     await ensureAgents(docsMapping, "deno");
     const content = readFileSync("AGENTS.md", "utf-8");
@@ -250,8 +255,10 @@ Deno.test("ensureAgents - should include sda classes and methods when present", 
 
   try {
     const docsMapping = {
-      "@nshiab/simple-data-analysis":
-        "# SDA\n## class SimpleDB\n#### constructor\n#### ai\n## class SimpleTable\n#### select\n#### filter",
+      "@nshiab/simple-data-analysis": {
+        llm:
+          "# SDA\n## class SimpleDB\n#### constructor\n#### ai\n## class SimpleTable\n#### select\n#### filter",
+      },
     };
     await ensureAgents(docsMapping, "deno");
     const content = readFileSync("AGENTS.md", "utf-8");
@@ -272,8 +279,9 @@ Deno.test("ensureAgents - should not create empty bullets for SDA parameter head
 
   try {
     const docsMapping = {
-      "@nshiab/simple-data-analysis":
-        "## class SimpleDB\n#### Parameters\n#### newTable",
+      "@nshiab/simple-data-analysis": {
+        llm: "## class SimpleDB\n#### Parameters\n#### newTable",
+      },
     };
     await ensureAgents(docsMapping, "deno");
     const content = readFileSync("AGENTS.md", "utf-8");
@@ -294,8 +302,10 @@ Deno.test("ensureAgents - should link to the installed SDA package docs", async 
 
   try {
     const docsMapping = {
-      "@nshiab/simple-data-analysis-core":
-        "# SDA Core\n## class SimpleDB\n#### select",
+      "@nshiab/simple-data-analysis-core": {
+        readme: "# SDA Core",
+        llm: "# SDA Core\n## class SimpleDB\n#### select",
+      },
     };
     await ensureAgents(
       docsMapping,
@@ -323,7 +333,12 @@ Deno.test("ensureAgents - should describe optional local documentation", async (
 
   try {
     await ensureAgents(
-      { "@nshiab/journalism-format": "## formatDate" },
+      {
+        "@nshiab/journalism-format": {
+          readme: "# Format README",
+          llm: "## formatDate",
+        },
+      },
       "deno",
       ["@nshiab/journalism-format"],
     );
@@ -331,14 +346,15 @@ Deno.test("ensureAgents - should describe optional local documentation", async (
 
     assert(
       content.includes(
-        "README.md` provides an overview and practical examples",
+        "overview and practical examples at `./docs/journalism-format/README.md`",
       ),
     );
     assert(
-      content.includes("`llm.md` contains the complete API documentation"),
+      content.includes(
+        "complete API documentation at `./docs/journalism-format/llm.md`",
+      ),
     );
-    assert(content.includes("Consult the relevant README when"));
-    assert(content.includes("search the relevant llm.md"));
+    assert(content.includes("Consult it when relevant"));
   } finally {
     Deno.chdir(originalCwd);
     cleanup();
@@ -352,9 +368,11 @@ Deno.test("ensureAgents - should show full package names and named imports", asy
 
   try {
     const docsMapping = {
-      "@nshiab/simple-data-analysis-core": "## class SimpleDB",
-      "@nshiab/simple-data-analysis": "## class SimpleDB",
-      "@nshiab/journalism-format": "## formatDate\n### Parameters",
+      "@nshiab/simple-data-analysis-core": { llm: "## class SimpleDB" },
+      "@nshiab/simple-data-analysis": { llm: "## class SimpleDB" },
+      "@nshiab/journalism-format": {
+        llm: "## formatDate\n### Parameters",
+      },
     };
     await ensureAgents(docsMapping, "deno", Object.keys(docsMapping));
     const content = readFileSync("AGENTS.md", "utf-8");
@@ -393,7 +411,9 @@ Deno.test("ensureAgents - should not invent a journalism import example", async 
 
   try {
     const docsMapping = {
-      "@nshiab/journalism-format": "# API Reference\n### Examples",
+      "@nshiab/journalism-format": {
+        llm: "# API Reference\n### Examples",
+      },
     };
     await ensureAgents(
       docsMapping,
@@ -421,14 +441,20 @@ Deno.test("ensureAgents - should rebuild all installed APIs across runs", async 
     log.info = (message) => messages.push(message);
 
     await ensureAgents(
-      { "@nshiab/simple-data-analysis": "## class SimpleDB\n#### select" },
+      {
+        "@nshiab/simple-data-analysis": {
+          llm: "## class SimpleDB\n#### select",
+        },
+      },
       "deno",
       ["@nshiab/simple-data-analysis"],
     );
     await ensureAgents(
       {
-        "@nshiab/simple-data-analysis": "## class SimpleDB\n#### select",
-        "@nshiab/journalism-format": "## formatDate",
+        "@nshiab/simple-data-analysis": {
+          llm: "## class SimpleDB\n#### select",
+        },
+        "@nshiab/journalism-format": { llm: "## formatDate" },
       },
       "deno",
       ["@nshiab/simple-data-analysis", "@nshiab/journalism-format"],
@@ -441,6 +467,24 @@ Deno.test("ensureAgents - should rebuild all installed APIs across runs", async 
     assert(content.includes("@nshiab/journalism-format"));
     assertEquals(content.match(/Always verify if there is a/g)?.length, 1);
     assertEquals(messages, ["Created AGENTS.md", "Updated AGENTS.md"]);
+  } finally {
+    Deno.chdir(originalCwd);
+    cleanup();
+  }
+});
+
+Deno.test("ensureAgents - should omit unverified library documentation", async () => {
+  const { tempDir, cleanup } = createTestDir();
+  const originalCwd = Deno.cwd();
+  Deno.chdir(tempDir);
+
+  try {
+    await ensureAgents({}, "deno", ["@nshiab/journalism-format"]);
+    const content = readFileSync("AGENTS.md", "utf-8");
+
+    assert(content.includes('installed "@nshiab/journalism-format" library'));
+    assert(!content.includes("./docs/journalism-format"));
+    assert(!content.includes("Here are the functions available"));
   } finally {
     Deno.chdir(originalCwd);
     cleanup();

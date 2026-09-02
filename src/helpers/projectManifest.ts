@@ -55,7 +55,11 @@ export class ProjectManifest {
   }
 
   getInstalledPackages(): string[] {
-    const installed: string[] = [];
+    return Object.keys(this.getInstalledPackageSpecifiers());
+  }
+
+  getInstalledPackageSpecifiers(): Record<string, string> {
+    const installed: Record<string, string> = {};
 
     for (const key of this.#dependencyKeys) {
       const dependencies = this.#config[key];
@@ -63,7 +67,11 @@ export class ProjectManifest {
         dependencies && typeof dependencies === "object" &&
         !Array.isArray(dependencies)
       ) {
-        installed.push(...Object.keys(dependencies));
+        for (const [name, specifier] of Object.entries(dependencies)) {
+          if (typeof specifier === "string") {
+            installed[name] = specifier;
+          }
+        }
       }
     }
 
