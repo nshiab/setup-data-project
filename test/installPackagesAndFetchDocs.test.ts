@@ -31,23 +31,30 @@ Deno.test("installPackagesAndFetchDocs - should try to install packages and fetc
   // Mock global fetch
   const originalFetch = globalThis.fetch;
   globalThis.fetch = ((url: string) => {
-    if (url.includes("simple-data-analysis")) {
+    if (url.endsWith("/README.md")) {
       return Promise.resolve({
         ok: true,
-        text: () => Promise.resolve("# SDA Docs"),
+        text: () => Promise.resolve("# SDA README"),
       });
     }
-    return Promise.resolve({ ok: false });
+    return Promise.resolve({
+      ok: true,
+      text: () => Promise.resolve("# SDA Docs"),
+    });
   }) as typeof fetch;
 
   try {
     const pkg = "@nshiab/simple-data-analysis";
     await installPackagesAndFetchDocs([pkg], { silent: true });
 
-    // Check if docs directory and file were created
-    const docPath = join("docs", "simple-data-analysis.md");
-    assertEquals(existsSync(docPath), true);
-    assertEquals(readFileSync(docPath, "utf-8"), "# SDA Docs");
+    // Check if both documentation files were created
+    const docsDirectory = join("docs", "simple-data-analysis");
+    const readmePath = join(docsDirectory, "README.md");
+    const llmDocsPath = join(docsDirectory, "llm.md");
+    assertEquals(existsSync(readmePath), true);
+    assertEquals(readFileSync(readmePath, "utf-8"), "# SDA README");
+    assertEquals(existsSync(llmDocsPath), true);
+    assertEquals(readFileSync(llmDocsPath, "utf-8"), "# SDA Docs");
 
     // Check if execSync was called with the correct command (for Deno runtime)
     assertEquals(

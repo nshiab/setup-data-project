@@ -15,53 +15,68 @@ const PACKAGES_WITH_FRESH_DENO_RELEASES = new Set([
   "@nshiab/simple-data-analysis",
 ]);
 
+const PACKAGE_DOCUMENTS = [
+  { remoteName: "README.md", localName: "README.md", label: "README" },
+  { remoteName: "llm.md", localName: "llm.md", label: "API documentation" },
+] as const;
+
 export async function fetchPackageDocs(
   pkg: string,
   options: { silent?: boolean } = {},
 ): Promise<string | undefined> {
-  if (!existsSync("docs")) {
-    mkdirSync("docs");
-  }
+  const repoName = pkg.split("/")[1];
+  const docsDirectory = join("docs", repoName);
+  mkdirSync(docsDirectory, { recursive: true });
 
   const sFetch = spinner();
   if (!options.silent) {
     sFetch.start("Fetching documentation for " + pkg + "...");
   }
 
-  try {
-    const repoName = pkg.split("/")[1];
-    const url = "https://raw.githubusercontent.com/nshiab/" + repoName +
-      "/refs/heads/main/llm.md";
-    const response = await fetch(url);
+  const fetchedDocuments = await Promise.all(
+    PACKAGE_DOCUMENTS.map(async (document) => {
+      try {
+        const url = "https://raw.githubusercontent.com/nshiab/" + repoName +
+          "/refs/heads/main/" + document.remoteName;
+        const response = await fetch(url);
 
-    if (!response.ok) {
-      if (!options.silent) {
-        sFetch.stop("⚠️  No documentation (llm.md) found for " + pkg + ".");
+        if (!response.ok) {
+          log.warn(
+            `${document.label} for ${pkg} could not be refreshed. Rerun the ` +
+              "script later to try again.",
+          );
+          return undefined;
+        }
+
+        const content = await response.text();
+        writeFileSync(join(docsDirectory, document.localName), content);
+        return content;
+      } catch (error) {
+        log.warn(
+          `${document.label} for ${pkg} could not be refreshed. Rerun the ` +
+            "script later to try again.",
+        );
+        console.error(error);
+        return undefined;
       }
-      log.warn(
-        `Documentation for ${pkg} could not be refreshed. Rerun the script ` +
-          "later to try again.",
-      );
-      return undefined;
-    }
+    }),
+  );
 
-    const docContent = await response.text();
-    writeFileSync(join("docs", repoName + ".md"), docContent);
-    if (!options.silent) {
+  const savedCount = fetchedDocuments.filter((content) => content !== undefined)
+    .length;
+  if (!options.silent) {
+    if (savedCount === PACKAGE_DOCUMENTS.length) {
       sFetch.stop("✅ Documentation for " + pkg + " saved!");
-    }
-    return docContent;
-  } catch (error) {
-    if (!options.silent) {
+    } else if (savedCount > 0) {
+      sFetch.stop(
+        "⚠️  Some documentation for " + pkg + " could not be fetched.",
+      );
+    } else {
       sFetch.stop("❌ Failed to fetch documentation for " + pkg + ".");
     }
-    log.warn(
-      `Documentation for ${pkg} could not be refreshed. Rerun the script ` +
-        "later to try again.",
-    );
-    console.error(error);
-    return undefined;
   }
+
+  return fetchedDocuments[1];
 }
 
 export async function installPackagesAndFetchDocs(

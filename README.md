@@ -25,7 +25,7 @@ published. It is tracked for removal in
   the full
   [simple-data-analysis](https://github.com/nshiab/simple-data-analysis/)
   package, and [journalism](https://github.com/nshiab/journalism) libraries,
-  then fetches their documentation for LLM use.
+  then fetches their README files and complete API documentation for LLM use.
 - Updates project configuration (e.g., `deno.json` or `package.json`) with
   relevant tasks.
 

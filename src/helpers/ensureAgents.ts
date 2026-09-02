@@ -13,6 +13,7 @@ export function ensureAgents(
   let journalismFunctions = "";
   let sdaClassesAndMethods = "";
   let sdaDocsPath = "";
+  let sdaReadmePath = "";
   let sdaLibraryName = "";
   const journalismFunctionsByPackage = new Map<string, string[]>();
 
@@ -36,7 +37,8 @@ export function ensureAgents(
         "\n";
     } else if (pkgType === "sda") {
       const repoName = pkg.split("/")[1];
-      sdaDocsPath = `./docs/${repoName}.md`;
+      sdaDocsPath = `./docs/${repoName}/llm.md`;
+      sdaReadmePath = `./docs/${repoName}/README.md`;
       sdaLibraryName = pkgConfig?.label || repoName;
       sdaClassesAndMethods = doc
         .split("\n")
@@ -100,6 +102,8 @@ export function ensureAgents(
       : "libraries";
     libraryGuidance = `
 Always prioritize the installed ${libraryNames} ${libraryNoun} when relevant.
+
+Each installed library has local documentation in \`./docs/<library-name>/\`. Its \`README.md\` provides an overview and practical examples, while its \`llm.md\` contains the complete API documentation. Consult the relevant README when an overview or examples would be helpful, and search the relevant llm.md for exact API details.
 `;
     if (importExamples.length > 0) {
       libraryGuidance += `APIs can be imported with named imports like this:
@@ -132,13 +136,13 @@ ${libraryGuidance}`;
 
   if (journalismFunctions !== "") {
     content += `
-Here are the functions available in the "journalism" libraries. If one of the function might be relevant, read the complete documentation in the "./docs/" folder to properly use it.
+Here are the functions available in the "journalism" libraries. If one of the functions might be relevant, search its complete API documentation in the corresponding \`./docs/<library-name>/llm.md\` file to properly use it.
 ${journalismFunctions}`;
   }
 
   if (sdaClassesAndMethods !== "") {
     content += `
-Here are the classes and their methods available in the "${sdaLibraryName}" library. If one of the classes or methods might be relevant, read the complete documentation at "${sdaDocsPath}" to properly use it.
+Here are the classes and their methods available in the "${sdaLibraryName}" library. An overview and practical examples are available at "${sdaReadmePath}". If one of the classes or methods might be relevant, search the complete API documentation at "${sdaDocsPath}" to properly use it.
 
 Most data-loading and transformation methods are synchronous, chainable builders. Await the final asynchronous observer or export method, such as \`log()\`, \`getData()\`, or \`writeData()\`, to execute the queued operations. If a chain ends without an observer, call \`run()\`. Always call \`await sdb.close()\` when the database is no longer needed. Methods that return an answer or export to an external service can be asynchronous, so verify their documentation before calling them.
 ${sdaClassesAndMethods}`;

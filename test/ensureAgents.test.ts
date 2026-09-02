@@ -305,8 +305,40 @@ Deno.test("ensureAgents - should link to the installed SDA package docs", async 
     const content = readFileSync("AGENTS.md", "utf-8");
     assert(content.includes('"simple-data-analysis-core" library'));
     assert(
-      content.includes('"./docs/simple-data-analysis-core.md"'),
+      content.includes('"./docs/simple-data-analysis-core/llm.md"'),
     );
+    assert(
+      content.includes('"./docs/simple-data-analysis-core/README.md"'),
+    );
+  } finally {
+    Deno.chdir(originalCwd);
+    cleanup();
+  }
+});
+
+Deno.test("ensureAgents - should describe optional local documentation", async () => {
+  const { tempDir, cleanup } = createTestDir();
+  const originalCwd = Deno.cwd();
+  Deno.chdir(tempDir);
+
+  try {
+    await ensureAgents(
+      { "@nshiab/journalism-format": "## formatDate" },
+      "deno",
+      ["@nshiab/journalism-format"],
+    );
+    const content = readFileSync("AGENTS.md", "utf-8");
+
+    assert(
+      content.includes(
+        "README.md` provides an overview and practical examples",
+      ),
+    );
+    assert(
+      content.includes("`llm.md` contains the complete API documentation"),
+    );
+    assert(content.includes("Consult the relevant README when"));
+    assert(content.includes("search the relevant llm.md"));
   } finally {
     Deno.chdir(originalCwd);
     cleanup();
