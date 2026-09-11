@@ -7,17 +7,17 @@ export interface PackageConfig {
 
 export const SUPPORTED_PACKAGES: PackageConfig[] = [
   {
-    value: "@nshiab/simple-data-analysis-core",
-    label: "simple-data-analysis-core",
-    type: "sda",
-    hint: "No fluff. Great for constrained environments, like a cheap server.",
-  },
-  {
     value: "@nshiab/simple-data-analysis",
     label: "simple-data-analysis",
     type: "sda",
     hint:
       "All the core functionality, plus methods for dataviz, AI, Google sheets, etc.",
+  },
+  {
+    value: "@nshiab/simple-data-analysis-core",
+    label: "simple-data-analysis-core",
+    type: "sda",
+    hint: "No fluff. Great for constrained environments, like a cheap server.",
   },
   {
     value: "@nshiab/journalism-ai",
