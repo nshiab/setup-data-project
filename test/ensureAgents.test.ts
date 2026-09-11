@@ -379,7 +379,7 @@ Deno.test("ensureAgents - should show full package names and named imports", asy
 
     assert(
       content.includes(
-        'installed "@nshiab/simple-data-analysis-core", "@nshiab/simple-data-analysis", "@nshiab/journalism-format" libraries',
+        'installed "@nshiab/simple-data-analysis", "@nshiab/simple-data-analysis-core", "@nshiab/journalism-format" libraries',
       ),
     );
     assert(
