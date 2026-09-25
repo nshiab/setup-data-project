@@ -118,15 +118,9 @@ Always prioritize the installed ${libraryNames} ${libraryNoun} when relevant.
       if (!docs) return [];
       if (docs.plot) {
         return [
-          "- `@observablehq/plot`: before creating or changing charts, read the " +
-          "overview at `./docs/observable-plot/what-is-plot.md`, examples at " +
-          "`./docs/observable-plot/getting-started.md`, and API index at " +
-          "`./docs/observable-plot/INDEX.md`. Follow the local Markdown links " +
-          "for marks, transforms, scales, and interactions. The index records " +
-          "the documentation version and source tag; " +
-          "upstream Vue components and plot fences are retained as source examples. " +
-          "Use these references alongside the installed simple-data-analysis " +
-          "or journalism-dataviz charting documentation when using their chart helpers.",
+          "- `@observablehq/plot`: overview and practical examples at " +
+          "`./docs/observable-plot/getting-started.md`; API index at " +
+          "`./docs/observable-plot/INDEX.md`",
         ];
       }
       const repoName = pkg.value.split("/")[1];
