@@ -88,7 +88,7 @@ export function ensureAgents(
   );
   const importExamples = installedPackageConfigs.flatMap((pkg) => {
     if (pkg.value === "@observablehq/plot") {
-      return ['import * as Plot from "@observablehq/plot";'];
+      return ['import { plot } from "@observablehq/plot";'];
     }
     if (pkg.type === "sda") {
       return [`import { SimpleDB } from "${pkg.value}";`];

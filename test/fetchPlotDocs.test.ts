@@ -103,7 +103,7 @@ Deno.test("Plot docs - discovers tagged pages and preserves source, links, and r
     const agents = readFileSync("AGENTS.md", "utf8");
     assertStringIncludes(agents, "User instructions");
     assertStringIncludes(agents, "./docs/observable-plot/INDEX.md");
-    assertStringIncludes(agents, 'import * as Plot from "@observablehq/plot"');
+    assertStringIncludes(agents, 'import { plot } from "@observablehq/plot"');
     assertStringIncludes(agents, "journalism-dataviz charting documentation");
     ensureAgents(
       await syncPackageDocs(["@observablehq/plot"], {
