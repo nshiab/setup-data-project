@@ -5,6 +5,7 @@ import { join } from "node:path";
 export interface PackageDocs {
   readme?: string;
   llm?: string;
+  plot?: { version: string; pages: string[] };
 }
 
 const PACKAGE_DOCUMENTS = [

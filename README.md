@@ -5,7 +5,7 @@ configurations, and documentation.
 
 ```sh
 # Deno
-deno run --min-dep-age=0 -A jsr:@nshiab/setup-data-project
+deno run -A jsr:@nshiab/setup-data-project
 
 # Node
 npx @nshiab/setup-data-project
@@ -14,9 +14,17 @@ npx @nshiab/setup-data-project
 bunx @nshiab/setup-data-project
 ```
 
-The Deno dependency-age bypass is temporary while the 2.0 dependencies are newly
-published. It is tracked for removal in
-[issue #15](https://github.com/nshiab/setup-data-project/issues/15).
+To select a library without prompts, add `--sda` or `--sda-core`:
+
+```sh
+deno run -A jsr:@nshiab/setup-data-project --sda
+npx @nshiab/setup-data-project --sda-core
+bunx @nshiab/setup-data-project --sda
+```
+
+These flags still create the usual project files and documentation, preserve
+existing package versions, and cannot be combined. Without a flag, library
+selection is interactive. Use `--help` for usage.
 
 - Creates a standardized folder structure.
 - Ensures necessary files like `.env`, `.gitignore`, and `README.md` exist.
@@ -27,6 +35,8 @@ published. It is tracked for removal in
   package, and [journalism](https://github.com/nshiab/journalism) libraries,
   then fetches their README files and complete API documentation from the
   matching version tags on GitHub for LLM use.
+- Fetches version-matched Observable Plot documentation when Plot is installed,
+  including its API index and chart examples, and links it from `AGENTS.md`.
 - Updates project configuration (e.g., `deno.json` or `package.json`) with
   relevant tasks.
 

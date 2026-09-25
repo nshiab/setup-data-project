@@ -95,9 +95,15 @@ export const SUPPORTED_PACKAGES: PackageConfig[] = [
   },
 ];
 
+// Plot is installed alongside charting libraries, but is not a setup menu option.
+export const DOCUMENTED_PACKAGES: PackageConfig[] = [
+  ...SUPPORTED_PACKAGES,
+  { value: "@observablehq/plot", label: "Observable Plot", type: "other" },
+];
+
 export function getInstalledPackageConfigs(
   installedPackages: string[],
 ): PackageConfig[] {
   const installedSet = new Set(installedPackages);
-  return SUPPORTED_PACKAGES.filter((pkg) => installedSet.has(pkg.value));
+  return DOCUMENTED_PACKAGES.filter((pkg) => installedSet.has(pkg.value));
 }

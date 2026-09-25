@@ -23,8 +23,15 @@ import { getInstalledPackageConfigs } from "./helpers/packageRegistry.ts";
 import { ProjectManifest } from "./helpers/projectManifest.ts";
 import { syncPackageDocs } from "./helpers/syncPackageDocs.ts";
 import { getInstalledPackageVersions } from "./helpers/getInstalledPackageVersions.ts";
+import { CLI_HELP, parseArguments } from "./helpers/parseArguments.ts";
 
 async function main() {
+  const cliOptions = parseArguments(process.argv.slice(2));
+  if (cliOptions.help) {
+    console.log(CLI_HELP);
+    return;
+  }
+
   const runtime = getRuntime();
   console.log();
   intro(`Hi! 👋 (Running on ${runtime})`);
@@ -40,12 +47,14 @@ async function main() {
       : opt.label,
   }));
 
-  const selectedPackages = (await multiselect({
-    message:
-      "Which libraries would you like to install?\n\x1b[2m(space to select, arrows to navigate, enter to confirm)\x1b[22m\n",
-    options,
-    required: false,
-  })) as string[];
+  const selectedPackages = cliOptions.package
+    ? [cliOptions.package]
+    : (await multiselect({
+      message:
+        "Which libraries would you like to install?\n\x1b[2m(space to select, arrows to navigate, enter to confirm)\x1b[22m\n",
+      options,
+      required: false,
+    })) as string[];
 
   if (isCancel(selectedPackages)) {
     cancel("Installation cancelled.");
@@ -60,6 +69,8 @@ async function main() {
 
   for (const pkg of selectedPackages) {
     if (alreadyInstalled.includes(pkg)) {
+      if (cliOptions.package) continue;
+
       const action = await select({
         message: `${pkg} is already installed. What would you like to do?`,
         options: [
