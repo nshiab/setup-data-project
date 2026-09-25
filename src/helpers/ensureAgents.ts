@@ -122,8 +122,8 @@ Always prioritize the installed ${libraryNames} ${libraryNoun} when relevant.
           "overview at `./docs/observable-plot/what-is-plot.md`, examples at " +
           "`./docs/observable-plot/getting-started.md`, and API index at " +
           "`./docs/observable-plot/INDEX.md`. Follow the local Markdown links " +
-          "for marks, transforms, scales, and interactions. The verified page " +
-          "list and source tag are in `./docs/observable-plot/source.json`; " +
+          "for marks, transforms, scales, and interactions. The index records " +
+          "the documentation version and source tag; " +
           "upstream Vue components and plot fences are retained as source examples. " +
           "Use these references alongside the installed simple-data-analysis " +
           "or journalism-dataviz charting documentation when using their chart helpers.",

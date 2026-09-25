@@ -31,7 +31,6 @@ export async function fetchPlotDocs(version: string): Promise<PackageDocs> {
     }
 
     const headings = new Map<string, string[]>();
-    const fetched: string[] = [];
     const failed: string[] = [];
     // Fetch in small batches to avoid overwhelming GitHub on the first run.
     for (let offset = 0; offset < pages.length; offset += 8) {
@@ -50,7 +49,6 @@ export async function fetchPlotDocs(version: string): Promise<PackageDocs> {
               page,
               content.split("\n").filter((line) => /^#{1,2}\s/.test(line)),
             );
-            fetched.push(page);
           } catch {
             failed.push(page);
           }
@@ -59,29 +57,13 @@ export async function fetchPlotDocs(version: string): Promise<PackageDocs> {
     }
 
     mkdirSync(directory, { recursive: true });
-    writeFileSync(
-      join(directory, "source.json"),
-      JSON.stringify(
-        {
-          package: "@observablehq/plot",
-          version,
-          tag,
-          source: `${repository}/tree/${tag}/docs`,
-          complete: failed.length === 0,
-          fetched: fetched.sort(),
-          failed: failed.sort(),
-        },
-        null,
-        2,
-      ) + "\n",
-    );
     if (failed.length > 0) {
       throw new Error(`Could not fetch ${failed.length} Markdown pages`);
     }
     const index = [
       `# Observable Plot ${version}: local documentation index`,
       "",
-      `Source: ${repository}/tree/${tag}/docs. See source.json for the verified page list.`,
+      `Package: \`@observablehq/plot@${version}\`. Source: [${tag}](${repository}/tree/${tag}/docs).`,
       "",
       "Use this generated index to find API names and examples in the original Markdown pages. Upstream api.md uses a Vue template; the links below are readable without rendering it.",
       "",

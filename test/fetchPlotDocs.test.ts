@@ -89,22 +89,19 @@ Deno.test("Plot docs - discovers tagged pages and preserves source, links, and r
     const index = readFileSync("docs/observable-plot/INDEX.md", "utf8");
     assertStringIncludes(index, "[dot(*data*, *options*)](marks/dot.md#dot)");
     assertStringIncludes(index, "[features/scales.md](features/scales.md)");
-    const source = readFileSync("docs/observable-plot/source.json", "utf8");
-    assertEquals(JSON.parse(source), {
-      package: "@observablehq/plot",
-      version: "0.6.17",
-      tag: "v0.6.17",
-      source: "https://github.com/observablehq/plot/tree/v0.6.17/docs",
-      complete: true,
-      fetched: [...pages].sort(),
-      failed: [],
-    });
+    assertStringIncludes(index, "`@observablehq/plot@0.6.17`");
+    assertStringIncludes(
+      index,
+      "[v0.6.17](https://github.com/observablehq/plot/tree/v0.6.17/docs)",
+    );
+    assertEquals(existsSync("docs/observable-plot/source.json"), false);
     ensureAgents(mapping, "deno", ["@observablehq/plot"]);
     const agents = readFileSync("AGENTS.md", "utf8");
     assertStringIncludes(agents, "User instructions");
     assertStringIncludes(agents, "./docs/observable-plot/INDEX.md");
     assertStringIncludes(agents, 'import { plot } from "@observablehq/plot"');
     assertStringIncludes(agents, "journalism-dataviz charting documentation");
+    assertEquals(agents.includes("source.json"), false);
     ensureAgents(
       await syncPackageDocs(["@observablehq/plot"], {
         "@observablehq/plot": "0.6.17",
@@ -114,10 +111,7 @@ Deno.test("Plot docs - discovers tagged pages and preserves source, links, and r
     );
     assertEquals(readFileSync("AGENTS.md", "utf8"), agents);
     assertEquals(readFileSync("docs/observable-plot/INDEX.md", "utf8"), index);
-    assertEquals(
-      readFileSync("docs/observable-plot/source.json", "utf8"),
-      source,
-    );
+    assertEquals(existsSync("docs/observable-plot/source.json"), false);
   });
 });
 
@@ -125,6 +119,7 @@ Deno.test("Plot docs - partial refresh preserves failed pages and excludes guide
   await withPlotFixture(async () => {
     mkdirSync("docs/observable-plot/marks", { recursive: true });
     writeFileSync("docs/observable-plot/marks/dot.md", "old dot");
+    writeFileSync("docs/observable-plot/INDEX.md", "old index for 0.6.16");
     ensureAgents(
       { "@observablehq/plot": { plot: { version: "0.6.16", pages } } },
       "node",
@@ -138,11 +133,11 @@ Deno.test("Plot docs - partial refresh preserves failed pages and excludes guide
       readFileSync("docs/observable-plot/marks/dot.md", "utf8"),
       "old dot",
     );
-    const source = JSON.parse(
-      readFileSync("docs/observable-plot/source.json", "utf8"),
+    assertEquals(
+      readFileSync("docs/observable-plot/INDEX.md", "utf8"),
+      "old index for 0.6.16",
     );
-    assertEquals(source.complete, false);
-    assertEquals(source.failed, ["marks/dot.md"]);
+    assertEquals(existsSync("docs/observable-plot/source.json"), false);
     ensureAgents(mapping, "node", ["@observablehq/plot"]);
     assertEquals(
       readFileSync("AGENTS.md", "utf8").includes("./docs/observable-plot"),
