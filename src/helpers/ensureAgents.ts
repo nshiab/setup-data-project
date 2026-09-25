@@ -87,9 +87,6 @@ export function ensureAgents(
     installedPackages,
   );
   const importExamples = installedPackageConfigs.flatMap((pkg) => {
-    if (pkg.value === "@observablehq/plot") {
-      return ['import { plot } from "@observablehq/plot";'];
-    }
     if (pkg.type === "sda") {
       return [`import { SimpleDB } from "${pkg.value}";`];
     }
@@ -118,7 +115,10 @@ Always prioritize the installed ${libraryNames} ${libraryNoun} when relevant.
       if (!docs) return [];
       if (docs.plot) {
         return [
-          "- `@observablehq/plot`: overview and practical examples at " +
+          "- `@observablehq/plot`: use Observable Plot to create charts and maps " +
+          "with `writeChart` and `writeMap`. Import with " +
+          '`import { plot } from "@observablehq/plot";`. ' +
+          "Overview and practical examples at " +
           "`./docs/observable-plot/getting-started.md`; API index at " +
           "`./docs/observable-plot/INDEX.md`",
         ];
