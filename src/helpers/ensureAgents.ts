@@ -87,6 +87,9 @@ export function ensureAgents(
     installedPackages,
   );
   const importExamples = installedPackageConfigs.flatMap((pkg) => {
+    if (pkg.value === "@observablehq/plot") {
+      return ['import * as Plot from "@observablehq/plot";'];
+    }
     if (pkg.type === "sda") {
       return [`import { SimpleDB } from "${pkg.value}";`];
     }
@@ -113,6 +116,19 @@ Always prioritize the installed ${libraryNames} ${libraryNoun} when relevant.
     const documentationGuidance = installedPackageConfigs.flatMap((pkg) => {
       const docs = docsMapping[pkg.value];
       if (!docs) return [];
+      if (docs.plot) {
+        return [
+          "- `@observablehq/plot`: before creating or changing charts, read the " +
+          "overview at `./docs/observable-plot/what-is-plot.md`, examples at " +
+          "`./docs/observable-plot/getting-started.md`, and API index at " +
+          "`./docs/observable-plot/INDEX.md`. Follow the local Markdown links " +
+          "for marks, transforms, scales, and interactions. The verified page " +
+          "list and source tag are in `./docs/observable-plot/source.json`; " +
+          "upstream Vue components and plot fences are retained as source examples. " +
+          "Use these references alongside the installed simple-data-analysis " +
+          "or journalism-dataviz charting documentation when using their chart helpers.",
+        ];
+      }
       const repoName = pkg.value.split("/")[1];
       const availableDocs = [
         docs.readme === undefined
@@ -134,7 +150,7 @@ ${documentationGuidance.join("\n")}
 `;
     }
     if (importExamples.length > 0) {
-      libraryGuidance += `APIs can be imported with named imports like this:
+      libraryGuidance += `APIs can be imported like this:
 \`\`\`typescript
 ${importExamples.join("\n")}
 \`\`\`

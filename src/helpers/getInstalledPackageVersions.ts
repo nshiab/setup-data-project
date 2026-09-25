@@ -14,10 +14,13 @@ export function getInstalledPackageVersions(
   const versions: Record<string, string> = {};
 
   for (const [pkg, specifier] of Object.entries(packageSpecifiers)) {
+    const denoVersion =
+      specifier.startsWith("jsr:") || specifier.startsWith("npm:")
+        ? getDenoLockVersion(pkg, specifier, denoLock)
+        : undefined;
     const version = specifier.startsWith("jsr:")
-      ? getDenoLockVersion(pkg, specifier, denoLock) ??
-        getExactVersion(specifier)
-      : getNodeModulesVersion(pkg) ??
+      ? denoVersion ?? getExactVersion(specifier)
+      : denoVersion ?? getNodeModulesVersion(pkg) ??
         getPackageLockVersion(pkg, packageLock) ??
         getBunLockVersion(pkg, bunLock) ??
         getExactVersion(specifier);
@@ -44,14 +47,15 @@ function getDenoLockVersion(
   specifier: string,
   lock: JsonObject | undefined,
 ): string | undefined {
-  if (!lock || !specifier.startsWith("jsr:")) return undefined;
+  if (!lock) return undefined;
   const specifiers = asObject(lock.specifiers);
   if (!specifiers) return undefined;
 
   const directVersion = specifiers[specifier];
   if (typeof directVersion === "string") return getExactVersion(directVersion);
 
-  const prefix = `jsr:${pkg}@`;
+  const protocol = specifier.startsWith("npm:") ? "npm" : "jsr";
+  const prefix = `${protocol}:${pkg}@`;
   const matchingVersions = Object.entries(specifiers)
     .filter(([key, value]) =>
       key.startsWith(prefix) && typeof value === "string"
