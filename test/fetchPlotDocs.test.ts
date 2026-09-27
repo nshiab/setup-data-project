@@ -86,32 +86,33 @@ Deno.test("Plot docs - discovers tagged pages and preserves source, links, and r
     assertEquals(urls.length, pages.length + 1);
     assertEquals(urls.every((url) => url.includes("v0.6.17")), true);
     assertEquals(existsSync("escape.md"), false);
-    const dot = readFileSync("docs/observable-plot/marks/dot.md", "utf8");
-    assertStringIncludes(dot, "[Dot](./marks/dot.md)");
-    assertStringIncludes(dot, ":::plot");
-    const index = readFileSync("docs/observable-plot/API_INDEX.md", "utf8");
-    assertEquals(
-      readFileSync("docs/observable-plot/index.md", "utf8"),
-      "# Upstream Plot landing page\n",
-    );
-    assertStringIncludes(index, "[dot(*data*, *options*)](marks/dot.md#dot)");
-    assertStringIncludes(index, "[features/scales.md](features/scales.md)");
-    assertStringIncludes(index, "`@observablehq/plot@0.6.17`");
+    const llm = readFileSync("docs/observable-plot/llm.md", "utf8");
+    assertEquals(mapping["@observablehq/plot"].llm, llm);
+    assertStringIncludes(llm, "# Upstream Plot landing page");
     assertStringIncludes(
-      index,
+      llm,
+      "[dot(*data*, *options*)](#plot-marks--dot--dot)",
+    );
+    assertStringIncludes(llm, "[features/scales.md](#plot-features--scales)");
+    assertStringIncludes(llm, "`@observablehq/plot@0.6.17`");
+    assertStringIncludes(
+      llm,
       "[v0.6.17](https://github.com/observablehq/plot/tree/v0.6.17/docs)",
     );
-    assertEquals(existsSync("docs/observable-plot/source.json"), false);
+    assertEquals(
+      [...Deno.readDirSync("docs/observable-plot")].map((entry) => entry.name),
+      ["llm.md"],
+    );
     ensureAgents(mapping, "deno", ["@observablehq/plot"]);
     const agents = readFileSync("AGENTS.md", "utf8");
     assertStringIncludes(agents, "User instructions");
-    assertStringIncludes(agents, "./docs/observable-plot/API_INDEX.md");
+    assertStringIncludes(agents, "./docs/observable-plot/llm.md");
     assertStringIncludes(agents, 'import { plot } from "@observablehq/plot"');
     assertStringIncludes(
       agents,
       "use Observable Plot to create charts and maps with `writeChart` and `writeMap`",
     );
-    assertStringIncludes(agents, "./docs/observable-plot/getting-started.md");
+
     assertEquals(agents.includes("source.json"), false);
     ensureAgents(
       await syncPackageDocs(["@observablehq/plot"], {
@@ -121,25 +122,22 @@ Deno.test("Plot docs - discovers tagged pages and preserves source, links, and r
       ["@observablehq/plot"],
     );
     assertEquals(readFileSync("AGENTS.md", "utf8"), agents);
-    assertEquals(
-      readFileSync("docs/observable-plot/API_INDEX.md", "utf8"),
-      index,
-    );
-    assertEquals(
-      readFileSync("docs/observable-plot/index.md", "utf8"),
-      "# Upstream Plot landing page\n",
-    );
-    assertEquals(existsSync("docs/observable-plot/source.json"), false);
+    assertEquals(readFileSync("docs/observable-plot/llm.md", "utf8"), llm);
   });
 });
 
 Deno.test("Plot docs - partial refresh preserves failed pages and excludes guide", async () => {
   await withPlotFixture(async () => {
-    mkdirSync("docs/observable-plot/marks", { recursive: true });
-    writeFileSync("docs/observable-plot/marks/dot.md", "old dot");
-    writeFileSync("docs/observable-plot/API_INDEX.md", "old index for 0.6.16");
+    mkdirSync("docs/observable-plot", { recursive: true });
+    writeFileSync("docs/observable-plot/llm.md", "old reference for 0.6.16");
+    writeFileSync("docs/observable-plot/custom.md", "user notes");
     ensureAgents(
-      { "@observablehq/plot": { plot: { version: "0.6.16", pages } } },
+      {
+        "@observablehq/plot": {
+          llm: "old reference",
+          plot: { version: "0.6.16", pages },
+        },
+      },
       "node",
       ["@observablehq/plot"],
     );
@@ -148,14 +146,18 @@ Deno.test("Plot docs - partial refresh preserves failed pages and excludes guide
     });
     assertEquals(mapping, {});
     assertEquals(
-      readFileSync("docs/observable-plot/marks/dot.md", "utf8"),
-      "old dot",
+      readFileSync("docs/observable-plot/llm.md", "utf8"),
+      "old reference for 0.6.16",
     );
     assertEquals(
-      readFileSync("docs/observable-plot/API_INDEX.md", "utf8"),
-      "old index for 0.6.16",
+      readFileSync("docs/observable-plot/custom.md", "utf8"),
+      "user notes",
     );
-    assertEquals(existsSync("docs/observable-plot/source.json"), false);
+    assertEquals(
+      [...Deno.readDirSync("docs/observable-plot")].map((entry) => entry.name)
+        .sort(),
+      ["custom.md", "llm.md"],
+    );
     ensureAgents(mapping, "node", ["@observablehq/plot"]);
     assertEquals(
       readFileSync("AGENTS.md", "utf8").includes("./docs/observable-plot"),
@@ -168,11 +170,11 @@ for (const options of [{ truncated: true }, { treeFailure: true }]) {
   Deno.test(`Plot docs - preserves files on incomplete tree ${JSON.stringify(options)}`, async () => {
     await withPlotFixture(async (urls) => {
       mkdirSync("docs/observable-plot", { recursive: true });
-      writeFileSync("docs/observable-plot/api.md", "old API");
+      writeFileSync("docs/observable-plot/llm.md", "old API");
       assertEquals(await fetchPlotDocs("0.6.17"), {});
       assertEquals(urls.length, 1);
       assertEquals(
-        readFileSync("docs/observable-plot/api.md", "utf8"),
+        readFileSync("docs/observable-plot/llm.md", "utf8"),
         "old API",
       );
     }, options);

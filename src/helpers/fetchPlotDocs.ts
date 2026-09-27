@@ -1,12 +1,12 @@
 import { log } from "@clack/prompts";
-import { mkdirSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { mkdirSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { combinePlotDocs } from "./combinePlotDocs.ts";
 import type { PackageDocs } from "./fetchPackageDocs.ts";
 
-// Keep the upstream Markdown hierarchy so examples and relative links survive.
+// Publish one reference only after every tagged page has been fetched.
 export async function fetchPlotDocs(version: string): Promise<PackageDocs> {
   const tag = `v${version}`;
-  const repository = "https://github.com/observablehq/plot";
   const directory = join("docs", "observable-plot");
   try {
     const response = await fetch(
@@ -30,7 +30,7 @@ export async function fetchPlotDocs(version: string): Promise<PackageDocs> {
       throw new Error("The tag is missing Plot's overview or API index");
     }
 
-    const headings = new Map<string, string[]>();
+    const documents = new Map<string, string>();
     const failed: string[] = [];
     // Fetch in small batches to avoid overwhelming GitHub on the first run.
     for (let offset = 0; offset < pages.length; offset += 8) {
@@ -42,13 +42,7 @@ export async function fetchPlotDocs(version: string): Promise<PackageDocs> {
             const response = await fetch(url);
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const content = await response.text();
-            const path = join(directory, page);
-            mkdirSync(dirname(path), { recursive: true });
-            writeFileSync(path, content);
-            headings.set(
-              page,
-              content.split("\n").filter((line) => /^#{1,2}\s/.test(line)),
-            );
+            documents.set(page, content);
           } catch {
             failed.push(page);
           }
@@ -56,33 +50,19 @@ export async function fetchPlotDocs(version: string): Promise<PackageDocs> {
       );
     }
 
-    mkdirSync(directory, { recursive: true });
     if (failed.length > 0) {
       throw new Error(`Could not fetch ${failed.length} Markdown pages`);
     }
-    const index = [
-      `# Observable Plot ${version}: local documentation index`,
-      "",
-      `Package: \`@observablehq/plot@${version}\`. Source: [${tag}](${repository}/tree/${tag}/docs).`,
-      "",
-      "Use this generated index to find API names and examples in the original Markdown pages. Upstream api.md uses a Vue template; the links below are readable without rendering it.",
-      "",
-      ...pages.flatMap((page) => [
-        `## [${page}](${page})`,
-        "",
-        ...(headings.get(page) ?? []).map((heading) => {
-          const anchor = heading.match(/\{#([^}]+)\}/)?.[1];
-          const label = heading.replace(/^#+\s+/, "").replace(
-            /\s*\{#[^}]+\}/g,
-            "",
-          ).trim();
-          return `- [${label}](${page}${anchor ? `#${anchor}` : ""})`;
-        }),
-        "",
-      ]),
-    ].join("\n");
-    writeFileSync(join(directory, "API_INDEX.md"), index);
-    return { plot: { version, pages } };
+    const llm = combinePlotDocs(version, documents);
+    mkdirSync(directory, { recursive: true });
+    const temporaryPath = join(directory, ".llm.md.tmp");
+    try {
+      writeFileSync(temporaryPath, llm);
+      renameSync(temporaryPath, join(directory, "llm.md"));
+    } finally {
+      rmSync(temporaryPath, { force: true });
+    }
+    return { llm, plot: { version, pages } };
   } catch (error) {
     log.warn(
       `Could not fetch complete Observable Plot documentation for ${tag}. ` +

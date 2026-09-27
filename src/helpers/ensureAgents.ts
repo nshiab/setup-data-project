@@ -118,9 +118,7 @@ Always prioritize the installed ${libraryNames} ${libraryNoun} when relevant.
           "- `@observablehq/plot`: use Observable Plot to create charts and maps " +
           "with `writeChart` and `writeMap`. Import with " +
           '`import { plot } from "@observablehq/plot";`. ' +
-          "Overview and practical examples at " +
-          "`./docs/observable-plot/getting-started.md`; API index at " +
-          "`./docs/observable-plot/API_INDEX.md`",
+          "Documentation and examples at `./docs/observable-plot/llm.md`",
         ];
       }
       const repoName = pkg.value.split("/")[1];

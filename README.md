@@ -36,7 +36,8 @@ selection is interactive. Use `--help` for usage.
   then fetches their README files and complete API documentation from the
   matching version tags on GitHub for LLM use.
 - Fetches version-matched Observable Plot documentation when Plot is installed,
-  including its API index and chart examples, and links it from `AGENTS.md`.
+  combines its reference and examples into `docs/observable-plot/llm.md`, and
+  links it from `AGENTS.md`.
 - Updates project configuration (e.g., `deno.json` or `package.json`) with
   relevant tasks.
 
