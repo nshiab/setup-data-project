@@ -81,7 +81,7 @@ export async function fetchPlotDocs(version: string): Promise<PackageDocs> {
         "",
       ]),
     ].join("\n");
-    writeFileSync(join(directory, "INDEX.md"), index);
+    writeFileSync(join(directory, "API_INDEX.md"), index);
     return { plot: { version, pages } };
   } catch (error) {
     log.warn(

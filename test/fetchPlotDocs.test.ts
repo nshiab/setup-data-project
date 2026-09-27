@@ -9,6 +9,7 @@ import { createTestDir } from "./helpers/utils.ts";
 
 const pages = [
   "api.md",
+  "index.md",
   "getting-started.md",
   "what-is-plot.md",
   "features/scales.md",
@@ -45,7 +46,9 @@ async function withPlotFixture(
     }
     return Promise.resolve(
       new Response(
-        "# Plot example\n\n## dot(*data*, *options*) {#dot}\n\n[Dot](./marks/dot.md)\n:::plot\nPlot.dot(data)\n:::\n",
+        url.endsWith("/index.md")
+          ? "# Upstream Plot landing page\n"
+          : "# Plot example\n\n## dot(*data*, *options*) {#dot}\n\n[Dot](./marks/dot.md)\n:::plot\nPlot.dot(data)\n:::\n",
         {
           status: options.failedPage && url.endsWith(options.failedPage)
             ? 404
@@ -86,7 +89,11 @@ Deno.test("Plot docs - discovers tagged pages and preserves source, links, and r
     const dot = readFileSync("docs/observable-plot/marks/dot.md", "utf8");
     assertStringIncludes(dot, "[Dot](./marks/dot.md)");
     assertStringIncludes(dot, ":::plot");
-    const index = readFileSync("docs/observable-plot/INDEX.md", "utf8");
+    const index = readFileSync("docs/observable-plot/API_INDEX.md", "utf8");
+    assertEquals(
+      readFileSync("docs/observable-plot/index.md", "utf8"),
+      "# Upstream Plot landing page\n",
+    );
     assertStringIncludes(index, "[dot(*data*, *options*)](marks/dot.md#dot)");
     assertStringIncludes(index, "[features/scales.md](features/scales.md)");
     assertStringIncludes(index, "`@observablehq/plot@0.6.17`");
@@ -98,7 +105,7 @@ Deno.test("Plot docs - discovers tagged pages and preserves source, links, and r
     ensureAgents(mapping, "deno", ["@observablehq/plot"]);
     const agents = readFileSync("AGENTS.md", "utf8");
     assertStringIncludes(agents, "User instructions");
-    assertStringIncludes(agents, "./docs/observable-plot/INDEX.md");
+    assertStringIncludes(agents, "./docs/observable-plot/API_INDEX.md");
     assertStringIncludes(agents, 'import { plot } from "@observablehq/plot"');
     assertStringIncludes(
       agents,
@@ -114,7 +121,14 @@ Deno.test("Plot docs - discovers tagged pages and preserves source, links, and r
       ["@observablehq/plot"],
     );
     assertEquals(readFileSync("AGENTS.md", "utf8"), agents);
-    assertEquals(readFileSync("docs/observable-plot/INDEX.md", "utf8"), index);
+    assertEquals(
+      readFileSync("docs/observable-plot/API_INDEX.md", "utf8"),
+      index,
+    );
+    assertEquals(
+      readFileSync("docs/observable-plot/index.md", "utf8"),
+      "# Upstream Plot landing page\n",
+    );
     assertEquals(existsSync("docs/observable-plot/source.json"), false);
   });
 });
@@ -123,7 +137,7 @@ Deno.test("Plot docs - partial refresh preserves failed pages and excludes guide
   await withPlotFixture(async () => {
     mkdirSync("docs/observable-plot/marks", { recursive: true });
     writeFileSync("docs/observable-plot/marks/dot.md", "old dot");
-    writeFileSync("docs/observable-plot/INDEX.md", "old index for 0.6.16");
+    writeFileSync("docs/observable-plot/API_INDEX.md", "old index for 0.6.16");
     ensureAgents(
       { "@observablehq/plot": { plot: { version: "0.6.16", pages } } },
       "node",
@@ -138,7 +152,7 @@ Deno.test("Plot docs - partial refresh preserves failed pages and excludes guide
       "old dot",
     );
     assertEquals(
-      readFileSync("docs/observable-plot/INDEX.md", "utf8"),
+      readFileSync("docs/observable-plot/API_INDEX.md", "utf8"),
       "old index for 0.6.16",
     );
     assertEquals(existsSync("docs/observable-plot/source.json"), false);

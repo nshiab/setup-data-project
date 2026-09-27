@@ -120,7 +120,7 @@ Always prioritize the installed ${libraryNames} ${libraryNoun} when relevant.
           '`import { plot } from "@observablehq/plot";`. ' +
           "Overview and practical examples at " +
           "`./docs/observable-plot/getting-started.md`; API index at " +
-          "`./docs/observable-plot/INDEX.md`",
+          "`./docs/observable-plot/API_INDEX.md`",
         ];
       }
       const repoName = pkg.value.split("/")[1];
