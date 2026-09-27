@@ -117,6 +117,10 @@ Inline \`[Link](./bar.md)\`.
     "![Root asset](https://raw.githubusercontent.com/observablehq/plot/refs/tags/v0.6.17/docs/public/images/chart.png)",
   );
   assertStringIncludes(llm, "[External](https://example.com/doc#anchor)");
+  assertStringIncludes(
+    llm,
+    "[Missing](https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/missing.md#anchor)",
+  );
   assertStringIncludes(llm, "[Reference]: #plot-marks--bar");
   assertEquals(llm.includes('id="plot-marks--bar--heading-in-code"'), false);
 });

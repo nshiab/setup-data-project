@@ -1,5 +1,7 @@
 import { assertEquals, assertStringIncludes } from "@std/assert";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { combinePlotDocs } from "../src/helpers/combinePlotDocs.ts";
+import { PLOT_DOC_PAGES } from "../src/helpers/plotDocPages.ts";
 import { ensureAgents } from "../src/helpers/ensureAgents.ts";
 import { fetchPlotDocs } from "../src/helpers/fetchPlotDocs.ts";
 import { getInstalledPackageConfigs } from "../src/helpers/packageRegistry.ts";
@@ -7,21 +9,19 @@ import { PACKAGE_OPTIONS } from "../src/helpers/packageOptions.ts";
 import { syncPackageDocs } from "../src/helpers/syncPackageDocs.ts";
 import { createTestDir } from "./helpers/utils.ts";
 
-const pages = [
-  "api.md",
-  "index.md",
-  "getting-started.md",
-  "what-is-plot.md",
-  "features/scales.md",
-  "marks/dot.md",
-  "transforms/bin.md",
-  "interactions/pointer.md",
-];
+const pages = PLOT_DOC_PAGES;
+const pageContent =
+  "# Plot example\n\n## dot(*data*, *options*) {#dot}\n\n[Dot](../marks/dot.md)\n:::plot\nPlot.dot(data)\n:::\n";
+const cachedReference = (version = "0.6.17") =>
+  combinePlotDocs(version, new Map(pages.map((page) => [page, pageContent])));
 
 async function withPlotFixture(
   run: (urls: string[]) => Promise<void>,
-  options: { failedPage?: string; truncated?: boolean; treeFailure?: boolean } =
-    {},
+  options: {
+    failedPage?: string;
+    stored?: string | "network-error";
+    upstreamFailure?: boolean;
+  } = {},
 ) {
   const { tempDir, cleanup } = createTestDir();
   const cwd = Deno.cwd();
@@ -31,26 +31,22 @@ async function withPlotFixture(
   globalThis.fetch = ((input: string | URL | Request) => {
     const url = String(input);
     urls.push(url);
-    if (url.startsWith("https://api.github.com/")) {
-      return Promise.resolve(Response.json({
-        truncated: options.truncated ?? false,
-        tree: [
-          ...pages.map((page) => ({ type: "blob", path: `docs/${page}` })),
-          {
-            type: "blob",
-            path: "docs/../../escape.md",
-          },
-          { type: "blob", path: "test/ignored.md" },
-        ],
-      }, { status: options.treeFailure ? 503 : 200 }));
+    if (url.includes("/docs-cache/")) {
+      if (options.stored === "network-error") {
+        return Promise.reject(new Error("Cache unavailable"));
+      }
+      return Promise.resolve(
+        new Response(options.stored ?? "Not found", {
+          status: options.stored ? 200 : 404,
+        }),
+      );
     }
     return Promise.resolve(
       new Response(
-        url.endsWith("/index.md")
-          ? "# Upstream Plot landing page\n"
-          : "# Plot example\n\n## dot(*data*, *options*) {#dot}\n\n[Dot](./marks/dot.md)\n:::plot\nPlot.dot(data)\n:::\n",
+        pageContent,
         {
-          status: options.failedPage && url.endsWith(options.failedPage)
+          status: options.upstreamFailure ||
+              (options.failedPage && url.endsWith(options.failedPage))
             ? 404
             : 200,
         },
@@ -66,7 +62,7 @@ async function withPlotFixture(
   }
 }
 
-Deno.test("Plot docs - discovers tagged pages and preserves source, links, and repeat output", async () => {
+Deno.test("Plot docs - cache miss fetches only selected tagged pages and preserves repeat output", async () => {
   await withPlotFixture(async (urls) => {
     assertEquals(getInstalledPackageConfigs(["@observablehq/plot"]).length, 1);
     assertEquals(
@@ -84,11 +80,46 @@ Deno.test("Plot docs - discovers tagged pages and preserves source, links, and r
     });
     assertEquals(mapping["@observablehq/plot"].plot?.pages, [...pages].sort());
     assertEquals(urls.length, pages.length + 1);
-    assertEquals(urls.every((url) => url.includes("v0.6.17")), true);
+    assertEquals(
+      urls[0],
+      "https://raw.githubusercontent.com/nshiab/setup-data-project/refs/heads/main/docs-cache/observable-plot/0.6.17/llm.md",
+    );
+    assertEquals(
+      urls.slice(1).every((url) => url.includes("/refs/tags/v0.6.17/docs/")),
+      true,
+    );
+    assertEquals(pages.length, 42);
+    assertEquals(
+      pages.filter((page) => page.startsWith("features/")).length,
+      8,
+    );
+    assertEquals(pages.filter((page) => page.startsWith("marks/")).length, 28);
+    assertEquals(
+      pages.filter((page) => page.startsWith("transforms/")).length,
+      6,
+    );
+    for (
+      const excluded of [
+        "api.md",
+        "index.md",
+        "getting-started.md",
+        "what-is-plot.md",
+        "interactions/pointer.md",
+        "marks/auto.md",
+        "marks/tip.md",
+        "features/interactions.md",
+        "transforms/window.md",
+      ]
+    ) {
+      assertEquals(
+        urls.some((url) => url.endsWith(`/docs/${excluded}`)),
+        false,
+      );
+    }
     assertEquals(existsSync("escape.md"), false);
     const llm = readFileSync("docs/observable-plot/llm.md", "utf8");
     assertEquals(mapping["@observablehq/plot"].llm, llm);
-    assertStringIncludes(llm, "# Upstream Plot landing page");
+
     assertStringIncludes(
       llm,
       "[dot(*data*, *options*)](#plot-marks--dot--dot)",
@@ -166,20 +197,59 @@ Deno.test("Plot docs - partial refresh preserves failed pages and excludes guide
   }, { failedPage: "marks/dot.md" });
 });
 
-for (const options of [{ truncated: true }, { treeFailure: true }]) {
-  Deno.test(`Plot docs - preserves files on incomplete tree ${JSON.stringify(options)}`, async () => {
+Deno.test("Plot docs - failed fallback preserves the existing reference", async () => {
+  await withPlotFixture(async (urls) => {
+    mkdirSync("docs/observable-plot", { recursive: true });
+    writeFileSync("docs/observable-plot/llm.md", "old API");
+    assertEquals(await fetchPlotDocs("0.6.17"), {});
+    assertEquals(urls.length, pages.length + 1);
+    assertEquals(
+      readFileSync("docs/observable-plot/llm.md", "utf8"),
+      "old API",
+    );
+  }, { upstreamFailure: true });
+});
+
+Deno.test("Plot docs - valid cache uses one request and installs its exact content", async () => {
+  const stored = cachedReference();
+  await withPlotFixture(async (urls) => {
+    const result = await fetchPlotDocs("0.6.17");
+    assertEquals(urls.length, 1);
+    assertEquals(result.llm, stored);
+    assertEquals(readFileSync("docs/observable-plot/llm.md", "utf8"), stored);
+    assertEquals(result.plot, { version: "0.6.17", pages });
+  }, { stored });
+});
+
+for (
+  const [name, stored] of [
+    ["wrong version", () => cachedReference("0.6.16")],
+    ["malformed", () => "# Observable Plot 0.6.17\n\nnot a reference"],
+    ["truncated", () => cachedReference().slice(0, -100)],
+    [
+      "missing page",
+      () => cachedReference().replace("# marks/dot.md\n", "# missing.md\n"),
+    ],
+    ["transport failure", () => "network-error"],
+  ] as const
+) {
+  Deno.test(`Plot docs - ${name} cache falls back to upstream`, async () => {
     await withPlotFixture(async (urls) => {
-      mkdirSync("docs/observable-plot", { recursive: true });
-      writeFileSync("docs/observable-plot/llm.md", "old API");
-      assertEquals(await fetchPlotDocs("0.6.17"), {});
-      assertEquals(urls.length, 1);
-      assertEquals(
-        readFileSync("docs/observable-plot/llm.md", "utf8"),
-        "old API",
-      );
-    }, options);
+      const result = await fetchPlotDocs("0.6.17");
+      assertEquals(urls.length, pages.length + 1);
+      assertEquals(result.llm, cachedReference());
+    }, { stored: stored() });
   });
 }
+
+Deno.test("Plot docs - maintainers can bypass the stored reference", async () => {
+  await withPlotFixture(async (urls) => {
+    const result = await fetchPlotDocs("0.6.17", { preferStored: false });
+    assertEquals(urls.length, pages.length);
+    assertEquals(urls.some((url) => url.includes("/docs-cache/")), false);
+    assertEquals(result.llm, cachedReference());
+  }, { stored: cachedReference() });
+});
 
 Deno.test("Plot docs - unresolved version does not fetch or advertise local documentation", async () => {
   await withPlotFixture(async (urls) => {

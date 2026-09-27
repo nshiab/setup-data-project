@@ -62,6 +62,9 @@ export function combinePlotDocs(
       // Preserve an upstream target when a fragment is not a known heading/ID.
       return `${source}/${markdown}${fragment ? `#${fragment}` : ""}`;
     }
+    if (resolved.endsWith(".md")) {
+      return `${source}/${resolved}${fragment ? `#${fragment}` : ""}`;
+    }
     const base = "https://raw.githubusercontent.com/observablehq/plot/" +
       `refs/tags/v${version}/docs/`;
     return path.startsWith("/")
@@ -109,7 +112,7 @@ export function combinePlotDocs(
       pageId(page)
     }"></a>\n\n# ${page}\n\nSource: ${source}/${page}\n\n${body}`;
   }).join("\n\n---\n\n");
-  return `# Observable Plot ${version}\n\nPackage: \`@observablehq/plot@${version}\`. Source: [v${version}](${source}).\n\nThis reference combines the tagged upstream Markdown pages. Vue components and plot fences are retained as source examples; api.md contains an upstream Vue template. Use the table of contents to find API signatures and examples.\n\n## Table of contents\n\n${contents}\n\n---\n\n${combined}\n`;
+  return `# Observable Plot ${version}\n\nPackage: \`@observablehq/plot@${version}\`. Source: [v${version}](${source}).\n\nThis reference combines selected upstream documentation for static charts and maps. Introductory and site pages, interaction helpers, and the Auto and Tip marks are omitted. Vue components and plot fences are retained as source examples. Use the table of contents to find API signatures and examples; links to omitted pages lead to the tagged upstream documentation.\n\n## Table of contents\n\n${contents}\n\n---\n\n${combined}\n\n<!-- setup-data-project:observable-plot:${version}:complete -->\n`;
 }
 
 function proseLines(

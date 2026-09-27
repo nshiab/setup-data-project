@@ -36,10 +36,18 @@ selection is interactive. Use `--help` for usage.
   then fetches their README files and complete API documentation from the
   matching version tags on GitHub for LLM use.
 - Fetches version-matched Observable Plot documentation when Plot is installed,
-  combines its reference and examples into `docs/observable-plot/llm.md`, and
-  links it from `AGENTS.md`.
+  using a single pre-generated download when available. Otherwise, it combines
+  42 selected pages for static charts and maps into
+  `docs/observable-plot/llm.md`. The reference is linked from `AGENTS.md`.
 - Updates project configuration (e.g., `deno.json` or `package.json`) with
   relevant tasks.
+
+To prepare the stored Plot reference for another version, run
+`deno task cache-plot-docs 0.6.17` with the desired exact version. Review and
+commit the resulting `docs-cache/observable-plot/<version>/llm.md`. Setup
+downloads it from this repository's `main` branch; keep earlier versions for
+pinned projects. The generated reference includes its source, version, and
+upstream license.
 
 The library is maintained by [Nael Shiab](http://naelshiab.com/), computational
 journalist and senior data producer for [CBC News](https://www.cbc.ca/news).
