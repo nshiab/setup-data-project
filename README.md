@@ -47,7 +47,7 @@ To prepare the stored Plot reference for another version, run
 commit the resulting `docs-cache/observable-plot/<version>/llm.md`. Setup
 downloads it from this repository's `main` branch; keep earlier versions for
 pinned projects. The generated reference includes its source, version, and
-upstream license.
+upstream license and is automatically formatted with `deno fmt` before saving.
 
 The library is maintained by [Nael Shiab](http://naelshiab.com/), computational
 journalist and senior data producer for [CBC News](https://www.cbc.ca/news).

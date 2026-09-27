@@ -15,6 +15,19 @@ const pageContent =
 const cachedReference = (version = "0.6.17") =>
   combinePlotDocs(version, new Map(pages.map((page) => [page, pageContent])));
 
+Deno.test("Plot docs - formatted repository reference uses one request", async () => {
+  const stored = readFileSync(
+    new URL("../docs-cache/observable-plot/0.6.17/llm.md", import.meta.url),
+    "utf8",
+  );
+  await withPlotFixture(async (urls) => {
+    const docs = await fetchPlotDocs("0.6.17");
+    assertEquals(docs.llm, stored);
+    assertEquals(urls.length, 1);
+    assertEquals(docs.plot?.pages, pages);
+  }, { stored });
+});
+
 async function withPlotFixture(
   run: (urls: string[]) => Promise<void>,
   options: {

@@ -80,11 +80,11 @@ async function generateReference(version: string): Promise<string> {
 
 function isStoredReference(content: string, version: string): boolean {
   const source = `https://github.com/observablehq/plot/tree/v${version}/docs`;
+  const metadata = content.split(/\n\s*\n/)[1]?.replace(/\s+/g, " ");
   if (
     !content.startsWith(`# Observable Plot ${version}\n\n`) ||
-    !content.includes(
-      `Package: \`@observablehq/plot@${version}\`. Source: [v${version}](${source}).`,
-    ) ||
+    metadata !==
+      `Package: \`@observablehq/plot@${version}\`. Source: [v${version}](${source}).` ||
     !content.trimEnd().endsWith(
       `<!-- setup-data-project:observable-plot:${version}:complete -->`,
     )
@@ -94,7 +94,7 @@ function isStoredReference(content: string, version: string): boolean {
   // exactly once and some upstream heading/content after its source record.
   const sections = [
     ...content.matchAll(
-      /<a id="(plot-[^"]+)"><\/a>\n\n# ([^\n]+\.md)\n\nSource: ([^\n]+)\n\n/g,
+      /<a id="(plot-[^"]+)"><\/a>\n\n# ([^\n]+\.md)\n\nSource:\s+([^\s]+)\n\n/g,
     ),
   ];
   if (sections.length !== PLOT_DOC_PAGES.length) return false;

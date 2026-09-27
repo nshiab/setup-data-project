@@ -24,9 +24,6 @@
     "minor": "deno task all-tests && deno run --no-lock -A jsr:@nshiab/bump-version minor",
     "major": "deno task all-tests && deno run --no-lock -A jsr:@nshiab/bump-version major"
   },
-  "fmt": {
-    "exclude": ["docs-cache/"]
-  },
   "imports": {
     "@clack/prompts": "npm:@clack/prompts@^1.3.0",
     "@deno/dnt": "jsr:@deno/dnt@^0.42.3",

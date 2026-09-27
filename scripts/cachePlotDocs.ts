@@ -1,5 +1,6 @@
 import { fetchPlotDocs } from "../src/helpers/fetchPlotDocs.ts";
 import { rmSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 
 const version = Deno.args[0];
 if (
@@ -43,10 +44,18 @@ const directory = new URL(
   import.meta.url,
 );
 Deno.mkdirSync(directory, { recursive: true });
-const temporaryFile = new URL(".llm.md.tmp", directory);
+const temporaryFile = new URL(".llm.tmp.md", directory);
 const outputFile = new URL("llm.md", directory);
 try {
   Deno.writeTextFileSync(temporaryFile, reference);
+  const formatted = await new Deno.Command(Deno.execPath(), {
+    args: ["fmt", fileURLToPath(temporaryFile)],
+    stdout: "piped",
+    stderr: "piped",
+  }).output();
+  if (!formatted.success) {
+    throw new Error(new TextDecoder().decode(formatted.stderr));
+  }
   Deno.renameSync(temporaryFile, outputFile);
 } finally {
   rmSync(temporaryFile, { force: true });
