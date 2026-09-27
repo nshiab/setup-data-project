@@ -32,12 +32,9 @@ selection is interactive. Use `--help` for usage.
   [simple-data-analysis-core](https://github.com/nshiab/simple-data-analysis-core),
   the full
   [simple-data-analysis](https://github.com/nshiab/simple-data-analysis/)
-  package, and [journalism](https://github.com/nshiab/journalism) libraries,
-  then fetches their README files and complete API documentation from the
-  matching version tags on GitHub for LLM use.
-- Adds version-matched Observable Plot documentation for static charts and maps
-  when Plot is installed, at `docs/observable-plot/llm.md`. The reference is
-  linked from `AGENTS.md`.
+  package, and [journalism](https://github.com/nshiab/journalism) libraries.
+- Downloads version-matched library documentation for LLM use and links it from
+  `AGENTS.md`.
 - Updates project configuration (e.g., `deno.json` or `package.json`) with
   relevant tasks.
 
