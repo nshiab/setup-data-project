@@ -18,7 +18,10 @@
     ]
   },
   "tasks": {
-    "cache-plot-docs": "deno run -A scripts/cachePlotDocs.ts",
+    "cache-plot-docs": {
+      "description": "Generate and format docs-cache/observable-plot/<version>/llm.md from upstream docs. Usage: deno task cache-plot-docs <exact-version>. Review and commit the result; keep earlier versions for pinned projects.",
+      "command": "deno run -A scripts/cachePlotDocs.ts"
+    },
     "all-tests": "deno fmt --check && deno lint && deno check src/main.ts && deno publish --allow-dirty --dry-run && deno test -A --fail-fast -- --internal-test-mode",
     "patch": "deno task all-tests && deno run --no-lock -A jsr:@nshiab/bump-version patch",
     "minor": "deno task all-tests && deno run --no-lock -A jsr:@nshiab/bump-version minor",
