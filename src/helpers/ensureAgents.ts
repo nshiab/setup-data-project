@@ -136,6 +136,8 @@ Always prioritize the installed ${libraryNames} ${libraryNoun} when relevant.
     });
     if (documentationGuidance.length > 0) {
       libraryGuidance += `
+The \`docs/\` folder contains long, exhaustive library references. Search for the relevant methods or topics, then read only the matching sections and any related definitions or examples you need.
+
 The following documentation was fetched for the exact installed library versions. Consult it when relevant:
 
 ${documentationGuidance.join("\n")}
