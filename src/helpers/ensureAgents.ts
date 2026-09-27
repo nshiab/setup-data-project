@@ -113,6 +113,14 @@ Always prioritize the installed ${libraryNames} ${libraryNoun} when relevant.
     const documentationGuidance = installedPackageConfigs.flatMap((pkg) => {
       const docs = docsMapping[pkg.value];
       if (!docs) return [];
+      if (docs.plot) {
+        return [
+          "- `@observablehq/plot`: use Observable Plot to create charts and maps " +
+          "with `writeChart` and `writeMap`. Import with " +
+          '`import { plot } from "@observablehq/plot";`. ' +
+          "Documentation and examples at `./docs/observable-plot/llm.md`",
+        ];
+      }
       const repoName = pkg.value.split("/")[1];
       const availableDocs = [
         docs.readme === undefined
@@ -128,13 +136,15 @@ Always prioritize the installed ${libraryNames} ${libraryNoun} when relevant.
     });
     if (documentationGuidance.length > 0) {
       libraryGuidance += `
+The \`docs/\` folder contains long, exhaustive library references. Search for the relevant methods or topics, then read only the matching sections and any related definitions or examples you need.
+
 The following documentation was fetched for the exact installed library versions. Consult it when relevant:
 
 ${documentationGuidance.join("\n")}
 `;
     }
     if (importExamples.length > 0) {
-      libraryGuidance += `APIs can be imported with named imports like this:
+      libraryGuidance += `APIs can be imported like this:
 \`\`\`typescript
 ${importExamples.join("\n")}
 \`\`\`

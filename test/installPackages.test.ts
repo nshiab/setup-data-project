@@ -28,7 +28,7 @@ Deno.test("installPackages - should install packages before docs are fetched", a
       { silent: true },
     );
     assertEquals(commands, [
-      "deno add --min-dep-age=0 jsr:@nshiab/simple-data-analysis",
+      "deno add jsr:@nshiab/simple-data-analysis",
       "deno add npm:@observablehq/plot",
     ]);
   } finally {

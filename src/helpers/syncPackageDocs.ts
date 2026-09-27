@@ -2,7 +2,8 @@ import { log } from "@clack/prompts";
 import { existsSync, mkdirSync, renameSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { fetchPackageDocs, type PackageDocs } from "./fetchPackageDocs.ts";
-import { SUPPORTED_PACKAGES } from "./packageRegistry.ts";
+import { fetchPlotDocs } from "./fetchPlotDocs.ts";
+import { DOCUMENTED_PACKAGES } from "./packageRegistry.ts";
 
 export async function syncPackageDocs(
   installedPackages: string[],
@@ -11,8 +12,9 @@ export async function syncPackageDocs(
   const installedSet = new Set(installedPackages);
   const docsMapping: Record<string, PackageDocs> = {};
 
-  for (const pkg of SUPPORTED_PACKAGES) {
-    const repoName = pkg.value.split("/")[1];
+  for (const pkg of DOCUMENTED_PACKAGES) {
+    const isPlot = pkg.value === "@observablehq/plot";
+    const repoName = isPlot ? "observable-plot" : pkg.value.split("/")[1];
     const docsDirectory = join("docs", repoName);
     const llmDocsPath = join(docsDirectory, "llm.md");
     const legacyDocsPath = join("docs", repoName + ".md");
@@ -47,8 +49,10 @@ export async function syncPackageDocs(
       continue;
     }
 
-    const docs = await fetchPackageDocs(pkg.value, version, { silent: true });
-    if (docs.readme !== undefined || docs.llm !== undefined) {
+    const docs = isPlot
+      ? await fetchPlotDocs(version)
+      : await fetchPackageDocs(pkg.value, version, { silent: true });
+    if (docs.readme !== undefined || docs.llm !== undefined || docs.plot) {
       docsMapping[pkg.value] = docs;
     }
   }
