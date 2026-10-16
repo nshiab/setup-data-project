@@ -21,7 +21,7 @@ export function ensureAgents(
     createContent: (section) => section,
     content: `Read package.json for the installed libraries and scripts. Prefer the installed data libraries when they cover the task.
 
-Use sda/main.ts as the entry point and sda/helpers/ for reusable helpers. Put tests in sda/tests/, source data in sda/data/, and results in sda/output/.
+Use sda/main.ts as the entry point and sda/helpers/ for reusable helpers. Put tests in sda/tests/, source data in sda/data/, and results in sda/output/. Import test utilities from \`vite-plus/test\`.
 
 For a single execution, run \`${command}\`. The sda script watches for changes. Before handing off code changes, run \`${run} all-tests\` and resolve failures.
 
