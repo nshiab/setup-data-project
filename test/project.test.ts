@@ -10,8 +10,23 @@ import { ensureEnvFile } from "../src/helpers/ensureEnvFile.ts";
 import { ensureGitignore } from "../src/helpers/ensureGitignore.ts";
 import { ensureAgents } from "../src/helpers/ensureAgents.ts";
 import { ensureReadme } from "../src/helpers/ensureReadme.ts";
+import { ensureVscode } from "../src/helpers/ensureVscode.ts";
 import { temporaryProject } from "./helpers/utils.ts";
 temporaryProject();
+test("VS Code setup preserves existing JSONC settings while adding missing recommendations", () => {
+  mkdirSync(".vscode");
+  const settings = '{\n  // My editor preferences\n  "editor.wordWrap": "off",\n}\n';
+  writeFileSync(".vscode/settings.json", settings);
+  ensureVscode();
+  expect(readFileSync(".vscode/settings.json", "utf8")).toBe(settings);
+  expect(readFileSync(".vscode/extensions.json", "utf8")).toContain(
+    "VoidZero.vite-plus-extension-pack",
+  );
+  const extensions = '{"recommendations":["my.extension"]}';
+  writeFileSync(".vscode/extensions.json", extensions);
+  ensureVscode();
+  expect(readFileSync(".vscode/extensions.json", "utf8")).toBe(extensions);
+});
 test("Bun wins over Node compatibility version", () => {
   expect(getRuntime({ bun: "1.3.0", node: "24.0.0" })).toBe("bun");
   expect(getRuntime({ node: "24.21.0" })).toBe("node");

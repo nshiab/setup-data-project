@@ -28,6 +28,10 @@ formatting, linting, type checking, and Vitest tests. Use `npm run sda`,
 `npm run all-tests`, and `npm run fix` (or `bun run` for Bun projects).
 Existing test commands remain in place.
 
+VS Code configuration recommends the Vite+ extension pack and enables formatting,
+lint fixes on save, and visual line wrapping. Existing `.vscode/extensions.json`
+and `.vscode/settings.json` files are left unchanged.
+
 Documentation is downloaded automatically for the exact installed library
 versions. Each library's release archive preserves its README, license,
 `llms.txt` index, granular API pages, and media under `docs/<library>/`.
