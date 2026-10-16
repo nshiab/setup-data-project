@@ -1,5 +1,6 @@
 export const GITIGNORE_ENTRIES = [
   "node_modules",
+  "docs/",
   ".tmp",
   ".sda-cache",
   ".journalism-cache",

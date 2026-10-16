@@ -33,9 +33,7 @@ export function createFolderStructure(selectedPackages: string[]) {
 const sdb = new SimpleDB();
 const table = sdb.newTable();
 
-await table
-  .loadArray([{ message: "Hello simple-data-analysis!" }])
-  .log();
+await table.loadArray([{ message: "Hello simple-data-analysis!" }]).log();
 
 await sdb.close();
 `;

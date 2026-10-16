@@ -1,20 +1,14 @@
 #!/usr/bin/env node
-import {
-  cancel,
-  intro,
-  isCancel,
-  multiselect,
-  outro,
-  select,
-  spinner,
-} from "@clack/prompts";
+import { cancel, intro, isCancel, multiselect, outro, select, spinner } from "@clack/prompts";
 import process from "node:process";
+import { execFileSync } from "node:child_process";
 
 import { getRuntime } from "./helpers/getRuntime.ts";
 import { PACKAGE_OPTIONS } from "./helpers/packageOptions.ts";
 import { ensureGitignore } from "./helpers/ensureGitignore.ts";
 import { ensureReadme } from "./helpers/ensureReadme.ts";
-import { installPackages } from "./helpers/installPackages.ts";
+import { ensureTooling } from "./helpers/ensureTooling.ts";
+import { runPackageManager, installPackages } from "./helpers/installPackages.ts";
 import { getProjectTasks } from "./helpers/getProjectTasks.ts";
 import { createFolderStructure } from "./helpers/createFolderStructure.ts";
 import { ensureEnvFile } from "./helpers/ensureEnvFile.ts";
@@ -33,11 +27,13 @@ async function main() {
   }
 
   const runtime = getRuntime();
+  const projectManifest = ProjectManifest.open();
+  if (cliOptions.docs) {
+    await refreshDocs(projectManifest);
+    return;
+  }
   console.log();
   intro(`Hi! 👋 (Running on ${runtime})`);
-
-  const projectManifest = ProjectManifest.open(runtime);
-  projectManifest.updateTasks(getProjectTasks());
 
   const installedPackages = projectManifest.getInstalledPackages();
   const options = PACKAGE_OPTIONS.map((opt) => ({
@@ -49,21 +45,19 @@ async function main() {
 
   const selectedPackages = cliOptions.package
     ? [cliOptions.package]
-    : (await multiselect({
-      message:
-        "Which libraries would you like to install?\n\x1b[2m(space to select, arrows to navigate, enter to confirm)\x1b[22m\n",
-      options,
-      required: false,
-    })) as string[];
+    : await multiselect({
+        message:
+          "Which libraries would you like to install?\n\x1b[2m(space to select, arrows to navigate, enter to confirm)\x1b[22m\n",
+        options,
+        required: false,
+      });
 
   if (isCancel(selectedPackages)) {
     cancel("Installation cancelled.");
     process.exit(0);
   }
 
-  const alreadyInstalled = selectedPackages.filter((pkg) =>
-    installedPackages.includes(pkg)
-  );
+  const alreadyInstalled = selectedPackages.filter((pkg) => installedPackages.includes(pkg));
 
   const packagesToInstall: string[] = [];
 
@@ -92,36 +86,46 @@ async function main() {
     }
   }
 
+  projectManifest.updateTasks(getProjectTasks(runtime));
+
   const sInstall = spinner();
   sInstall.start("Installing packages...");
 
-  for (const pkg of packagesToInstall) {
-    try {
-      await installPackages([pkg], { silent: true });
-    } catch (error) {
-      sInstall.stop(`❌ Failed to install ${pkg}.`);
-      console.error(error);
-      process.exit(1);
+  try {
+    await installPackages(packagesToInstall);
+    projectManifest.reload();
+    const declared = projectManifest.getInstalledPackageSpecifiers();
+    if (
+      projectManifest
+        .getInstalledPackages()
+        .some((pkg) =>
+          ["@nshiab/simple-data-analysis", "@nshiab/journalism-dataviz"].includes(pkg),
+        ) &&
+      !declared["@observablehq/plot"]
+    ) {
+      await installPackages(["@observablehq/plot"]);
+      projectManifest.reload();
     }
+    await ensureTooling(projectManifest);
+    // Reinstall declared dependencies when a project was cloned without node_modules.
+    projectManifest.reload();
+    const versions = getInstalledPackageVersions(projectManifest.getInstalledPackageSpecifiers());
+    if (projectManifest.getInstalledPackages().some((pkg) => !versions[pkg]))
+      await runPackageManager(["install"]);
+  } catch (error) {
+    sInstall.stop("Package installation failed.");
+    throw error;
   }
   sInstall.stop("✅ Package installation complete.");
 
   projectManifest.reload();
   projectManifest.updateTasks(getProjectTasks());
+  execFileSync("node", ["node_modules/vite-plus/bin/vp", "fmt", "package.json"], { stdio: "pipe" });
 
   const finalInstalledPackages = getInstalledPackageConfigs(
     projectManifest.getInstalledPackages(),
   ).map((pkg) => pkg.value);
-  const finalInstalledVersions = getInstalledPackageVersions(
-    projectManifest.getInstalledPackageSpecifiers(),
-  );
-  const sDocs = spinner();
-  sDocs.start("Fetching documentation for installed package versions...");
-  const docsMapping = await syncPackageDocs(
-    finalInstalledPackages,
-    finalInstalledVersions,
-  );
-  sDocs.stop("✅ Documentation synchronization complete.");
+  const docsMapping = await refreshDocs(projectManifest);
 
   createFolderStructure(finalInstalledPackages);
 
@@ -129,11 +133,30 @@ async function main() {
 
   ensureEnvFile();
 
-  await ensureReadme(runtime, finalInstalledPackages);
+  ensureReadme(runtime, finalInstalledPackages);
 
-  await ensureAgents(docsMapping, runtime, finalInstalledPackages);
+  ensureAgents(docsMapping, runtime, finalInstalledPackages);
 
-  outro("You are all set! 🙌");
+  outro(
+    process.exitCode
+      ? "Project setup complete; documentation needs attention."
+      : "You are all set! 🙌",
+  );
+}
+
+async function refreshDocs(manifest: ProjectManifest) {
+  const packages = getInstalledPackageConfigs(manifest.getInstalledPackages()).map(
+    (pkg) => pkg.value,
+  );
+  const mapping = await syncPackageDocs(
+    packages,
+    getInstalledPackageVersions(manifest.getInstalledPackageSpecifiers()),
+  );
+  if (Object.keys(mapping).length !== packages.length) {
+    console.error("Documentation refresh incomplete. See the warnings above.");
+    process.exitCode = 1;
+  }
+  return mapping;
 }
 
 main().catch((error) => {

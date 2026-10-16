@@ -1,61 +1,25 @@
 import { log } from "@clack/prompts";
-import { existsSync, mkdirSync, renameSync, rmSync } from "node:fs";
-import { join } from "node:path";
 import { fetchPackageDocs, type PackageDocs } from "./fetchPackageDocs.ts";
 import { fetchPlotDocs } from "./fetchPlotDocs.ts";
-import { DOCUMENTED_PACKAGES } from "./packageRegistry.ts";
-
+import { getInstalledPackageConfigs } from "./packageRegistry.ts";
 export async function syncPackageDocs(
   installedPackages: string[],
   installedVersions: Record<string, string>,
 ): Promise<Record<string, PackageDocs>> {
-  const installedSet = new Set(installedPackages);
-  const docsMapping: Record<string, PackageDocs> = {};
-
-  for (const pkg of DOCUMENTED_PACKAGES) {
-    const isPlot = pkg.value === "@observablehq/plot";
-    const repoName = isPlot ? "observable-plot" : pkg.value.split("/")[1];
-    const docsDirectory = join("docs", repoName);
-    const llmDocsPath = join(docsDirectory, "llm.md");
-    const legacyDocsPath = join("docs", repoName + ".md");
-
-    if (!installedSet.has(pkg.value)) {
-      for (const path of [docsDirectory, legacyDocsPath]) {
-        if (existsSync(path)) {
-          rmSync(path, { recursive: true });
-          log.info(`Removed stale documentation at ${path}.`);
-        }
-      }
-      continue;
-    }
-
-    if (existsSync(legacyDocsPath)) {
-      if (!existsSync(llmDocsPath)) {
-        mkdirSync(docsDirectory, { recursive: true });
-        renameSync(legacyDocsPath, llmDocsPath);
-        log.info(`Moved documentation to ${llmDocsPath}.`);
-      } else {
-        rmSync(legacyDocsPath);
-      }
-    }
-
+  const mapping: Record<string, PackageDocs> = {};
+  for (const pkg of getInstalledPackageConfigs(installedPackages)) {
     const version = installedVersions[pkg.value];
-    if (version === undefined) {
+    if (!version) {
       log.warn(
-        `Could not determine the exact installed version of ${pkg.value}. ` +
-          "Existing local documentation was preserved but will not be " +
-          "included in AGENTS.md.",
+        `Could not determine the installed version of ${pkg.value}. Install the project dependencies, then run the docs script again. Existing documentation may be stale.`,
       );
       continue;
     }
-
-    const docs = isPlot
-      ? await fetchPlotDocs(version)
-      : await fetchPackageDocs(pkg.value, version, { silent: true });
-    if (docs.readme !== undefined || docs.llm !== undefined || docs.plot) {
-      docsMapping[pkg.value] = docs;
-    }
+    const docs =
+      pkg.value === "@observablehq/plot"
+        ? await fetchPlotDocs(version)
+        : await fetchPackageDocs(pkg.value, version);
+    if (docs.index !== undefined || docs.plot) mapping[pkg.value] = docs;
   }
-
-  return docsMapping;
+  return mapping;
 }

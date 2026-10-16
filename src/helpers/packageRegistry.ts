@@ -10,8 +10,7 @@ export const SUPPORTED_PACKAGES: PackageConfig[] = [
     value: "@nshiab/simple-data-analysis",
     label: "simple-data-analysis",
     type: "sda",
-    hint:
-      "All the core functionality, plus methods for dataviz, AI, Google sheets, etc.",
+    hint: "All the core functionality, plus methods for dataviz, AI, Google sheets, etc.",
   },
   {
     value: "@nshiab/simple-data-analysis-core",
@@ -23,8 +22,7 @@ export const SUPPORTED_PACKAGES: PackageConfig[] = [
     value: "@nshiab/journalism-ai",
     label: "journalism-ai",
     type: "journalism",
-    hint:
-      "Easily use AI local models with Ollama or remote models with Gemini/Vertex.",
+    hint: "Easily use AI local models with Ollama or remote models with Gemini/Vertex.",
   },
   {
     value: "@nshiab/journalism-google",
@@ -36,15 +34,13 @@ export const SUPPORTED_PACKAGES: PackageConfig[] = [
     value: "@nshiab/journalism-web-scraping",
     label: "journalism-web-scraping",
     type: "journalism",
-    hint:
-      "Retrieve data from Statistics Canada tables, HTML table, download files...",
+    hint: "Retrieve data from Statistics Canada tables, HTML table, download files...",
   },
   {
     value: "@nshiab/journalism-finance",
     label: "journalism-finance",
     type: "journalism",
-    hint:
-      "Retrieve financial data, calculate Canadian mortgage payments and taxes...",
+    hint: "Retrieve financial data, calculate Canadian mortgage payments and taxes...",
   },
   {
     value: "@nshiab/journalism-format",
@@ -62,48 +58,42 @@ export const SUPPORTED_PACKAGES: PackageConfig[] = [
     value: "@nshiab/journalism-dataviz",
     label: "journalism-dataviz",
     type: "journalism",
-    hint:
-      "Render charts/maps with Observable Plot or directly in the terminal.",
+    hint: "Render charts/maps with Observable Plot or directly in the terminal.",
   },
   {
     value: "@nshiab/journalism-geo",
     label: "journalism-geo",
     type: "journalism",
-    hint:
-      "Calculate distances, transform 2D coordinates to 3D, wrangle GeoTIFF files...",
+    hint: "Calculate distances, transform 2D coordinates to 3D, wrangle GeoTIFF files...",
   },
   {
     value: "@nshiab/journalism-statistics",
     label: "journalism-statistics",
     type: "journalism",
-    hint:
-      "Functions for statistical tests, clustering, random path generation...",
+    hint: "Functions for statistical tests, clustering, random path generation...",
   },
   {
     value: "@nshiab/journalism-web",
     label: "journalism-web",
     type: "journalism",
-    hint:
-      "Web related functions, including downloading data as CSV, extracting ZIP files to URLs...",
+    hint: "Web related functions, including downloading data as CSV, extracting ZIP files to URLs...",
   },
   {
     value: "@nshiab/journalism-extras",
     label: "journalism-extras",
     type: "journalism",
-    hint:
-      "Functions to zip/unzip, sleep, reencode files, create nested directories...",
+    hint: "Functions to zip/unzip, sleep, reencode files, create nested directories...",
   },
 ];
 
 // Plot is installed alongside charting libraries, but is not a setup menu option.
 export const DOCUMENTED_PACKAGES: PackageConfig[] = [
   ...SUPPORTED_PACKAGES,
+  { value: "@nshiab/journalism", label: "journalism", type: "journalism" },
   { value: "@observablehq/plot", label: "Observable Plot", type: "other" },
 ];
 
-export function getInstalledPackageConfigs(
-  installedPackages: string[],
-): PackageConfig[] {
+export function getInstalledPackageConfigs(installedPackages: string[]): PackageConfig[] {
   const installedSet = new Set(installedPackages);
   return DOCUMENTED_PACKAGES.filter((pkg) => installedSet.has(pkg.value));
 }
