@@ -26,12 +26,22 @@ test("docs-only leaves package files, env, source and instructions unchanged", (
     "main.ts": "// custom source",
   };
   for (const [path, content] of Object.entries(files)) writeFileSync(path, content);
-  execFileSync(process.execPath, [entry, "--docs"], { stdio: "pipe" });
+  expect(execFileSync(process.execPath, [entry, "--docs"], { encoding: "utf8" })).toContain(
+    "No library documentation to download.",
+  );
   expect(readdirSync(".").sort()).toEqual(Object.keys(files).sort());
   for (const [path, content] of Object.entries(files))
     expect(readFileSync(path, "utf8")).toBe(content);
   writeFileSync("package.json", '{"dependencies":{"@nshiab/journalism-format":"1.1.14"}}');
-  expect(() => execFileSync(process.execPath, [entry, "--docs"], { stdio: "pipe" })).toThrow();
+  const result = spawnSync(process.execPath, [entry, "--docs"], {
+    encoding: "utf8",
+    timeout: 3000,
+  });
+  expect(result.error).toBeUndefined();
+  expect(result.status).toBe(1);
+  expect(result.stdout).toContain("Could not determine the installed version");
+  expect(result.stdout).toContain("Documentation incomplete.");
+  expect(result.stdout).not.toContain("Documentation downloaded.");
   expect(readdirSync(".").sort()).toEqual(Object.keys(files).sort());
 });
 test("cancelling library selection creates no project files", async () => {

@@ -118,30 +118,33 @@ async function main() {
     sInstall.stop("Package installation failed.");
     throw error;
   }
-  sInstall.stop("✅ Package installation complete.");
+  sInstall.stop("Packages installed.");
 
   projectManifest.reload();
-  projectManifest.updateTasks(getProjectTasks());
-  execFileSync(process.execPath, ["node_modules/vite-plus/bin/vp", "fmt", "package.json"], {
-    stdio: "pipe",
-  });
-
   const finalInstalledPackages = getInstalledPackageConfigs(
     projectManifest.getInstalledPackages(),
   ).map((pkg) => pkg.value);
   const docsMapping = await refreshDocs(projectManifest);
 
-  createFolderStructure(finalInstalledPackages);
+  const sConfig = spinner();
+  sConfig.start("Preparing project files and configuration...");
+  try {
+    projectManifest.updateTasks(getProjectTasks());
+    execFileSync(process.execPath, ["node_modules/vite-plus/bin/vp", "fmt", "package.json"], {
+      stdio: "pipe",
+    });
 
-  ensureGitignore();
-
-  ensureEnvFile();
-
-  ensureVscode();
-
-  ensureReadme(runtime, finalInstalledPackages);
-
-  ensureAgents(docsMapping, runtime, finalInstalledPackages);
+    createFolderStructure(finalInstalledPackages);
+    ensureGitignore();
+    ensureEnvFile();
+    ensureVscode();
+    ensureReadme(runtime, finalInstalledPackages);
+    ensureAgents(docsMapping, runtime, finalInstalledPackages);
+  } catch (error) {
+    sConfig.stop("Project configuration failed.");
+    throw error;
+  }
+  sConfig.stop("Project files and configuration ready.");
 
   outro(
     process.exitCode
@@ -154,15 +157,26 @@ async function refreshDocs(manifest: ProjectManifest) {
   const packages = getInstalledPackageConfigs(manifest.getInstalledPackages()).map(
     (pkg) => pkg.value,
   );
-  const mapping = await syncPackageDocs(
-    packages,
-    getInstalledPackageVersions(manifest.getInstalledPackageSpecifiers()),
-  );
-  if (Object.keys(mapping).length !== packages.length) {
-    console.error("Documentation refresh incomplete. See the warnings above.");
-    process.exitCode = 1;
+  const sDocs = spinner();
+  sDocs.start("Downloading documentation...");
+  try {
+    const mapping = await syncPackageDocs(
+      packages,
+      getInstalledPackageVersions(manifest.getInstalledPackageSpecifiers()),
+    );
+    if (Object.keys(mapping).length !== packages.length) {
+      sDocs.stop("Documentation incomplete. See the warnings above.");
+      process.exitCode = 1;
+    } else {
+      sDocs.stop(
+        packages.length > 0 ? "Documentation downloaded." : "No library documentation to download.",
+      );
+    }
+    return mapping;
+  } catch (error) {
+    sDocs.stop("Documentation download failed.");
+    throw error;
   }
-  return mapping;
 }
 
 main().catch((error) => {

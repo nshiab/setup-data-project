@@ -2,7 +2,6 @@ import { deepStrictEqual as assertEquals } from "node:assert";
 import { test, expect } from "vite-plus/test";
 import { existsSync, mkdirSync } from "node:fs";
 const assertExists = (path: string) => expect(existsSync(path)).toBe(true);
-import { log } from "@clack/prompts";
 import { join } from "node:path";
 import { readFileSync, symlinkSync, writeFileSync } from "node:fs";
 import { createFolderStructure } from "../src/helpers/createFolderStructure.ts";
@@ -10,16 +9,12 @@ import { temporaryProject } from "./helpers/utils.ts";
 temporaryProject();
 
 test("createFolderStructure - should create the correct files and folders", () => {
-  const messages: string[] = [];
-  log.info = (message) => messages.push(message);
-
   createFolderStructure([]);
   assertExists(join("sda", "data"));
   assertExists(join("sda", "helpers"));
   assertExists(join("sda", "output"));
   assertExists(join("sda", "tests"));
   assertExists(join("sda", "main.ts"));
-  assertEquals(messages, ["Created sda/main.ts"]);
 });
 
 test("createFolderStructure - should use @nshiab/simple-data-analysis-core if selected", () => {

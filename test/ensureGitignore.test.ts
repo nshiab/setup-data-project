@@ -1,6 +1,5 @@
 import { deepStrictEqual as assertEquals } from "node:assert";
 import { test } from "vite-plus/test";
-import { log } from "@clack/prompts";
 import { readFileSync, symlinkSync, writeFileSync } from "node:fs";
 import { ensureGitignore, GITIGNORE_SENTINEL } from "../src/helpers/ensureGitignore.ts";
 import { GITIGNORE_ENTRIES } from "../src/helpers/gitignoreEntries.ts";
@@ -8,20 +7,14 @@ import { temporaryProject } from "./helpers/utils.ts";
 temporaryProject();
 
 test("ensureGitignore - should create .gitignore without a leading blank line", () => {
-  const messages: string[] = [];
-  log.info = (message) => messages.push(message);
-
   ensureGitignore();
   assertEquals(
     readFileSync(".gitignore", "utf-8"),
     `${GITIGNORE_SENTINEL}\n${GITIGNORE_ENTRIES.join("\n")}\n`,
   );
-  assertEquals(messages, ["Created .gitignore"]);
 });
 
 test("ensureGitignore - should append the complete block when the sentinel is absent", () => {
-  const messages: string[] = [];
-  log.info = (message) => messages.push(message);
   writeFileSync(".gitignore", "node_modules\ncustom-entry\n");
 
   ensureGitignore();
@@ -30,7 +23,6 @@ test("ensureGitignore - should append the complete block when the sentinel is ab
     readFileSync(".gitignore", "utf-8"),
     `node_modules\ncustom-entry\n\n${GITIGNORE_SENTINEL}\n${GITIGNORE_ENTRIES.join("\n")}\n`,
   );
-  assertEquals(messages, ["Updated .gitignore"]);
 });
 
 test("ensureGitignore - should append missing entries to a file containing the sentinel", () => {

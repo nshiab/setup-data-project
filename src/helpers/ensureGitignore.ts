@@ -1,5 +1,4 @@
 import { lstatSync, readFileSync, writeFileSync } from "node:fs";
-import { log } from "@clack/prompts";
 import { GITIGNORE_ENTRIES } from "./gitignoreEntries.ts";
 
 export const GITIGNORE_SENTINEL = "# Added by setup-data-project. Do not remove this line.";
@@ -29,6 +28,4 @@ export function ensureGitignore() {
   const separator = content === "" ? "" : content.endsWith("\n") ? "\n" : "\n\n";
   const block = `${GITIGNORE_SENTINEL}\n${GITIGNORE_ENTRIES.join("\n")}\n`;
   writeFileSync(path, content + separator + block);
-
-  log.info(`${stats === undefined ? "Created" : "Updated"} ${path}`);
 }
