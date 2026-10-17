@@ -27,7 +27,7 @@ export async function installPackages(
   const bun = getRuntime() === "bun";
   await runPackageManager([
     bun ? "add" : "install",
-    ...(options.development ? (bun ? ["--dev", "--exact"] : ["--save-dev", "--save-exact"]) : []),
+    ...(options.development ? (bun ? ["--dev"] : ["--save-dev"]) : []),
     ...packages,
   ]);
 }

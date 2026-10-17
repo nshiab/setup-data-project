@@ -17,7 +17,7 @@ test("package manager failures reject with an actionable command", async () => {
   }
 });
 test.skipIf(process.platform === "win32")(
-  "npm and Bun receive their own exact development dependency flags",
+  "npm and Bun receive their own development dependency flags",
   async () => {
     for (const runtime of ["node", "bun"]) {
       const bun = runtime === "bun";
@@ -30,12 +30,12 @@ test.skipIf(process.platform === "win32")(
       chmodSync(command, 0o755);
       vi.stubEnv("PATH", process.cwd());
       try {
-        await installPackages(["vite-plus@1.2.0"], { development: true });
+        await installPackages(["vite-plus@latest"], { development: true });
         const args: unknown = JSON.parse(readFileSync("arguments.json", "utf8"));
         expect(args).toEqual(
           bun
-            ? ["add", "--dev", "--exact", "vite-plus@1.2.0"]
-            : ["install", "--save-dev", "--save-exact", "vite-plus@1.2.0"],
+            ? ["add", "--dev", "vite-plus@latest"]
+            : ["install", "--save-dev", "vite-plus@latest"],
         );
       } finally {
         vi.unstubAllEnvs();

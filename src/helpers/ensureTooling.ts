@@ -2,15 +2,13 @@ import { existsSync, writeFileSync } from "node:fs";
 import { ProjectManifest } from "./projectManifest.ts";
 import { getRuntime } from "./getRuntime.ts";
 import { installPackages } from "./installPackages.ts";
-const tools = { "vite-plus": "1.2.0", typescript: "6.0.3", "@types/node": "24.19.2" };
+const tools = ["vite-plus", "typescript", "@types/node"];
 export async function ensureTooling(manifest: ProjectManifest): Promise<void> {
   const runtime = getRuntime();
-  const runtimeTools = runtime === "bun" ? { ...tools, "@types/bun": "1.4.3" } : tools;
+  const runtimeTools = runtime === "bun" ? [...tools, "@types/bun"] : tools;
   const installed = manifest.getInstalledPackages();
   await installPackages(
-    Object.entries(runtimeTools)
-      .filter(([pkg]) => !installed.includes(pkg))
-      .map(([pkg, version]) => `${pkg}@${version}`),
+    runtimeTools.filter((pkg) => !installed.includes(pkg)).map((pkg) => `${pkg}@latest`),
     { development: true },
   );
   if (
