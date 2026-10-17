@@ -1,203 +1,34 @@
-import { log } from "@clack/prompts";
 import type { PackageDocs } from "./fetchPackageDocs.ts";
 import { ensureManagedSection } from "./ensureManagedSection.ts";
-import {
-  getInstalledPackageConfigs,
-  SUPPORTED_PACKAGES,
-} from "./packageRegistry.ts";
-
+import { getInstalledPackageConfigs } from "./packageRegistry.ts";
+import type { Runtime } from "./getRuntime.ts";
 export function ensureAgents(
   docsMapping: Record<string, PackageDocs>,
-  runtime: string,
+  runtime: Runtime,
   installedPackages: string[] = Object.keys(docsMapping),
 ) {
-  let journalismFunctions = "";
-  let sdaClassesAndMethods = "";
-  let sdaDocsPath = "";
-  let sdaReadmePath = "";
-  let sdaLibraryName = "";
-  const journalismFunctionsByPackage = new Map<string, string[]>();
-
-  for (const [pkg, docs] of Object.entries(docsMapping)) {
-    const pkgConfig = SUPPORTED_PACKAGES.find((p) => p.value === pkg);
-    const pkgType = pkgConfig?.type || "other";
-    const doc = docs.llm;
-
-    if (doc === undefined) continue;
-
-    if (pkgType === "journalism") {
-      const repoName = pkg.split("/")[1];
-      const functions = doc
-        .split("\n")
-        .filter((line) => line.trim().startsWith("#"))
-        .filter((line) => {
-          const depth = line.match(/^#+/)?.[0].length || 0;
-          return depth === 2;
-        })
-        .map((line) => line.replace(/^#+\s+/, "").trim());
-      journalismFunctionsByPackage.set(pkg, functions);
-      journalismFunctions += `\n### ${repoName}\n\n`;
-      journalismFunctions += functions.map((name) => `- ${name}`).join("\n") +
-        "\n";
-    } else if (pkgType === "sda") {
-      const repoName = pkg.split("/")[1];
-      sdaDocsPath = `./docs/${repoName}/llm.md`;
-      sdaReadmePath = docs.readme === undefined
-        ? ""
-        : `./docs/${repoName}/README.md`;
-      sdaLibraryName = pkgConfig?.label || repoName;
-      sdaClassesAndMethods = doc
-        .split("\n")
-        .filter((line) => line.trim().startsWith("#"))
-        .filter((line) => {
-          const depth = line.match(/^#+/)?.[0].length || 0;
-          if (depth === 2) return true;
-          if (depth !== 4) return false;
-          const heading = line.replace(/^#+\s+/, "").replaceAll("`", "")
-            .trim();
-          return heading !== "Parameters";
-        })
-        .map((line) => {
-          const depth = line.match(/^#+/)?.[0].length || 0;
-          if (depth === 2) {
-            return "\n" + line.replace(/^#+\s+/, "").trim();
-          } else {
-            return line.replace(/^#+\s+/, "  - ")
-              .replaceAll("`", "");
-          }
-        })
-        .join("\n");
-    }
-  }
-
-  const configFile = runtime === "deno" ? "deno.json" : "package.json";
-  const runSdaOnce = runtime === "deno"
-    ? "deno run -A --env --check sda/main.ts"
-    : runtime === "bun"
-    ? "bun run sda/main.ts"
-    : "node --env-file-if-exists=.env --experimental-strip-types sda/main.ts";
-  const runClean = runtime === "deno" ? "deno task clean" : "npm run clean";
-  const runAllTests = runtime === "deno"
-    ? "deno task all-tests"
-    : runtime === "bun"
-    ? "bun run all-tests"
-    : "npm run all-tests";
-
-  const installedPackageConfigs = getInstalledPackageConfigs(
-    installedPackages,
-  );
-  const importExamples = installedPackageConfigs.flatMap((pkg) => {
-    if (pkg.type === "sda") {
-      return [`import { SimpleDB } from "${pkg.value}";`];
-    }
-
-    const functionName = journalismFunctionsByPackage.get(pkg.value)
-      ?.map((name) => name.replaceAll("`", ""))
-      .find((name) => /^[A-Za-z_$][\w$]*$/.test(name));
-    return functionName
-      ? [`import { ${functionName} } from "${pkg.value}";`]
-      : [];
+  const run = runtime === "bun" ? "bun run" : "npm run";
+  const command =
+    runtime === "bun" ? "bun run sda/main.ts" : "node --env-file-if-exists=.env sda/main.ts";
+  const links = getInstalledPackageConfigs(installedPackages).map((pkg) => {
+    if (pkg.value === "@observablehq/plot")
+      return `- Observable Plot charts and maps: read \`docs/observable-plot/llm.md\` for use with writeChart and writeMap.`;
+    return `- \`${pkg.value}\`: start at \`docs/${pkg.value.slice("@nshiab/".length)}/llms.txt\`, then read the relevant API pages and examples.`;
   });
-
-  let libraryGuidance = "";
-  if (installedPackageConfigs.length > 0) {
-    const libraryNames = installedPackageConfigs.map((pkg) => `"${pkg.value}"`)
-      .join(", ");
-    const libraryNoun = installedPackageConfigs.length === 1
-      ? "library"
-      : "libraries";
-    libraryGuidance = `
-Always prioritize the installed ${libraryNames} ${libraryNoun} when relevant.
-`;
-
-    const documentationGuidance = installedPackageConfigs.flatMap((pkg) => {
-      const docs = docsMapping[pkg.value];
-      if (!docs) return [];
-      if (docs.plot) {
-        return [
-          "- `@observablehq/plot`: use Observable Plot to create charts and maps " +
-          "with `writeChart` and `writeMap`. Import with " +
-          '`import { plot } from "@observablehq/plot";`. ' +
-          "Documentation and examples at `./docs/observable-plot/llm.md`",
-        ];
-      }
-      const repoName = pkg.value.split("/")[1];
-      const availableDocs = [
-        docs.readme === undefined
-          ? ""
-          : `overview and practical examples at \`./docs/${repoName}/README.md\``,
-        docs.llm === undefined
-          ? ""
-          : `complete API documentation at \`./docs/${repoName}/llm.md\``,
-      ].filter(Boolean);
-      return availableDocs.length === 0
-        ? []
-        : [`- \`${pkg.value}\`: ${availableDocs.join("; ")}`];
-    });
-    if (documentationGuidance.length > 0) {
-      libraryGuidance += `
-The \`docs/\` folder contains long, exhaustive library references. Search for the relevant methods or topics, then read only the matching sections and any related definitions or examples you need.
-
-The following documentation was fetched for the exact installed library versions. Consult it when relevant:
-
-${documentationGuidance.join("\n")}
-`;
-    }
-    if (importExamples.length > 0) {
-      libraryGuidance += `APIs can be imported like this:
-\`\`\`typescript
-${importExamples.join("\n")}
-\`\`\`
-`;
-    }
-  }
-
-  let content =
-    `Always verify if there is a ${configFile} file in the root of the project and familiarize yourself with the scripts available in it and the libraries already installed in the project.
-
-Run \`sda/main.ts\` with \`${runSdaOnce}\`. Do not use the \`sda\` task for agent-driven checks because it runs in watch mode and will keep waiting for file changes.
-
-Before handing off your work, always run \`${runAllTests}\`, even if no tests have been added yet. Fix any errors or warnings it reports.
-
-The \`clean\` task (e.g. \`${runClean}\`) removes caches and other temporary files. Do not run it routinely. Cached results can be especially valuable for computationally expensive operations or API calls. If you are unsure whether the caches should be removed, ask the user first.
-
-Always use "sda/main.ts" as the entry point.
-
-If you need to create other TypeScript files, create them in the "sda/helpers" folder. Prioritize the use of helper functions to keep the code well organized and maintainable, with one helper function per file, with the file named after the function. Prioritize default exports for helper functions.
-
-Put tests in the "sda/tests" folder. Write focused tests for reusable helpers and important data transformations when appropriate. When testing a helper from "sda/helpers/functionName.ts", name its test file "sda/tests/functionName.test.ts".
-
-If you need to download data, always put the files in the "sda/data" folder, which is ignored by Git.
-
-If you need to output data to a file, always put the file in the "sda/output" folder, which is also ignored by Git.
-${libraryGuidance}`;
-
-  if (journalismFunctions !== "") {
-    content += `
-Here are the functions available in the "journalism" libraries. If one of the functions might be relevant, search its complete API documentation in the corresponding \`./docs/<library-name>/llm.md\` file to properly use it.
-${journalismFunctions}`;
-  }
-
-  if (sdaClassesAndMethods !== "") {
-    const readmeGuidance = sdaReadmePath === ""
-      ? ""
-      : ` An overview and practical examples are available at "${sdaReadmePath}".`;
-    content += `
-Here are the classes and their methods available in the "${sdaLibraryName}" library.${readmeGuidance} If one of the classes or methods might be relevant, search the complete API documentation at "${sdaDocsPath}" to properly use it.
-
-Most data-loading and transformation methods are synchronous, chainable builders. Await the final asynchronous observer or export method, such as \`log()\`, \`getData()\`, or \`writeData()\`, to execute the queued operations. If a chain ends without an observer, call \`run()\`. Always call \`await sdb.close()\` when the database is no longer needed. Methods that return an answer or export to an external service can be asynchronous, so verify their documentation before calling them.
-${sdaClassesAndMethods}`;
-  }
-
-  const status = ensureManagedSection({
+  ensureManagedSection({
     path: "AGENTS.md",
     name: "agents",
-    content,
-    createContent: (managedSection) => managedSection,
+    createContent: (section) => section,
+    content: `Read package.json for the installed libraries and scripts. Prefer the installed data libraries when they cover the task.
+
+Use sda/main.ts as the entry point and sda/helpers/ for reusable helpers. Put tests in sda/tests/, source data in sda/data/, and results in sda/output/. Import test utilities from \`vite-plus/test\`.
+
+For a single execution, run \`${command}\`. The sda script watches for changes. Before handing off code changes, run \`${run} all-tests\` and resolve failures.
+
+The clean script removes cached results and temporary files. Run it only when those cached results can be discarded.
+
+Library documentation in docs/ is generated and ignored by Git. Run \`${run} docs\` when documentation is missing or after dependency changes; resolve refresh failures before using possibly stale references. Edit project source files rather than downloaded documentation.
+
+${links.join("\n")}`,
   });
-  if (status === "created") {
-    log.info("Created AGENTS.md");
-  } else if (status === "updated") {
-    log.info("Updated AGENTS.md");
-  }
 }

@@ -42,7 +42,7 @@ export async function fetchPlotDocs(
     log.warn(
       `Could not fetch complete Observable Plot documentation for ${tag}. ` +
         "Existing files were preserved, but may not match the installed " +
-        "version. Plot documentation will not be included in AGENTS.md. " +
+        "version. Resolve the refresh failure before using this reference. " +
         String(error),
     );
     return {};
@@ -59,7 +59,8 @@ async function generateReference(version: string): Promise<string> {
     await Promise.all(
       pages.slice(offset, offset + 8).map(async (page) => {
         try {
-          const url = "https://raw.githubusercontent.com/observablehq/plot/" +
+          const url =
+            "https://raw.githubusercontent.com/observablehq/plot/" +
             `refs/tags/${tag}/docs/${page}`;
           const response = await fetch(url);
           if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -83,19 +84,15 @@ function isStoredReference(content: string, version: string): boolean {
   const metadata = content.split(/\n\s*\n/)[1]?.replace(/\s+/g, " ");
   if (
     !content.startsWith(`# Observable Plot ${version}\n\n`) ||
-    metadata !==
-      `Package: \`@observablehq/plot@${version}\`. Source: [v${version}](${source}).` ||
-    !content.trimEnd().endsWith(
-      `<!-- setup-data-project:observable-plot:${version}:complete -->`,
-    )
-  ) return false;
+    metadata !== `Package: \`@observablehq/plot@${version}\`. Source: [v${version}](${source}).` ||
+    !content.trimEnd().endsWith(`<!-- setup-data-project:observable-plot:${version}:complete -->`)
+  )
+    return false;
 
   // Match actual page sections, not TOC entries. Require every selected page
   // exactly once and some upstream heading/content after its source record.
   const sections = [
-    ...content.matchAll(
-      /<a id="(plot-[^"]+)"><\/a>\n\n# ([^\n]+\.md)\n\nSource:\s+([^\s]+)\n\n/g,
-    ),
+    ...content.matchAll(/<a id="(plot-[^"]+)"><\/a>\n\n# ([^\n]+\.md)\n\nSource:\s+([^\s]+)\n\n/g),
   ];
   if (sections.length !== PLOT_DOC_PAGES.length) return false;
   const found = new Set<string>();
@@ -104,13 +101,13 @@ function isStoredReference(content: string, version: string): boolean {
     const page = section[2];
     const id = `plot-${page.replace(/\.md$/, "").replaceAll("/", "--")}`;
     if (
-      !PLOT_DOC_PAGES.includes(page) || found.has(page) || section[1] !== id ||
+      !PLOT_DOC_PAGES.includes(page) ||
+      found.has(page) ||
+      section[1] !== id ||
       section[3] !== `${source}/${page}`
-    ) return false;
-    const body = content.slice(
-      section.index! + section[0].length,
-      sections[index + 1]?.index,
-    );
+    )
+      return false;
+    const body = content.slice(section.index + section[0].length, sections[index + 1]?.index);
     if (!/^#{1,6}\s+\S/m.test(body)) return false;
     found.add(page);
   }

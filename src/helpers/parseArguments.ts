@@ -1,36 +1,45 @@
+import { SUPPORTED_PACKAGES } from "./packageRegistry.ts";
+
 export interface CliOptions {
   help: boolean;
-  package?: string;
+  docs: boolean;
+  packages: string[];
 }
 
-export const CLI_HELP = `Usage: setup-data-project [--sda | --sda-core] [--help]
+const packageFlags = new Map(
+  SUPPORTED_PACKAGES.map((pkg) => [
+    `--${pkg.label.replace(/^simple-data-analysis/, "sda").replace(/^journalism-/, "")}`,
+    pkg.value,
+  ]),
+);
 
-  --sda       Select simple-data-analysis without prompting.
-  --sda-core  Select simple-data-analysis-core without prompting.
-  -h, --help  Show this help and exit.
+export const CLI_HELP = `Usage: setup-data-project [library flags | --docs] [--help]
+
+${Array.from(packageFlags, ([flag, pkg]) => `  ${flag.padEnd(16)} Select ${pkg}.`).join("\n")}
+  --docs            Refresh documentation only for installed libraries.
+  -h, --help        Show this help and exit.
 
 Without a package flag, choose packages interactively.
-Package flags keep existing versions and still set up project files and docs.
---sda and --sda-core cannot be combined.`;
+Combine package flags to select libraries without prompting.
+Package flags keep existing versions and still set up project files and docs.`;
 
 export function parseArguments(args: string[]): CliOptions {
-  const options: CliOptions = { help: false };
+  const options: CliOptions = { help: false, docs: false, packages: [] };
 
   for (const arg of args) {
+    const pkg = packageFlags.get(arg);
     if (arg === "--help" || arg === "-h") {
       options.help = true;
-    } else if (arg === "--sda" || arg === "--sda-core") {
-      const pkg = arg === "--sda"
-        ? "@nshiab/simple-data-analysis"
-        : "@nshiab/simple-data-analysis-core";
-      if (options.package && options.package !== pkg) {
-        throw new Error("--sda and --sda-core cannot be combined.");
-      }
-      options.package = pkg;
+    } else if (arg === "--docs") {
+      options.docs = true;
+    } else if (pkg) {
+      if (!options.packages.includes(pkg)) options.packages.push(pkg);
     } else {
       throw new Error(`Unknown argument: ${arg}. Use --help for usage.`);
     }
   }
 
+  if (options.docs && options.packages.length > 0)
+    throw new Error("--docs cannot be combined with package flags.");
   return options;
 }

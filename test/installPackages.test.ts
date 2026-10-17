@@ -1,105 +1,45 @@
-import { assertEquals } from "@std/assert";
-import { stub } from "@std/testing/mock";
-import { runtimeConfig } from "../src/helpers/getRuntime.ts";
-import {
-  commandRunner,
-  installPackages,
-} from "../src/helpers/installPackages.ts";
-import { createTestDir } from "./helpers/utils.ts";
-
-Deno.test("installPackages - should install packages before docs are fetched", async () => {
-  const { tempDir, cleanup } = createTestDir();
-  const originalCwd = Deno.cwd();
-  Deno.chdir(tempDir);
-  const commands: string[] = [];
-  const execStub = stub(
-    commandRunner,
-    "exec",
-    ((command: string, callback: unknown) => {
-      commands.push(command);
-      if (typeof callback === "function") callback(null, "", "");
-      return {};
-    }) as unknown as typeof commandRunner.exec,
-  );
-
+import { expect, test, vi } from "vite-plus/test";
+import { chmodSync, readFileSync, writeFileSync } from "node:fs";
+import { installPackages } from "../src/helpers/installPackages.ts";
+import { getRuntime } from "../src/helpers/getRuntime.ts";
+import { temporaryProject } from "./helpers/utils.ts";
+vi.mock("../src/helpers/getRuntime.ts", () => ({ getRuntime: vi.fn(() => "node") }));
+temporaryProject();
+test("package manager failures reject with an actionable command", async () => {
+  vi.mocked(getRuntime).mockReturnValue("node");
+  vi.stubEnv("PATH", "");
   try {
-    await installPackages(
-      ["@nshiab/simple-data-analysis"],
-      { silent: true },
-    );
-    assertEquals(commands, [
-      "deno add jsr:@nshiab/simple-data-analysis",
-      "deno add npm:@observablehq/plot",
-    ]);
-  } finally {
-    execStub.restore();
-    Deno.chdir(originalCwd);
-    cleanup();
-  }
-});
-
-Deno.test("installPackages - should use npm install for Node", async () => {
-  const { tempDir, cleanup } = createTestDir();
-  const originalCwd = Deno.cwd();
-  Deno.chdir(tempDir);
-  const execStub = stub(
-    commandRunner,
-    "exec",
-    ((_command: string, callback: unknown) => {
-      if (typeof callback === "function") callback(null, "", "");
-      return {};
-    }) as unknown as typeof commandRunner.exec,
-  );
-  const runtimeStub = stub(runtimeConfig, "getRuntime", () => "node" as const);
-
-  try {
-    await installPackages(
-      ["@nshiab/simple-data-analysis"],
-      { silent: true },
-    );
-    assertEquals(
-      execStub.calls[0].args[0],
-      "npm install @nshiab/simple-data-analysis",
-    );
-    assertEquals(
-      execStub.calls[1].args[0],
-      "npm install @observablehq/plot",
+    await expect(installPackages(["@nshiab/simple-data-analysis-core"])).rejects.toThrow(
+      "install @nshiab/simple-data-analysis-core failed",
     );
   } finally {
-    runtimeStub.restore();
-    execStub.restore();
-    Deno.chdir(originalCwd);
-    cleanup();
+    vi.unstubAllEnvs();
   }
 });
-
-Deno.test("installPackages - should use bun add for Bun", async () => {
-  const { tempDir, cleanup } = createTestDir();
-  const originalCwd = Deno.cwd();
-  Deno.chdir(tempDir);
-  const execStub = stub(
-    commandRunner,
-    "exec",
-    ((_command: string, callback: unknown) => {
-      if (typeof callback === "function") callback(null, "", "");
-      return {};
-    }) as unknown as typeof commandRunner.exec,
-  );
-  const runtimeStub = stub(runtimeConfig, "getRuntime", () => "bun" as const);
-
-  try {
-    await installPackages(
-      ["@nshiab/simple-data-analysis"],
-      { silent: true },
-    );
-    assertEquals(
-      execStub.calls[0].args[0],
-      "bun add @nshiab/simple-data-analysis",
-    );
-  } finally {
-    runtimeStub.restore();
-    execStub.restore();
-    Deno.chdir(originalCwd);
-    cleanup();
-  }
-});
+test.skipIf(process.platform === "win32")(
+  "npm and Bun receive their own development dependency flags",
+  async () => {
+    for (const runtime of ["node", "bun"]) {
+      const bun = runtime === "bun";
+      const command = bun ? "bun" : "npm";
+      vi.mocked(getRuntime).mockReturnValue(bun ? "bun" : "node");
+      writeFileSync(
+        command,
+        `#!${process.execPath}\nrequire("node:fs").writeFileSync("arguments.json", JSON.stringify(process.argv.slice(2)));\n`,
+      );
+      chmodSync(command, 0o755);
+      vi.stubEnv("PATH", process.cwd());
+      try {
+        await installPackages(["vite-plus@latest"], { development: true });
+        const args: unknown = JSON.parse(readFileSync("arguments.json", "utf8"));
+        expect(args).toEqual(
+          bun
+            ? ["add", "--dev", "vite-plus@latest"]
+            : ["install", "--save-dev", "vite-plus@latest"],
+        );
+      } finally {
+        vi.unstubAllEnvs();
+      }
+    }
+  },
+);

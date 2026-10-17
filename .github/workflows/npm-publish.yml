@@ -1,38 +1,25 @@
 name: Publish to npm
-
 on:
   push:
-    tags:
-      - "v*"
-
+    tags: ["v*"]
+permissions:
+  contents: write
+  id-token: write
 jobs:
-  build-and-publish:
+  publish:
     runs-on: ubuntu-latest
-
-    # 1. THIS IS REQUIRED FOR OIDC
-    permissions:
-      contents: read
-      id-token: write
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Setup Deno
-        uses: denoland/setup-deno@v2
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          deno-version: v2.x
-
-      - name: Setup Node.js and npm registry
-        uses: actions/setup-node@v6
-        with:
-          node-version: "24.x"
+          node-version: "24.21.0"
           registry-url: "https://registry.npmjs.org"
-
-      - name: Build npm package using auto-dnt
-        run: deno run -A jsr:@nshiab/deno-to-npm
-
-      # 2. Add the --provenance flag and REMOVE the NODE_AUTH_TOKEN env variable
-      - name: Publish to npm
-        working-directory: ./npm
-        run: npm publish --access public --provenance
+          cache: npm
+      - run: npm ci
+      - run: npm run all-tests
+      - run: npm publish --access public --provenance
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: gh release create "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --title "$RELEASE_TAG" --generate-notes

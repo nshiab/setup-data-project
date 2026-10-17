@@ -1,7 +1,9 @@
-import { assertEquals, assertStringIncludes } from "@std/assert";
+import { test, expect } from "vite-plus/test";
+import { deepStrictEqual as assertEquals } from "node:assert";
+const assertStringIncludes = (value: string, expected: string) => expect(value).toContain(expected);
 import { combinePlotDocs } from "../src/helpers/combinePlotDocs.ts";
 
-Deno.test("combinePlotDocs - links pages, explicit APIs, repeated headings and HTML IDs", () => {
+test("combinePlotDocs - links pages, explicit APIs, repeated headings and HTML IDs", () => {
   const docs = new Map([
     [
       "marks/bar.md",
@@ -34,20 +36,19 @@ The clip option<a id="clip" href="#clip"></a>.
     ],
   ]);
   const llm = combinePlotDocs("0.6.17", docs);
-  for (
-    const fragment of [
-      "[Self](#plot-marks--bar--barX)",
-      "[second options](#plot-marks--bar--options-1)",
-      "[other](#plot-features--scales--options)",
-      '<a id="plot-marks--bar--barX"></a>',
-      '<a id="plot-marks--bar--options-1"></a>',
-      'id="plot-marks--bar--clip" href="#plot-marks--bar--clip"',
-      "[HTML ID](#plot-marks--bar--clip)",
-      "[Scales](#plot-features--scales)",
-      "[Scales title](#plot-features--scales--scale-options)",
-      "[Page](#plot-marks--bar)",
-    ]
-  ) assertStringIncludes(llm, fragment);
+  for (const fragment of [
+    "[Self](#plot-marks--bar--barX)",
+    "[second options](#plot-marks--bar--options-1)",
+    "[other](#plot-features--scales--options)",
+    '<a id="plot-marks--bar--barX"></a>',
+    '<a id="plot-marks--bar--options-1"></a>',
+    'id="plot-marks--bar--clip" href="#plot-marks--bar--clip"',
+    "[HTML ID](#plot-marks--bar--clip)",
+    "[Scales](#plot-features--scales)",
+    "[Scales title](#plot-features--scales--scale-options)",
+    "[Page](#plot-marks--bar)",
+  ])
+    assertStringIncludes(llm, fragment);
   const ids = [...llm.matchAll(/id="([^"]+)"/g)].map((match) => match[1]);
   assertEquals(new Set(ids).size, ids.length);
   for (const target of llm.matchAll(/\]\(#([^)]*)\)/g)) {
@@ -56,13 +57,11 @@ The clip option<a id="clip" href="#clip"></a>.
   assertEquals(combinePlotDocs("0.6.17", new Map([...docs].reverse())), llm);
 });
 
-Deno.test("combinePlotDocs - keeps code and script examples verbatim and resolves assets upstream", () => {
-  const code =
-    '```js\n// [Link](./bar.md)\nconst example = "## Options {#options}";\n```';
+test("combinePlotDocs - keeps code and script examples verbatim and resolves assets upstream", () => {
+  const code = '```js\n// [Link](./bar.md)\nconst example = "## Options {#options}";\n```';
   const longFence = "````md\n```js\n[Code](./bar.md)\n```\n````";
   const tildeFence = "~~~md\n# Heading in code\n[Example](./bar.md)\n~~~";
-  const script =
-    '<script setup>\nconst example = "[Link](./bar.md)";\n</script>';
+  const script = '<script setup>\nconst example = "[Link](./bar.md)";\n</script>';
   const llm = combinePlotDocs(
     "0.6.17",
     new Map([
@@ -93,15 +92,7 @@ Inline \`[Link](./bar.md)\`.
       ],
     ]),
   );
-  for (
-    const verbatim of [
-      code,
-      longFence,
-      tildeFence,
-      script,
-      "Inline `[Link](./bar.md)`.",
-    ]
-  ) {
+  for (const verbatim of [code, longFence, tildeFence, script, "Inline `[Link](./bar.md)`."]) {
     assertStringIncludes(llm, verbatim);
   }
   assertStringIncludes(

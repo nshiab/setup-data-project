@@ -1,61 +1,38 @@
-import { assertEquals, assertExists } from "@std/assert";
+import { deepStrictEqual as assertEquals } from "node:assert";
+import { test, expect } from "vite-plus/test";
+import { existsSync } from "node:fs";
+const assertExists = (path: string) => expect(existsSync(path)).toBe(true);
 import { log } from "@clack/prompts";
 import { readFileSync, symlinkSync, writeFileSync } from "node:fs";
 import { ensureEnvFile } from "../src/helpers/ensureEnvFile.ts";
-import { createTestDir } from "./helpers/utils.ts";
+import { temporaryProject } from "./helpers/utils.ts";
+temporaryProject();
 
-Deno.test("ensureEnvFile - should create .env if it does not exist", () => {
-  const { tempDir, cleanup } = createTestDir();
-  const originalCwd = Deno.cwd();
-  Deno.chdir(tempDir);
+test("ensureEnvFile - should create .env if it does not exist", () => {
+  const messages: string[] = [];
+  log.info = (message) => messages.push(message);
 
-  try {
-    const messages: string[] = [];
-    log.info = (message) => messages.push(message);
-
-    ensureEnvFile();
-    assertExists(".env");
-    assertEquals(messages, ["Created .env"]);
-  } finally {
-    Deno.chdir(originalCwd);
-    cleanup();
-  }
+  ensureEnvFile();
+  assertExists(".env");
+  assertEquals(messages, ["Created .env"]);
 });
 
-Deno.test("ensureEnvFile - should not overwrite .env if it already exists", () => {
-  const { tempDir, cleanup } = createTestDir();
-  const originalCwd = Deno.cwd();
-  Deno.chdir(tempDir);
+test("ensureEnvFile - should not overwrite .env if it already exists", () => {
+  const messages: string[] = [];
+  log.info = (message) => messages.push(message);
+  writeFileSync(".env", "MY_VAR=hello");
 
-  try {
-    const messages: string[] = [];
-    log.info = (message) => messages.push(message);
-    writeFileSync(".env", "MY_VAR=hello");
+  ensureEnvFile();
 
-    ensureEnvFile();
-
-    assertEquals(readFileSync(".env", "utf-8"), "MY_VAR=hello");
-    assertEquals(messages, []);
-  } finally {
-    Deno.chdir(originalCwd);
-    cleanup();
-  }
+  assertEquals(readFileSync(".env", "utf-8"), "MY_VAR=hello");
+  assertEquals(messages, []);
 });
 
-Deno.test("ensureEnvFile - should preserve a symlinked .env", () => {
-  const { tempDir, cleanup } = createTestDir();
-  const originalCwd = Deno.cwd();
-  Deno.chdir(tempDir);
+test("ensureEnvFile - should preserve a symlinked .env", () => {
+  writeFileSync("shared.env", "MY_VAR=shared");
+  symlinkSync("shared.env", ".env");
 
-  try {
-    writeFileSync("shared.env", "MY_VAR=shared");
-    symlinkSync("shared.env", ".env");
+  ensureEnvFile();
 
-    ensureEnvFile();
-
-    assertEquals(readFileSync("shared.env", "utf-8"), "MY_VAR=shared");
-  } finally {
-    Deno.chdir(originalCwd);
-    cleanup();
-  }
+  assertEquals(readFileSync("shared.env", "utf-8"), "MY_VAR=shared");
 });

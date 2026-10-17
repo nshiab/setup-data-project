@@ -1,107 +1,84 @@
-import { log, spinner } from "@clack/prompts";
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
-
+import { log } from "@clack/prompts";
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  renameSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
+import { join, posix } from "node:path";
+import { x } from "tar";
+import { DOCUMENTED_PACKAGES } from "./packageRegistry.ts";
 export interface PackageDocs {
   readme?: string;
+  index?: string;
   llm?: string;
   plot?: { version: string; pages: string[] };
 }
-
-const PACKAGE_DOCUMENTS = [
-  {
-    remoteName: "README.md",
-    localName: "README.md",
-    key: "readme",
-    label: "README",
-  },
-  {
-    remoteName: "llm.md",
-    localName: "llm.md",
-    key: "llm",
-    label: "API documentation",
-  },
-] as const;
-
-export async function fetchPackageDocs(
-  pkg: string,
-  version: string,
-  options: { silent?: boolean } = {},
-): Promise<PackageDocs> {
-  const repoName = pkg.split("/")[1];
-  const docsDirectory = join("docs", repoName);
-  mkdirSync(docsDirectory, { recursive: true });
-
-  const sFetch = spinner();
-  if (!options.silent) {
-    sFetch.start(`Fetching documentation for ${pkg}@${version}...`);
-  }
-
-  const fetchedDocuments = await Promise.all(
-    PACKAGE_DOCUMENTS.map(async (document) => {
-      const localPath = join(docsDirectory, document.localName);
-
-      try {
-        const url = "https://raw.githubusercontent.com/nshiab/" + repoName +
-          `/refs/tags/v${version}/${document.remoteName}`;
-        const response = await fetch(url);
-
-        if (!response.ok) {
-          warnAboutFailedFetch(pkg, version, document.label, localPath);
-          return { key: document.key, content: undefined };
+export async function fetchPackageDocs(pkg: string, version: string): Promise<PackageDocs> {
+  const config = DOCUMENTED_PACKAGES.find(
+    (item) => item.value === pkg && item.value.startsWith("@nshiab/"),
+  );
+  if (!config || !/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/.test(version))
+    throw new Error(`Unsupported package or version: ${pkg}@${version}`);
+  const repo = pkg.slice("@nshiab/".length);
+  mkdirSync("docs", { recursive: true });
+  const staging = mkdtempSync(join("docs", ".download-"));
+  const contents = join(staging, "contents");
+  const target = join("docs", repo);
+  const backup = join(staging, "previous");
+  try {
+    const url = `https://github.com/nshiab/${repo}/releases/download/v${version}/documentation.tar.gz`;
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP ${response.status} from ${url}`);
+    const archive = join(staging, "documentation.tar.gz");
+    writeFileSync(archive, Buffer.from(await response.arrayBuffer()));
+    mkdirSync(contents);
+    let unsafeEntry: string | undefined;
+    await x({
+      file: archive,
+      cwd: contents,
+      strict: true,
+      preservePaths: false,
+      filter(path, entry) {
+        const normalized = posix.normalize(path);
+        if (
+          path.includes("\\") ||
+          path.startsWith("/") ||
+          normalized === ".." ||
+          normalized.startsWith("../") ||
+          !("type" in entry) ||
+          !["File", "Directory"].includes(entry.type)
+        ) {
+          unsafeEntry = path;
+          return false;
         }
-
-        const content = await response.text();
-        writeFileSync(localPath, content);
-        return { key: document.key, content };
-      } catch (error) {
-        warnAboutFailedFetch(pkg, version, document.label, localPath);
-        console.error(error);
-        return { key: document.key, content: undefined };
-      }
-    }),
-  );
-
-  const docs: PackageDocs = {};
-  for (const document of fetchedDocuments) {
-    if (document.content !== undefined) {
-      docs[document.key] = document.content;
+        return true;
+      },
+    });
+    if (unsafeEntry !== undefined) throw new Error(`Unsafe archive entry: ${unsafeEntry}`);
+    for (const path of ["README.md", "LICENSE", "llms.txt", "docs"]) {
+      if (!existsSync(join(contents, path)))
+        throw new Error(`Documentation archive is missing ${path}.`);
     }
-  }
-
-  const savedCount =
-    fetchedDocuments.filter((document) => document.content !== undefined)
-      .length;
-  if (!options.silent) {
-    if (savedCount === PACKAGE_DOCUMENTS.length) {
-      sFetch.stop(`✅ Documentation for ${pkg}@${version} saved!`);
-    } else if (savedCount > 0) {
-      sFetch.stop(
-        `⚠️  Some documentation for ${pkg}@${version} could not be fetched.`,
-      );
-    } else {
-      sFetch.stop(
-        `❌ Failed to fetch documentation for ${pkg}@${version}.`,
-      );
+    const readme = readFileSync(join(contents, "README.md"), "utf8");
+    const index = readFileSync(join(contents, "llms.txt"), "utf8");
+    if (existsSync(target)) renameSync(target, backup);
+    try {
+      renameSync(contents, target);
+    } catch (error) {
+      if (existsSync(backup)) renameSync(backup, target);
+      throw error;
     }
+    return { readme, index };
+  } catch (error) {
+    log.warn(
+      `Could not refresh ${pkg}@${version}: ${String(error)} Existing documentation was preserved and may be stale. Run the docs script again after resolving the error.`,
+    );
+    return {};
+  } finally {
+    rmSync(staging, { recursive: true, force: true });
   }
-
-  return docs;
-}
-
-function warnAboutFailedFetch(
-  pkg: string,
-  version: string,
-  label: string,
-  localPath: string,
-) {
-  const existingFileGuidance = existsSync(localPath)
-    ? ` The existing file at ${localPath} was preserved, but it may not ` +
-      "match the installed version. Double-check it before relying on it, or " +
-      "remove it."
-    : "";
-  log.warn(
-    `Could not fetch ${label} for ${pkg}@${version} from its GitHub tag.` +
-      existingFileGuidance,
-  );
 }

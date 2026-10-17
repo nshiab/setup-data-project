@@ -11,20 +11,16 @@ interface ManagedSectionOptions {
 export function ensureManagedSection(
   options: ManagedSectionOptions,
 ): "created" | "updated" | "unchanged" | "missing-markers" {
-  const startMarker =
-    `<!-- Do not remove / setup-data-project:${options.name}:start -->`;
-  const endMarker =
-    `<!-- Do not remove / setup-data-project:${options.name}:end -->`;
+  const startMarker = `<!-- Do not remove / setup-data-project:${options.name}:start -->`;
+  const endMarker = `<!-- Do not remove / setup-data-project:${options.name}:end -->`;
   const trimmedContent = options.content.trim();
-  const section = trimmedContent === ""
-    ? `${startMarker}\n${endMarker}`
-    : `${startMarker}\n${trimmedContent}\n${endMarker}`;
+  const section =
+    trimmedContent === ""
+      ? `${startMarker}\n${endMarker}`
+      : `${startMarker}\n\n${trimmedContent}\n\n${endMarker}`;
 
   if (!existsSync(options.path)) {
-    writeFileSync(
-      options.path,
-      ensureFinalNewline(options.createContent(section)),
-    );
+    writeFileSync(options.path, ensureFinalNewline(options.createContent(section)));
     return "created";
   }
 
@@ -41,8 +37,8 @@ export function ensureManagedSection(
     return "missing-markers";
   }
 
-  const nextContent = currentContent.slice(0, start) + section +
-    currentContent.slice(end + endMarker.length);
+  const nextContent =
+    currentContent.slice(0, start) + section + currentContent.slice(end + endMarker.length);
 
   if (nextContent === currentContent) {
     return "unchanged";

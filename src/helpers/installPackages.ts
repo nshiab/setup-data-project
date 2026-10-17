@@ -1,58 +1,33 @@
-import { spinner } from "@clack/prompts";
-import * as childProcess from "node:child_process";
+import { execFile } from "node:child_process";
 import { getRuntime } from "./getRuntime.ts";
-
-export const commandRunner = {
-  exec: childProcess.exec,
-};
-
+export function runPackageManager(args: string[]): Promise<void> {
+  const command = getRuntime() === "bun" ? "bun" : process.platform === "win32" ? "npm.cmd" : "npm";
+  return new Promise((resolve, reject) => {
+    execFile(
+      command,
+      args,
+      { maxBuffer: 10 * 1024 * 1024, shell: process.platform === "win32" },
+      (error, stdout, stderr) => {
+        if (error)
+          reject(
+            new Error(`${command} ${args.join(" ")} failed.\n${stderr || stdout}`, {
+              cause: error,
+            }),
+          );
+        else resolve();
+      },
+    );
+  });
+}
 export async function installPackages(
-  selectedPackages: string[],
-  options: { silent?: boolean } = {},
+  packages: string[],
+  options: { development?: boolean } = {},
 ): Promise<void> {
-  const runtime = getRuntime();
-
-  for (const selectedPackage of selectedPackages) {
-    const packagesToInstall = [selectedPackage];
-    if (
-      selectedPackage === "@nshiab/simple-data-analysis" ||
-      selectedPackage === "@nshiab/journalism-dataviz"
-    ) {
-      packagesToInstall.push("@observablehq/plot");
-    }
-
-    for (const pkg of packagesToInstall) {
-      const s = spinner();
-      const isObservablePlot = pkg === "@observablehq/plot";
-      const installCmd = runtime === "deno"
-        ? (isObservablePlot ? "deno add npm:" + pkg : "deno add jsr:" + pkg)
-        : runtime === "bun"
-        ? "bun add " + pkg
-        : "npm install " + pkg;
-
-      if (!options.silent) {
-        s.start("Installing " + pkg + " via " + runtime + "...");
-      }
-
-      try {
-        await new Promise<void>((resolve, reject) => {
-          commandRunner.exec(installCmd, (error) => {
-            if (error) {
-              reject(error);
-            } else {
-              resolve();
-            }
-          });
-        });
-        if (!options.silent) {
-          s.stop("✅ " + pkg + " installed!");
-        }
-      } catch (error) {
-        if (!options.silent) {
-          s.stop("❌ Failed to install " + pkg + ".");
-        }
-        throw error;
-      }
-    }
-  }
+  if (packages.length === 0) return;
+  const bun = getRuntime() === "bun";
+  await runPackageManager([
+    bun ? "add" : "install",
+    ...(options.development ? (bun ? ["--dev"] : ["--save-dev"]) : []),
+    ...packages,
+  ]);
 }
