@@ -44,14 +44,15 @@ async function main() {
       : opt.label,
   }));
 
-  const selectedPackages = cliOptions.package
-    ? [cliOptions.package]
-    : await multiselect({
-        message:
-          "Which libraries would you like to install?\n\x1b[2m(space to select, arrows to navigate, enter to confirm)\x1b[22m\n",
-        options,
-        required: false,
-      });
+  const selectedPackages =
+    cliOptions.packages.length > 0
+      ? cliOptions.packages
+      : await multiselect({
+          message:
+            "Which libraries would you like to install?\n\x1b[2m(space to select, arrows to navigate, enter to confirm)\x1b[22m\n",
+          options,
+          required: false,
+        });
 
   if (isCancel(selectedPackages)) {
     cancel("Installation cancelled.");
@@ -64,7 +65,7 @@ async function main() {
 
   for (const pkg of selectedPackages) {
     if (alreadyInstalled.includes(pkg)) {
-      if (cliOptions.package) continue;
+      if (cliOptions.packages.length > 0) continue;
 
       const action = await select({
         message: `${pkg} is already installed. What would you like to do?`,

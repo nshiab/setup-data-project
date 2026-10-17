@@ -47,8 +47,8 @@ test("cancelling library selection creates no project files", async () => {
   expect(readdirSync(".")).toEqual([]);
 });
 
-test("installation failure stops the spinner and exits unsuccessfully", () => {
-  const result = spawnSync(process.execPath, [entry, "--sda-core"], {
+test("combined library flags install without prompts and failures stop the spinner", () => {
+  const result = spawnSync(process.execPath, [entry, "--format", "--geo", "--format"], {
     env: { ...process.env, PATH: "" },
     timeout: 3000,
     encoding: "utf8",
@@ -56,5 +56,9 @@ test("installation failure stops the spinner and exits unsuccessfully", () => {
   expect(result.error).toBeUndefined();
   expect(result.status).toBe(1);
   expect(result.stderr).toContain("failed");
+  expect(result.stderr).toContain(
+    "install @nshiab/journalism-format @nshiab/journalism-geo failed",
+  );
+  expect(result.stdout).not.toContain("Which libraries");
   expect(result.stdout).toContain("Package installation failed");
 });

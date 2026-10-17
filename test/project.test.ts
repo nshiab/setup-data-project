@@ -34,10 +34,16 @@ test("Bun wins over Node compatibility version", () => {
   expect(getProjectTasks("node").sda).toBe("node --env-file-if-exists=.env --watch sda/main.ts");
 });
 test("flags preserve noninteractive selection and isolate docs-only", () => {
-  expect(parseArguments(["--sda-core"]).package).toBe("@nshiab/simple-data-analysis-core");
+  expect(parseArguments([]).packages).toEqual([]);
+  expect(parseArguments(["--sda-core", "--format", "--geo", "--format"]).packages).toEqual([
+    "@nshiab/simple-data-analysis-core",
+    "@nshiab/journalism-format",
+    "@nshiab/journalism-geo",
+  ]);
   expect(parseArguments(["--docs"]).docs).toBe(true);
-  expect(() => parseArguments(["--sda", "--sda-core"])).toThrow();
+  expect(parseArguments(["--sda", "--sda-core"]).packages).toHaveLength(2);
   expect(() => parseArguments(["--docs", "--sda"])).toThrow();
+  expect(() => parseArguments(["--geo", "--docs"])).toThrow();
   expect(() => parseArguments(["--runtime", "bun"])).toThrow();
 });
 test("opening manifests is read-only and setup preserves scripts and versions", () => {

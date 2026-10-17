@@ -14,9 +14,17 @@ bunx --bun @nshiab/setup-data-project
 The CLI uses the runtime that launches it. Its executable has a Node shebang,
 so use `bunx --bun` to explicitly run it with Bun.
 
-Select libraries interactively, or use `--sda` or `--sda-core` to select
-simple-data-analysis or simple-data-analysis-core without prompts. These flags
-keep existing dependency versions and cannot be combined.
+Select libraries interactively, or combine library flags to install without prompts:
+
+```sh
+npx @nshiab/setup-data-project --sda
+npx @nshiab/setup-data-project --format --geo --dataviz
+bunx --bun @nshiab/setup-data-project --sda-core --ai
+```
+
+Use `--sda` or `--sda-core` for Simple Data Analysis, or the suffix of a journalism
+library name, such as `--web-scraping`. Run `--help` for all available flags.
+Library flags keep existing dependency versions and cannot be combined with `--docs`.
 
 The project includes `sda/main.ts`, helpers, tests, data and output folders,
 `.env`, `.gitignore`, and managed sections in README.md and AGENTS.md.
