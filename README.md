@@ -91,12 +91,13 @@ For development, use `npm ci` and `npm run all-tests`.
 `npx vp pack` produces the npm executable. Releases use `npm run patch`,
 `npm run minor`, or `npm run major` from main; GitHub Actions publishes to npm.
 
-To cache documentation for a new Observable Plot version, run:
+To cache documentation for the latest Observable Plot version, run:
 
 ```sh
-npm run cache-plot-docs -- 0.6.17
+npm run cache-plot-docs
 ```
 
-Replace `0.6.17` with the exact version. Review and commit the generated
-`docs-cache/observable-plot/<version>/llm.md`; keep earlier versions for pinned
-projects. The command fetches the tagged upstream pages and license.
+This checks npm and skips generation if that version is already cached. To generate
+or refresh a specific version, run `npm run cache-plot-docs -- 0.6.17`.
+Review and commit `docs-cache/observable-plot/<version>/llm.md`; keep earlier
+versions for pinned projects. The command fetches the tagged upstream pages and license.
