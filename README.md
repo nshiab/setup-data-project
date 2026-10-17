@@ -1,7 +1,7 @@
 # setup-data-project
 
 Set up a TypeScript data analysis project with Node.js or Bun.
-Use Node.js 24.21.0+ or Bun. Generated development commands use the selected runtime.
+Generated development commands use the selected runtime.
 
 ```sh
 # Node
@@ -62,7 +62,7 @@ Failed downloads preserve previous files, warn that they may be stale, and
 exit unsuccessfully. Generated docs scripts pin the setup CLI version that
 created them. Use `--help` for usage.
 
-For development, use Node.js 24.21.0+, `npm ci`, and `npm run all-tests`.
+For development, use `npm ci` and `npm run all-tests`.
 `npx vp pack` produces the npm executable. Releases use `npm run patch`,
 `npm run minor`, or `npm run major` from main; GitHub Actions publishes to npm.
 
