@@ -57,9 +57,18 @@ and unmanaged documentation are preserved.
 Generated projects run TypeScript directly with Node or Bun. Vite+ provides
 formatting, linting, type checking, and Vitest tests. Use `npm run sda`,
 `npm run all-tests`, and `npm run fix` (or `bun run` for Bun projects).
-Existing test commands remain in place.
+The generated `all-tests` command also succeeds when no tests exist.
 New development tools are installed at their latest versions; existing dependencies
 are preserved.
+
+For test-driven development, run one test file and watch for changes (replace the
+example path with your test file):
+
+```sh
+npx vp test sda/tests/example.test.ts --watch
+# Bun
+bun run --bun vp test sda/tests/example.test.ts --watch
+```
 
 VS Code configuration recommends the Vite+ extension pack and enables formatting,
 lint fixes on save, and visual line wrapping. Existing `.vscode/extensions.json`

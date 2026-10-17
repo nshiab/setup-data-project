@@ -60,6 +60,7 @@ test("opening manifests is read-only and setup preserves scripts and versions", 
   const fresh = ProjectManifest.open();
   expect(existsSync("package.json")).toBe(false);
   fresh.updateTasks(getProjectTasks("node"));
+  expect(readFileSync("package.json", "utf8")).not.toContain('"test":');
   writeFileSync(
     "package.json",
     JSON.stringify({
@@ -73,7 +74,7 @@ test("opening manifests is read-only and setup preserves scripts and versions", 
   const text = readFileSync("package.json", "utf8");
   expect(text).toContain("custom-test");
   expect(text).toContain("custom-run");
-  expect(text).toContain("npm run test");
+  expect(text).toContain("vp check && vp test --passWithNoTests");
   expect(manifest.getInstalledPackageSpecifiers()["@nshiab/journalism-format"]).toBe("~1.1.0");
   manifest.reload();
   expect(manifest.getInstalledPackages()).toEqual(["@nshiab/journalism-format"]);
@@ -106,12 +107,17 @@ test("reruns preserve source, .env and unmanaged documentation while updating ma
   ensureAgents({}, "node", ["@nshiab/simple-data-analysis-core"]);
   const readme = readFileSync("README.md", "utf8");
   const agents = readFileSync("AGENTS.md", "utf8");
+  expect(readme).toContain("npx vp test sda/tests/example.test.ts --watch");
+  expect(readme).not.toContain("npm run test");
   writeFileSync("README.md", `Custom intro\n${readme}\nCustom footer`);
   writeFileSync("AGENTS.md", `Custom policy\n${agents}`);
   ensureReadme("bun", ["@nshiab/simple-data-analysis-core"]);
   ensureAgents({}, "bun", ["@nshiab/simple-data-analysis-core"]);
   expect(readFileSync("README.md", "utf8")).toContain("Custom footer");
   expect(readFileSync("README.md", "utf8")).toContain("bun run docs");
+  expect(readFileSync("README.md", "utf8")).toContain(
+    "bun run --bun vp test sda/tests/example.test.ts --watch",
+  );
   expect(readFileSync("README.md", "utf8")).not.toContain("npm run docs");
   expect(readFileSync("AGENTS.md", "utf8")).toContain("Custom policy");
   expect(readFileSync("AGENTS.md", "utf8")).toContain("docs/simple-data-analysis-core/llms.txt");

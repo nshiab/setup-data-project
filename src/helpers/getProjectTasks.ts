@@ -7,8 +7,7 @@ export function getProjectTasks(runtime: Runtime = getRuntime()) {
       runtime === "bun"
         ? "bun run --watch sda/main.ts"
         : "node --env-file-if-exists=.env --watch sda/main.ts",
-    test: `${vp} test --passWithNoTests`,
-    "all-tests": `${vp} check && ${runtime === "bun" ? "bun" : "npm"} run test`,
+    "all-tests": `${vp} check && ${vp} test --passWithNoTests`,
     clean: "rm -rf .sda-cache .journalism-cache .tmp",
     fix: `${vp} check --fix`,
     docs: `${runtime === "bun" ? "bunx --bun" : "npx"} @nshiab/setup-data-project@${metadata.version} --docs`,
