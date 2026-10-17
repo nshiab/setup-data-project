@@ -17,6 +17,7 @@
     "access": "public"
   },
   "scripts": {
+    "cache-plot-docs": "node scripts/cachePlotDocs.ts",
     "fix": "vp check --fix",
     "all-tests": "vp check && vp test && vp pack",
     "preversion": "node scripts/check-release-branch.ts && npm run all-tests",

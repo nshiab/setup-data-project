@@ -12,7 +12,7 @@ export function ensureAgents(
     runtime === "bun" ? "bun run sda/main.ts" : "node --env-file-if-exists=.env sda/main.ts";
   const links = getInstalledPackageConfigs(installedPackages).map((pkg) => {
     if (pkg.value === "@observablehq/plot")
-      return `- Observable Plot charts and maps: read \`docs/observable-plot/llm.md\` for use with writeChart and writeMap.`;
+      return `- Observable Plot charts and maps: start at \`docs/observable-plot/llms.txt\`, then read the relevant pages for use with writeChart and writeMap.`;
     return `- \`${pkg.value}\`: start at \`docs/${pkg.value.slice("@nshiab/".length)}/llms.txt\`, then read the relevant API pages and examples.`;
   });
   ensureManagedSection({

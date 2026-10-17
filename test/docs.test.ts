@@ -95,6 +95,12 @@ test("Observable Plot keeps its exact-version cache and falls back to tagged sou
   vi.stubGlobal("fetch", fetchMock);
   expect((await fetchPlotDocs("0.6.17")).llm).toBe(cached);
   expect(fetchMock).toHaveBeenCalledTimes(1);
+  expect(readFileSync("docs/observable-plot/llms.txt", "utf8")).toContain(
+    "[marks/dot.md](./marks/dot.md)",
+  );
+  expect(readFileSync("docs/observable-plot/marks/dot.md", "utf8")).toContain("A chart example.");
+  expect(existsSync("docs/observable-plot/llm.md")).toBe(false);
+  writeFileSync("docs/observable-plot/obsolete.md", "old");
   const urls: string[] = [];
   vi.stubGlobal(
     "fetch",
@@ -105,8 +111,11 @@ test("Observable Plot keeps its exact-version cache and falls back to tagged sou
     }),
   );
   expect((await fetchPlotDocs("0.6.17")).plot?.version).toBe("0.6.17");
-  expect(urls.slice(1).every((url) => url.includes("/refs/tags/v0.6.17/docs/"))).toBe(true);
-  expect(urls.length).toBe(PLOT_DOC_PAGES.length + 1);
+  expect(urls.slice(1).every((url) => url.includes("/refs/tags/v0.6.17/"))).toBe(true);
+  expect(urls.length).toBe(PLOT_DOC_PAGES.length + 2);
+  expect(readFileSync("docs/observable-plot/LICENSE", "utf8")).toBe(content + "\n");
+  expect(existsSync("docs/observable-plot/obsolete.md")).toBe(false);
+  expect(readdirSync("docs")).toEqual(["observable-plot"]);
 });
 
 test("invalid or truncated Plot cache falls back and partial source failure preserves old docs", async () => {
@@ -121,10 +130,10 @@ test("invalid or truncated Plot cache falls back and partial source failure pres
       return new Response(url.includes("docs-cache") ? stored : content);
     });
     vi.stubGlobal("fetch", fetchMock);
-    expect((await fetchPlotDocs("0.6.17")).llm).toBe(cached);
-    expect(fetchMock).toHaveBeenCalledTimes(PLOT_DOC_PAGES.length + 1);
+    expect((await fetchPlotDocs("0.6.17")).llm).toContain("## Upstream license");
+    expect(fetchMock).toHaveBeenCalledTimes(PLOT_DOC_PAGES.length + 2);
   }
-  writeFileSync("docs/observable-plot/llm.md", "previous complete reference");
+  writeFileSync("docs/observable-plot/llms.txt", "previous complete reference");
   vi.stubGlobal(
     "fetch",
     vi.fn<typeof fetch>(async (input) => {
@@ -135,5 +144,5 @@ test("invalid or truncated Plot cache falls back and partial source failure pres
     }),
   );
   expect(await fetchPlotDocs("0.6.17")).toEqual({});
-  expect(readFileSync("docs/observable-plot/llm.md", "utf8")).toBe("previous complete reference");
+  expect(readFileSync("docs/observable-plot/llms.txt", "utf8")).toBe("previous complete reference");
 });

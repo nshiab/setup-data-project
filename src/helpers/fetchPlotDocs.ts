@@ -1,11 +1,12 @@
 import { log } from "@clack/prompts";
-import { mkdirSync, renameSync, rmSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, mkdirSync, mkdtempSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { splitPlotDocs } from "./splitPlotDocs.ts";
 import { combinePlotDocs } from "./combinePlotDocs.ts";
 import { PLOT_DOC_PAGES } from "./plotDocPages.ts";
 import type { PackageDocs } from "./fetchPackageDocs.ts";
 
-// Publish one reference only after every tagged page has been fetched.
+// Replace local documentation only after every page is ready.
 export async function fetchPlotDocs(
   version: string,
   options: { preferStored?: boolean } = {},
@@ -28,16 +29,29 @@ export async function fetchPlotDocs(
         // A cache is an optimization. An unavailable cache never blocks the tag.
       }
     }
-    if (llm === undefined) llm = await generateReference(version);
-    mkdirSync(directory, { recursive: true });
-    const temporaryPath = join(directory, ".llm.md.tmp");
+    if (llm === undefined) llm = await generatePlotReference(version);
+    const files = splitPlotDocs(llm, version);
+    mkdirSync("docs", { recursive: true });
+    const staging = mkdtempSync(join("docs", ".plot-"));
+    const contents = join(staging, "contents");
+    const backup = join(staging, "previous");
     try {
-      writeFileSync(temporaryPath, llm);
-      renameSync(temporaryPath, join(directory, "llm.md"));
+      for (const [page, content] of files) {
+        const path = join(contents, page);
+        mkdirSync(dirname(path), { recursive: true });
+        writeFileSync(path, content);
+      }
+      if (existsSync(directory)) renameSync(directory, backup);
+      try {
+        renameSync(contents, directory);
+      } catch (error) {
+        if (existsSync(backup)) renameSync(backup, directory);
+        throw error;
+      }
     } finally {
-      rmSync(temporaryPath, { force: true });
+      rmSync(staging, { recursive: true, force: true });
     }
-    return { llm, plot: { version, pages: [...PLOT_DOC_PAGES] } };
+    return { llm, index: files.get("llms.txt"), plot: { version, pages: [...PLOT_DOC_PAGES] } };
   } catch (error) {
     log.warn(
       `Could not fetch complete Observable Plot documentation for ${tag}. ` +
@@ -49,7 +63,9 @@ export async function fetchPlotDocs(
   }
 }
 
-async function generateReference(version: string): Promise<string> {
+export async function generatePlotReference(version: string): Promise<string> {
+  if (!/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(version))
+    throw new Error("An exact Plot version is required.");
   const tag = `v${version}`;
   const pages = PLOT_DOC_PAGES;
   const documents = new Map<string, string>();
@@ -76,7 +92,16 @@ async function generateReference(version: string): Promise<string> {
   if (failed.length > 0) {
     throw new Error(`Could not fetch ${failed.length} Markdown pages`);
   }
-  return combinePlotDocs(version, documents);
+  const response = await fetch(
+    `https://raw.githubusercontent.com/observablehq/plot/refs/tags/${tag}/LICENSE`,
+  );
+  if (!response.ok) throw new Error(`Could not fetch Plot's license: HTTP ${response.status}`);
+  const license = await response.text();
+  const completion = `<!-- setup-data-project:observable-plot:${version}:complete -->`;
+  return combinePlotDocs(version, documents).replace(
+    completion,
+    `## Upstream license\n\n${license.trim()}\n\n${completion}`,
+  );
 }
 
 function isStoredReference(content: string, version: string): boolean {

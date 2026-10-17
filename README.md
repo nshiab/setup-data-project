@@ -68,7 +68,9 @@ and `.vscode/settings.json` files are left unchanged.
 Documentation is downloaded automatically for the exact installed library
 versions. Each library's release archive preserves its README, license,
 `llms.txt` index, granular API pages, and media under `docs/<library>/`.
-Observable Plot uses its version-matched source documentation or cached reference.
+Observable Plot downloads one version-matched cached reference (or falls back to
+upstream sources), then splits it into feature, mark, and transform pages with
+an index at `docs/observable-plot/llms.txt`.
 The generated `docs/` folder is ignored by Git.
 
 After cloning or changing dependencies, run `npm run docs` or `bun run docs`.
@@ -88,3 +90,13 @@ created them. Use `--help` for usage.
 For development, use `npm ci` and `npm run all-tests`.
 `npx vp pack` produces the npm executable. Releases use `npm run patch`,
 `npm run minor`, or `npm run major` from main; GitHub Actions publishes to npm.
+
+To cache documentation for a new Observable Plot version, run:
+
+```sh
+npm run cache-plot-docs -- 0.6.17
+```
+
+Replace `0.6.17` with the exact version. Review and commit the generated
+`docs-cache/observable-plot/<version>/llm.md`; keep earlier versions for pinned
+projects. The command fetches the tagged upstream pages and license.
