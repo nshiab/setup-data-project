@@ -79,7 +79,8 @@ versions. Each library's release archive preserves its README, license,
 `llms.txt` index, granular API pages, and media under `docs/<library>/`.
 Observable Plot downloads one version-matched cached reference (or falls back to
 upstream sources), then splits it into feature, mark, and transform pages with
-an index at `docs/observable-plot/llms.txt`.
+an index at `docs/observable-plot/llms.txt`. Website controls are removed; examples
+that depend on upstream setup or interactive templates are labeled.
 The generated `docs/` folder is ignored by Git.
 
 After cloning or changing dependencies, run `npm run docs` or `bun run docs`.

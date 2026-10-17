@@ -92,7 +92,13 @@ Inline \`[Link](./bar.md)\`.
       ],
     ]),
   );
-  for (const verbatim of [code, longFence, tildeFence, script, "Inline `[Link](./bar.md)`."]) {
+  for (const verbatim of [
+    code,
+    longFence,
+    tildeFence,
+    '```js\nconst example = "[Link](./bar.md)";\n```',
+    "Inline `[Link](./bar.md)`.",
+  ]) {
     assertStringIncludes(llm, verbatim);
   }
   assertStringIncludes(

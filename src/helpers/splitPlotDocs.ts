@@ -1,3 +1,4 @@
+import { cleanPlotMarkdown } from "./cleanPlotMarkdown.ts";
 import { posix } from "node:path";
 import { proseLines } from "./combinePlotDocs.ts";
 import { PLOT_DOC_PAGES } from "./plotDocPages.ts";
@@ -42,30 +43,32 @@ export function splitPlotDocs(reference: string, version: string): Map<string, s
     };
     files.set(
       page,
-      proseLines(body, (line) =>
-        line
-          .split(/(`+[^`]*`+)/g)
-          .map((part, index) =>
-            index % 2
-              ? part
-              : part
-                  .replace(
-                    /(\]\()#([^\s)]+)([^)]*\))/g,
-                    (_match: string, before: string, id: string, after: string) =>
-                      `${before}${link(id)}${after}`,
-                  )
-                  .replace(
-                    /^( {0,3}\[[^\]]+\]:\s*)#(\S+)/,
-                    (_match: string, before: string, id: string) => `${before}${link(id)}`,
-                  )
-                  .replace(
-                    /(?<!:)\b(href|src)=(["'])#([^"']+)\2/g,
-                    (_match: string, attr: string, quote: string, id: string) =>
-                      `${attr}=${quote}${link(id)}${quote}`,
-                  ),
-          )
-          .join(""),
-      ) + "\n",
+      cleanPlotMarkdown(
+        proseLines(body, (line) =>
+          line
+            .split(/(`+[^`]*`+)/g)
+            .map((part, index) =>
+              index % 2
+                ? part
+                : part
+                    .replace(
+                      /(\]\()#([^\s)]+)([^)]*\))/g,
+                      (_match: string, before: string, id: string, after: string) =>
+                        `${before}${link(id)}${after}`,
+                    )
+                    .replace(
+                      /^( {0,3}\[[^\]]+\]:\s*)#(\S+)/,
+                      (_match: string, before: string, id: string) => `${before}${link(id)}`,
+                    )
+                    .replace(
+                      /(?<!:)\b(href|src)=(["'])#([^"']+)\2/g,
+                      (_match: string, attr: string, quote: string, id: string) =>
+                        `${attr}=${quote}${link(id)}${quote}`,
+                    ),
+            )
+            .join(""),
+        ),
+      ),
     );
   }
   const license =

@@ -20,12 +20,12 @@ to omitted pages lead to the tagged upstream documentation.
   - [Facet scales](#plot-features--facets--facet-scales)
 - [features/formats.md](#plot-features--formats)
   - [Formats](#plot-features--formats--formats)
-  - [formatNumber(_locale_) <VersionBadge version="0.6.15" pr="2078" />](#plot-features--formats--formatNumber)
+  - [formatNumber(_locale_) (since v0.6.15)](#plot-features--formats--formatNumber)
   - [formatIsoDate(_date_)](#plot-features--formats--formatIsoDate)
   - [formatWeekday(_locale_, _format_)](#plot-features--formats--formatWeekday)
   - [formatMonth(_locale_, _format_)](#plot-features--formats--formatMonth)
 - [features/legends.md](#plot-features--legends)
-  - [Legends <VersionBadge version="0.3.0" />](#plot-features--legends--legends)
+  - [Legends (since v0.3.0)](#plot-features--legends--legends)
   - [Legend options](#plot-features--legends--legend-options)
   - [legend(_options_)](#plot-features--legends--legend)
 - [features/marks.md](#plot-features--marks)
@@ -40,7 +40,7 @@ to omitted pages lead to the tagged upstream documentation.
   - [Mark options](#plot-features--marks--mark-options)
   - [Insets](#plot-features--marks--insets)
   - [Rounded corners](#plot-features--marks--rounded-corners)
-  - [marks(..._marks_) <VersionBadge version="0.2.0" />](#plot-features--marks--marks)
+  - [marks(..._marks_) (since v0.2.0)](#plot-features--marks--marks)
 - [features/plots.md](#plot-features--plots)
   - [Plots](#plot-features--plots--plots)
   - [Marks option](#plot-features--plots--marks-option)
@@ -51,7 +51,7 @@ to omitted pages lead to the tagged upstream documentation.
   - [_plot_.scale(_name_)](#plot-features--plots--plot_scale)
   - [_plot_.legend(_name_, _options_)](#plot-features--plots--plot_legend)
 - [features/projections.md](#plot-features--projections)
-  - [Projections <VersionBadge version="0.6.1" />](#plot-features--projections--projections)
+  - [Projections (since v0.6.1)](#plot-features--projections--projections)
   - [Projection options](#plot-features--projections--projection-options)
 - [features/scales.md](#plot-features--scales)
   - [Scales](#plot-features--scales--scales)
@@ -64,8 +64,8 @@ to omitted pages lead to the tagged upstream documentation.
   - [Scale options](#plot-features--scales--scale-options)
   - [Color scale options](#plot-features--scales--color-scale-options)
   - [Position scale options](#plot-features--scales--position-scale-options)
-  - [Sort mark option <VersionBadge version="0.2.0" />](#plot-features--scales--sort-mark-option)
-  - [scale(_options_) <VersionBadge version="0.4.0" />](#plot-features--scales--scale)
+  - [Sort mark option (since v0.2.0)](#plot-features--scales--sort-mark-option)
+  - [scale(_options_) (since v0.4.0)](#plot-features--scales--scale)
 - [marks/area.md](#plot-marks--area)
   - [Area mark](#plot-marks--area--area-mark)
   - [Area options](#plot-marks--area--area-options)
@@ -73,11 +73,11 @@ to omitted pages lead to the tagged upstream documentation.
   - [areaX(_data_, _options_)](#plot-marks--area--areaX)
   - [area(_data_, _options_)](#plot-marks--area--area)
 - [marks/arrow.md](#plot-marks--arrow)
-  - [Arrow mark <VersionBadge version="0.4.0" />](#plot-marks--arrow--arrow-mark)
+  - [Arrow mark (since v0.4.0)](#plot-marks--arrow--arrow-mark)
   - [Arrow options](#plot-marks--arrow--arrow-options)
   - [arrow(_data_, _options_)](#plot-marks--arrow--arrow)
 - [marks/axis.md](#plot-marks--axis)
-  - [Axis mark <VersionBadge version="0.6.3" />](#plot-marks--axis--axis-mark)
+  - [Axis mark (since v0.6.3)](#plot-marks--axis--axis-mark)
   - [Axis options](#plot-marks--axis--axis-options)
   - [axisX(_data_, _options_)](#plot-marks--axis--axisX)
   - [axisY(_data_, _options_)](#plot-marks--axis--axisY)
@@ -89,13 +89,13 @@ to omitted pages lead to the tagged upstream documentation.
   - [barX(_data_, _options_)](#plot-marks--bar--barX)
   - [barY(_data_, _options_)](#plot-marks--bar--barY)
 - [marks/bollinger.md](#plot-marks--bollinger)
-  - [Bollinger mark <VersionBadge version="0.6.10" pr="1772" />](#plot-marks--bollinger--bollinger-mark)
+  - [Bollinger mark (since v0.6.10)](#plot-marks--bollinger--bollinger-mark)
   - [Bollinger options](#plot-marks--bollinger--bollinger-options)
   - [bollingerX(_data_, _options_)](#plot-marks--bollinger--bollingerX)
   - [bollingerY(_data_, _options_)](#plot-marks--bollinger--bollingerY)
   - [bollinger(_options_)](#plot-marks--bollinger--bollinger)
 - [marks/box.md](#plot-marks--box)
-  - [Box mark <VersionBadge version="0.4.2" />](#plot-marks--box--box-mark)
+  - [Box mark (since v0.4.2)](#plot-marks--box--box-mark)
   - [Box options](#plot-marks--box--box-options)
   - [boxX(_data_, _options_)](#plot-marks--box--boxX)
   - [boxY(_data_, _options_)](#plot-marks--box--boxY)
@@ -106,56 +106,56 @@ to omitted pages lead to the tagged upstream documentation.
   - [cellX(_data_, _options_)](#plot-marks--cell--cellX)
   - [cellY(_data_, _options_)](#plot-marks--cell--cellY)
 - [marks/contour.md](#plot-marks--contour)
-  - [Contour mark <VersionBadge version="0.6.2" />](#plot-marks--contour--contour-mark)
+  - [Contour mark (since v0.6.2)](#plot-marks--contour--contour-mark)
   - [Contour options](#plot-marks--contour--contour-options)
   - [contour(_data_, _options_)](#plot-marks--contour--contour)
 - [marks/delaunay.md](#plot-marks--delaunay)
-  - [Delaunay marks <VersionBadge version="0.5.1" />](#plot-marks--delaunay--delaunay-marks)
+  - [Delaunay marks (since v0.5.1)](#plot-marks--delaunay--delaunay-marks)
   - [delaunayLink(_data_, _options_)](#plot-marks--delaunay--delaunayLink)
   - [delaunayMesh(_data_, _options_)](#plot-marks--delaunay--delaunayMesh)
   - [hull(_data_, _options_)](#plot-marks--delaunay--hull)
   - [voronoi(_data_, _options_)](#plot-marks--delaunay--voronoi)
   - [voronoiMesh(_data_, _options_)](#plot-marks--delaunay--voronoiMesh)
 - [marks/density.md](#plot-marks--density)
-  - [Density mark <VersionBadge version="0.5.1" />](#plot-marks--density--density-mark)
+  - [Density mark (since v0.5.1)](#plot-marks--density--density-mark)
   - [Density options](#plot-marks--density--density-options)
   - [density(_data_, _options_)](#plot-marks--density--density)
 - [marks/difference.md](#plot-marks--difference)
-  - [Difference mark <VersionBadge version="0.6.12" pr="1896" />](#plot-marks--difference--difference-mark)
+  - [Difference mark (since v0.6.12)](#plot-marks--difference--difference-mark)
   - [Difference options](#plot-marks--difference--difference-options)
   - [differenceY(_data_, _options_)](#plot-marks--difference--differenceY)
-  - [differenceX(_data_, _options_) <VersionBadge version="0.6.16" pr="1922" />](#plot-marks--difference--differenceX)
+  - [differenceX(_data_, _options_) (since v0.6.16)](#plot-marks--difference--differenceX)
 - [marks/dot.md](#plot-marks--dot)
   - [Dot mark](#plot-marks--dot--dot-mark)
   - [Dot options](#plot-marks--dot--dot-options)
   - [dot(_data_, _options_)](#plot-marks--dot--dot)
   - [dotX(_data_, _options_)](#plot-marks--dot--dotX)
   - [dotY(_data_, _options_)](#plot-marks--dot--dotY)
-  - [circle(_data_, _options_) <VersionBadge version="0.5.0" />](#plot-marks--dot--circle)
-  - [hexagon(_data_, _options_) <VersionBadge version="0.5.0" />](#plot-marks--dot--hexagon)
+  - [circle(_data_, _options_) (since v0.5.0)](#plot-marks--dot--circle)
+  - [hexagon(_data_, _options_) (since v0.5.0)](#plot-marks--dot--hexagon)
 - [marks/frame.md](#plot-marks--frame)
   - [Frame mark](#plot-marks--frame--frame-mark)
   - [Frame options](#plot-marks--frame--frame-options)
   - [frame(_options_)](#plot-marks--frame--frame)
 - [marks/geo.md](#plot-marks--geo)
-  - [Geo mark <VersionBadge version="0.6.1" />](#plot-marks--geo--geo-mark)
+  - [Geo mark (since v0.6.1)](#plot-marks--geo--geo-mark)
   - [Geo options](#plot-marks--geo--geo-options)
   - [geo(_data_, _options_)](#plot-marks--geo--geo)
-  - [sphere(_options_) <VersionBadge version="0.6.1" />](#plot-marks--geo--sphere)
-  - [graticule(_options_) <VersionBadge version="0.6.1" />](#plot-marks--geo--graticule)
+  - [sphere(_options_) (since v0.6.1)](#plot-marks--geo--sphere)
+  - [graticule(_options_) (since v0.6.1)](#plot-marks--geo--graticule)
 - [marks/grid.md](#plot-marks--grid)
-  - [Grid mark <VersionBadge version="0.6.3" />](#plot-marks--grid--grid-mark)
+  - [Grid mark (since v0.6.3)](#plot-marks--grid--grid-mark)
   - [Grid options](#plot-marks--grid--grid-options)
   - [gridX(_data_, _options_)](#plot-marks--grid--gridX)
   - [gridY(_data_, _options_)](#plot-marks--grid--gridY)
   - [gridFx(_data_, _options_)](#plot-marks--grid--gridFx)
   - [gridFy(_data_, _options_)](#plot-marks--grid--gridFy)
 - [marks/hexgrid.md](#plot-marks--hexgrid)
-  - [Hexgrid mark <VersionBadge version="0.5.0" />](#plot-marks--hexgrid--hexgrid-mark)
+  - [Hexgrid mark (since v0.5.0)](#plot-marks--hexgrid--hexgrid-mark)
   - [Hexgrid options](#plot-marks--hexgrid--hexgrid-options)
   - [hexgrid(_options_)](#plot-marks--hexgrid--hexgrid)
 - [marks/image.md](#plot-marks--image)
-  - [Image mark <VersionBadge version="0.3.0" />](#plot-marks--image--image-mark)
+  - [Image mark (since v0.3.0)](#plot-marks--image--image-mark)
   - [Image options](#plot-marks--image--image-options)
   - [image(_data_, _options_)](#plot-marks--image--image)
 - [marks/line.md](#plot-marks--line)
@@ -165,7 +165,7 @@ to omitted pages lead to the tagged upstream documentation.
   - [lineX(_data_, _options_)](#plot-marks--line--lineX)
   - [lineY(_data_, _options_)](#plot-marks--line--lineY)
 - [marks/linear-regression.md](#plot-marks--linear-regression)
-  - [Linear regression mark <VersionBadge version="0.5.1" />](#plot-marks--linear-regression--linear-regression-mark)
+  - [Linear regression mark (since v0.5.1)](#plot-marks--linear-regression--linear-regression-mark)
   - [Linear regression options](#plot-marks--linear-regression--linear-regression-options)
   - [linearRegressionX(_data_, _options_)](#plot-marks--linear-regression--linearRegressionX)
   - [linearRegressionY(_data_, _options_)](#plot-marks--linear-regression--linearRegressionY)
@@ -174,7 +174,7 @@ to omitted pages lead to the tagged upstream documentation.
   - [Link options](#plot-marks--link--link-options)
   - [link(_data_, _options_)](#plot-marks--link--link)
 - [marks/raster.md](#plot-marks--raster)
-  - [Raster mark <VersionBadge version="0.6.2" />](#plot-marks--raster--raster-mark)
+  - [Raster mark (since v0.6.2)](#plot-marks--raster--raster-mark)
   - [Raster options](#plot-marks--raster--raster-options)
   - [raster(_data_, _options_)](#plot-marks--raster--raster)
   - [Spatial interpolators](#plot-marks--raster--spatial-interpolators)
@@ -205,19 +205,19 @@ to omitted pages lead to the tagged upstream documentation.
   - [tickX(_data_, _options_)](#plot-marks--tick--tickX)
   - [tickY(_data_, _options_)](#plot-marks--tick--tickY)
 - [marks/tree.md](#plot-marks--tree)
-  - [Tree mark <VersionBadge version="0.4.3" />](#plot-marks--tree--tree-mark)
+  - [Tree mark (since v0.4.3)](#plot-marks--tree--tree-mark)
   - [Tree options](#plot-marks--tree--tree-options)
   - [tree(_data_, _options_)](#plot-marks--tree--tree)
   - [cluster(_data_, _options_)](#plot-marks--tree--cluster)
 - [marks/vector.md](#plot-marks--vector)
-  - [Vector mark <VersionBadge version="0.4.0" />](#plot-marks--vector--vector-mark)
+  - [Vector mark (since v0.4.0)](#plot-marks--vector--vector-mark)
   - [Vector options](#plot-marks--vector--vector-options)
   - [vector(_data_, _options_)](#plot-marks--vector--vector)
   - [vectorX(_data_, _options_)](#plot-marks--vector--vectorX)
   - [vectorY(_data_, _options_)](#plot-marks--vector--vectorY)
-  - [spike(_data_, _options_) <VersionBadge version="0.6.2" />](#plot-marks--vector--spike)
+  - [spike(_data_, _options_) (since v0.6.2)](#plot-marks--vector--spike)
 - [marks/waffle.md](#plot-marks--waffle)
-  - [Waffle mark <VersionBadge version="0.6.16" pr="2040" />](#plot-marks--waffle--waffle-mark)
+  - [Waffle mark (since v0.6.16)](#plot-marks--waffle--waffle-mark)
   - [Waffle options](#plot-marks--waffle--waffle-options)
   - [waffleX(_data_, _options_)](#plot-marks--waffle--waffleX)
   - [waffleY(_data_, _options_)](#plot-marks--waffle--waffleY)
@@ -228,7 +228,7 @@ to omitted pages lead to the tagged upstream documentation.
   - [binX(_outputs_, _options_)](#plot-transforms--bin--binX)
   - [binY(_outputs_, _options_)](#plot-transforms--bin--binY)
 - [transforms/centroid.md](#plot-transforms--centroid)
-  - [Centroid transform <VersionBadge version="0.6.2" />](#plot-transforms--centroid--centroid-transform)
+  - [Centroid transform (since v0.6.2)](#plot-transforms--centroid--centroid-transform)
   - [centroid(_options_)](#plot-transforms--centroid--centroid)
   - [geoCentroid(_options_)](#plot-transforms--centroid--geoCentroid)
 - [transforms/group.md](#plot-transforms--group)
@@ -238,11 +238,11 @@ to omitted pages lead to the tagged upstream documentation.
   - [groupX(_outputs_, _options_)](#plot-transforms--group--groupX)
   - [groupY(_outputs_, _options_)](#plot-transforms--group--groupY)
   - [groupZ(_outputs_, _options_)](#plot-transforms--group--groupZ)
-  - [find(_test_) <VersionBadge version="0.6.12" pr="1914" />](#plot-transforms--group--find)
+  - [find(_test_) (since v0.6.12)](#plot-transforms--group--find)
 - [transforms/normalize.md](#plot-transforms--normalize)
   - [Normalize transform](#plot-transforms--normalize--normalize-transform)
   - [Normalize options](#plot-transforms--normalize--normalize-options)
-  - [normalize(_basis_) <VersionBadge version="0.2.3" />](#plot-transforms--normalize--normalize)
+  - [normalize(_basis_) (since v0.2.3)](#plot-transforms--normalize--normalize)
   - [normalizeX(_basis_, _options_)](#plot-transforms--normalize--normalizeX)
   - [normalizeY(_basis_, _options_)](#plot-transforms--normalize--normalizeY)
 - [transforms/sort.md](#plot-transforms--sort)
@@ -269,16 +269,16 @@ to omitted pages lead to the tagged upstream documentation.
 Source:
 https://github.com/observablehq/plot/tree/v0.6.17/docs/features/curves.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import {ref} from "vue";
 
 const curve = ref("catmull-rom");
 const numbers = d3.range(20).map(d3.randomLcg(42));
-
-</script>
+```
 
 <a id="plot-features--curves--curves"></a>
 
@@ -291,37 +291,11 @@ the [line](#plot-marks--line), [area](#plot-marks--area), and
 [link](#plot-marks--link) marks, and are implemented by
 [d3-shape](https://d3js.org/d3-shape/curve).
 
-<p>
-  <label class="label-input">
-    Curve:
-    <select v-model="curve">
-      <option>basis</option>
-      <option>basis-open</option>
-      <option>basis-closed</option>
-      <option>bump-x</option>
-      <option>bump-y</option>
-      <option>bundle</option>
-      <option>cardinal</option>
-      <option>cardinal-open</option>
-      <option>cardinal-closed</option>
-      <option>catmull-rom</option>
-      <option>catmull-rom-open</option>
-      <option>catmull-rom-closed</option>
-      <option>linear</option>
-      <option>linear-closed</option>
-      <option>monotone-x</option>
-      <option>monotone-y</option>
-      <option>natural</option>
-      <option>step</option>
-      <option>step-after</option>
-      <option>step-before</option>
-    </select>
-  </label>
-</p>
+[Interactive example](https://observablehq.com/@observablehq/plot-curve-option)
 
-:::plot https://observablehq.com/@observablehq/plot-curve-option
+Interactive example template (values in `{{…}}` come from the upstream website):
 
-```js-vue
+```text
 Plot.plot({
   marks: [
     Plot.lineY(numbers, {curve: "{{curve}}"}),
@@ -329,8 +303,6 @@ Plot.plot({
   ]
 })
 ```
-
-:::
 
 The supported curve options are:
 
@@ -365,7 +337,7 @@ The following named curve methods are supported:
 - _step-before_ - a piecewise constant function where _x_ changes after _y_
 - _auto_ - like _linear_, but use the (possibly spherical)
   [projection](#plot-features--projections), if any
-  <VersionBadge version="0.6.1" />
+  (since v0.6.1)
 
 If **curve** is a function, it will be invoked with a given _context_ in the
 same fashion as a
@@ -393,8 +365,9 @@ Catmull–Rom splines,
 Source:
 https://github.com/observablehq/plot/tree/v0.6.17/docs/features/facets.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import {shallowRef, onMounted} from "vue";
@@ -413,8 +386,7 @@ const scheme = Plot.scale({color: {type: "categorical"}}).range;
 onMounted(() => {
   d3.csv("../data/athletes.csv", d3.autoType).then((data) => (olympians.value = data));
 });
-
-</script>
+```
 
 <a id="plot-features--facets--facets"></a>
 
@@ -431,10 +403,10 @@ trelliswork”) of
 [Becker _et al._](https://hci.stanford.edu/courses/cs448b/papers/becker-trellis-jcgs.pdf)
 using the dot’s **fy** channel to declare vertical↕︎ facets, showing the yields
 of several varieties of barley across several sites for the years
-<span :style="{borderBottom: `solid 2px ${scheme[0]}`}">1931</span> and
-<span :style="{borderBottom: `solid 2px ${scheme[1]}`}">1932</span>.
+1931 and
+1932.
 
-:::plot https://observablehq.com/@observablehq/plot-trellis
+[Interactive example](https://observablehq.com/@observablehq/plot-trellis)
 
 ```js
 Plot.plot({
@@ -458,25 +430,23 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip This plot uses the
+**Tip:** This plot uses the
 [**sort** mark option](#plot-features--scales--sort-mark-option) to order the
 _y_ and _fy_ scale domains by descending median yield (the associated _x_
-values). Without this option, the domains would be sorted alphabetically. :::
+values). Without this option, the domains would be sorted alphabetically.
 
-:::tip Use the [frame mark](#plot-marks--frame) for stronger visual separation
-of facets. :::
+**Tip:** Use the [frame mark](#plot-marks--frame) for stronger visual separation
+of facets.
 
 The chart above reveals a likely data collection error: the years appear to be
 reversed for the Morris site as it is the only site where the yields in
-<span :style="{borderBottom: `solid 2px ${scheme[1]}`}">1932</span> were higher
-than in <span :style="{borderBottom: `solid 2px ${scheme[0]}`}">1931</span>. The
+1932 were higher
+than in 1931. The
 anomaly in Morris is more obvious if we use directed arrows to show the
 year-over-year change. The [group transform](#plot-transforms--group) groups the
 observations by site and variety to compute the change.
 
-:::plot defer https://observablehq.com/@observablehq/plot-trellis-anomaly
+[Interactive example](https://observablehq.com/@observablehq/plot-trellis-anomaly)
 
 ```js
 Plot.plot({
@@ -513,10 +483,8 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::info Here the sort order has changed slightly: the _y_ and _fy_ domains are
-sorted by the median **x1** values, which are the yields for 1931. :::
+**Info:** Here the sort order has changed slightly: the _y_ and _fy_ domains are
+sorted by the median **x1** values, which are the yields for 1931.
 
 Faceting requires ordinal or categorical data because there are a discrete
 number of facets; the associated _fx_ and _fy_ scales are
@@ -529,7 +497,7 @@ _fx_ or _fy_ scale. Below, we produce a [box plot](#plot-marks--box) of the
 weights (in kilograms) of Olympic athletes, faceted by height binned at a 10cm
 (0.1 meter) interval.
 
-:::plot defer https://observablehq.com/@observablehq/plot-olympians-box-plot
+[Interactive example](https://observablehq.com/@observablehq/plot-olympians-box-plot)
 
 ```js
 Plot.plot({
@@ -545,10 +513,8 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip If you are interested in automatic faceting for quantitative data, please
-upvote [#14](https://github.com/observablehq/plot/issues/14). :::
+**Tip:** If you are interested in automatic faceting for quantitative data, please
+upvote [#14](https://github.com/observablehq/plot/issues/14).
 
 When both **fx** and **fy** channels are specified, two-dimensional faceting
 results, as in the faceted scatterplot of penguin culmen measurements below. The
@@ -556,7 +522,6 @@ horizontal↔︎ facet shows sex (with the rightmost column representing penguin
 whose _sex_ field is null, indicating missing data), while the vertical↕︎ facet
 shows species.
 
-:::plot defer
 https://observablehq.com/@observablehq/plot-two-dimensional-faceting
 
 ```js
@@ -576,15 +541,13 @@ Plot.plot({
 });
 ```
 
-:::
-
 You can mix-and-match faceted and non-faceted marks within the same plot. The
 non-faceted marks will be repeated across all facets. This is useful for
 decoration marks, such as a [frame](#plot-marks--frame), and also for context:
 below, the entire population of penguins is repeated in each facet as small gray
 dots, making it easier to see how each facet compares to the whole.
 
-:::plot defer https://observablehq.com/@observablehq/plot-non-faceted-marks
+[Interactive example](https://observablehq.com/@observablehq/plot-non-faceted-marks)
 
 ```js
 Plot.plot({
@@ -609,11 +572,9 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip Set the
+**Tip:** Set the
 [**facet** mark option](#plot-features--facets--mark-facet-options) to _exclude_
-to draw only the dots _not_ in the current facet. :::
+to draw only the dots _not_ in the current facet.
 
 When there are many facets, facets may be small and hard to read; you may need
 to increase the plot’s **width** or **height**. Alternatively, you can wrap
@@ -621,7 +582,7 @@ facets by computing a row and column number as **fy** and **fx**. Below, small
 multiples of varying unemployment counts across industries are shown in a
 three-column display.
 
-:::plot defer https://observablehq.com/@observablehq/plot-facet-wrap
+[Interactive example](https://observablehq.com/@observablehq/plot-facet-wrap)
 
 ```js
 Plot.plot((() => {
@@ -652,21 +613,19 @@ Plot.plot((() => {
 })());
 ```
 
-:::
+**Tip:** If you are interested in automatic facet wrapping, please upvote
+[#277](https://github.com/observablehq/plot/issues/277).
 
-:::tip If you are interested in automatic facet wrapping, please upvote
-[#277](https://github.com/observablehq/plot/issues/277). :::
-
-:::info This example uses an
+**Info:** This example uses an
 [immediately-invoked function expression (IIFE)](https://developer.mozilla.org/en-US/docs/Glossary/IIFE)
-to declare local variables. :::
+to declare local variables.
 
 The above chart also demonstrates faceted annotations, using a
 [text mark](#plot-marks--text) to label the facet in lieu of facet axes. Below,
 we apply a single text annotation to the _Adelie_ facet by setting the **fy**
 channel to a single-element array parallel to the data.
 
-:::plot defer https://observablehq.com/@observablehq/plot-annotated-facets
+[Interactive example](https://observablehq.com/@observablehq/plot-annotated-facets)
 
 ```js
 Plot.plot({
@@ -695,14 +654,12 @@ Plot.plot({
 });
 ```
 
-:::
-
 <a id="plot-features--facets--mark-facet-options"></a>
 
 ## Mark facet options
 
 Facets can be defined for each mark via the **fx** or **fy** channels.
-<VersionBadge version="0.6.1" /> The **fx** and **fy** channels are computed
+(since v0.6.1) The **fx** and **fy** channels are computed
 prior to the
 [mark’s transform](https://github.com/observablehq/plot/tree/v0.6.17/docs/features/transforms.md),
 if any (_i.e._, facet channels are not transformed). Alternatively, the
@@ -729,7 +686,7 @@ labels and legends.
 
 The **facetAnchor**
 option<a id="plot-features--facets--facetAnchor" href="#plot-features--facets--facetAnchor" aria-label="Permalink to &quot;facetAnchor&quot;"></a>
-<VersionBadge version="0.6.3" /> controls the placement of the mark with respect
+(since v0.6.3) controls the placement of the mark with respect
 to the facets. Based on the value, the mark will be displayed on:
 
 - null - non-empty facets
@@ -789,7 +746,7 @@ options. It is useful when multiple marks share the same data; the **x** and
 famous [Anscombe’s quartet](https://en.wikipedia.org/wiki/Anscombe's_quartet) as
 a scatterplot with horizontal facets.
 
-:::plot https://observablehq.com/@observablehq/plot-anscombes-quartet
+[Interactive example](https://observablehq.com/@observablehq/plot-anscombes-quartet)
 
 ```js
 Plot.plot({
@@ -803,8 +760,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 For top-level faceting, these **facet** options determine the facets:
 
@@ -838,12 +793,12 @@ You can adjust the space between facets using the **padding**, **round**, and
 Source:
 https://github.com/observablehq/plot/tree/v0.6.17/docs/features/formats.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
-
-</script>
+```
 
 <a id="plot-features--formats--formats"></a>
 
@@ -859,7 +814,7 @@ for the [axis mark](#plot-marks--axis), as the **text** option for a
 
 <a id="plot-features--formats--formatNumber"></a>
 
-## formatNumber(_locale_) <VersionBadge version="0.6.15" pr="2078" />
+## formatNumber(_locale_) (since v0.6.15)
 
 ```js
 Plot.formatNumber("en-US")(Math.PI); // "3.142"
@@ -886,13 +841,11 @@ given _date_ is not valid, returns `"Invalid Date"`. See
 
 ## formatWeekday(_locale_, _format_)
 
-:::plot https://observablehq.com/@observablehq/plot-format-helpers
+[Interactive example](https://observablehq.com/@observablehq/plot-format-helpers)
 
 ```js
 Plot.textX(d3.range(7)).plot({ x: { tickFormat: Plot.formatWeekday() } });
 ```
-
-:::
 
 ```js
 Plot.formatWeekday("es-MX", "long")(0); // "domingo"
@@ -909,15 +862,13 @@ _narrow_, _short_, or _long_; if not specified, it defaults to _short_.
 
 ## formatMonth(_locale_, _format_)
 
-:::plot https://observablehq.com/@observablehq/plot-format-helpers
+[Interactive example](https://observablehq.com/@observablehq/plot-format-helpers)
 
 ```js
 Plot.textX(d3.range(12)).plot({
   x: { tickFormat: Plot.formatMonth(), ticks: 12 },
 });
 ```
-
-:::
 
 ```js
 Plot.formatMonth("es-MX", "long")(0); // "enero"
@@ -940,8 +891,9 @@ to _short_.
 Source:
 https://github.com/observablehq/plot/tree/v0.6.17/docs/features/legends.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import {shallowRef, onMounted} from "vue";
@@ -963,12 +915,11 @@ onMounted(() => {
   d3.csv("../data/gistemp.csv", d3.autoType).then((data) => (gistemp.value = data));
   d3.csv("../data/penguins.csv", d3.autoType).then((data) => (penguins.value = data));
 });
-
-</script>
+```
 
 <a id="plot-features--legends--legends"></a>
 
-# Legends <VersionBadge version="0.3.0" />
+# Legends (since v0.3.0)
 
 Plot can generate **legends** for _color_, _opacity_, and _symbol_
 [scales](#plot-features--scales). For example, the scatterplot below of body
@@ -976,7 +927,7 @@ measurements of Olympic athletes includes a legend for its _color_ scale,
 allowing the meaning of color to be interpreted by the reader. (The axes
 similarly document the meaning of the _x_ and _y_ position scales.)
 
-:::plot defer https://observablehq.com/@observablehq/plot-olympians-scatterplot
+[Interactive example](https://observablehq.com/@observablehq/plot-olympians-scatterplot)
 
 ```js
 Plot.plot({
@@ -987,8 +938,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 The legend above is a _swatches_ legend because the _color_ scale is _ordinal_
 (with a _categorical_ scheme). When the _color_ scale is continuous, a _ramp_
 legend with a smooth gradient is generated instead. The plot below of global
@@ -996,7 +945,6 @@ average surface temperature ([GISTEMP](https://data.giss.nasa.gov/gistemp/))
 uses a _diverging_ _color_ scale to indicate the deviation from the 1951–1980
 average in degrees Celsius.
 
-:::plot defer
 https://observablehq.com/@observablehq/plot-diverging-color-scatterplot
 
 ```js
@@ -1012,13 +960,11 @@ Plot.plot({
 });
 ```
 
-:::
-
 When an ordinal _color_ scale is used redundantly with a _symbol_ scale, the
 _symbol_ legend will incorporate the color encoding. This is more accessible
 than using color alone, particularly for readers with color vision deficiency.
 
-:::plot defer https://observablehq.com/@observablehq/plot-symbol-channel
+[Interactive example](https://observablehq.com/@observablehq/plot-symbol-channel)
 
 ```js
 Plot.plot({
@@ -1037,8 +983,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 Plot does not yet generate legends for the _r_ (radius) scale or the _length_
 scale. If you are interested in this feature, please upvote
 [#236](https://github.com/observablehq/plot/issues/236). In the meantime, you
@@ -1056,8 +1000,6 @@ defaults to _ramp_ but may be set to _swatches_ for a discrete scale (most
 commonly for _threshold_ color scales); for _ordinal_ _color_ scales and
 _symbol_ scales, only the _swatches_ value is supported.
 
-<!-- TODO Describe the color and opacity options. -->
-
 Categorical and ordinal color legends are rendered as swatches, unless the
 **legend** option is set to _ramp_. The swatches can be configured with the
 following options:
@@ -1070,7 +1012,7 @@ following options:
 - **marginLeft** - the legend’s left margin
 - **className** - a class name, that defaults to a randomly generated string
   scoping the styles
-- **opacity** - the swatch fill opacity <VersionBadge version="0.6.5" />
+- **opacity** - the swatch fill opacity (since v0.6.5)
 - **width** - the legend’s width (in pixels)
 
 Symbol legends are rendered as swatches and support the options above in
@@ -1124,7 +1066,9 @@ The _options_ object must define at least one scale; see
 For example, here is a _ramp_ legend of a _linear_ _color_ scale with the
 default domain of [0, 1] and default scheme _turbo_:
 
-<PlotRender :options='{color: {type: "linear"}}' defer method="legend" />
+```js
+Plot.legend({color: {type: "linear"}});
+```
 
 ```js
 Plot.legend({ color: { type: "linear" } });
@@ -1133,7 +1077,9 @@ Plot.legend({ color: { type: "linear" } });
 The _options_ object may also include any additional legend options described in
 the previous section. For example, to make the above legend slightly wider:
 
-<PlotRender :options='{width: 320, color: {type: "linear"}}' defer method="legend" />
+```js
+Plot.legend({width: 320, color: {type: "linear"}});
+```
 
 ```js
 Plot.legend({ width: 320, color: { type: "linear" } });
@@ -1147,8 +1093,9 @@ Plot.legend({ width: 320, color: { type: "linear" } });
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/features/marks.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import * as htl from "htl";
@@ -1194,17 +1141,15 @@ onMounted(() => {
   d3.csv("../data/goog.csv", d3.autoType).then((data) => (goog.value = data));
   d3.csv("../data/bls-metro-unemployment.csv", d3.autoType).then((data) => (bls.value = data));
 });
-
-</script>
+```
 
 <a id="plot-features--marks--Marks"></a>
 
 # Marks
 
-:::tip If you aren’t yet up and running with Plot, please read our
+**Tip:** If you aren’t yet up and running with Plot, please read our
 [getting started guide](https://github.com/observablehq/plot/tree/v0.6.17/docs/getting-started.md)
 first. Tinkering with the code below will give a better sense of how Plot works.
-:::
 
 Plot doesn’t have chart types; instead, you construct charts by layering
 **marks**.
@@ -1221,35 +1166,29 @@ shape.
 For example, the [dot mark](#plot-marks--dot) draws stroked circles (by
 default).
 
-:::plot https://observablehq.com/@observablehq/plot-temporal-scatterplot
+[Interactive example](https://observablehq.com/@observablehq/plot-temporal-scatterplot)
 
 ```js
 Plot.dot(gistemp, { x: "Date", y: "Anomaly" }).plot();
 ```
 
-:::
-
 The [line mark](#plot-marks--line) draws connected line segments (also known as
 a _polyline_ or _polygonal chain_).
 
-:::plot https://observablehq.com/@observablehq/plot-temporal-line-chart
+[Interactive example](https://observablehq.com/@observablehq/plot-temporal-line-chart)
 
 ```js
 Plot.lineY(gistemp, { x: "Date", y: "Anomaly" }).plot();
 ```
 
-:::
-
 And the [bar mark](#plot-marks--bar) draws rectangular bars in either a
 horizontal (barX→) or vertical (barY↑) orientation.
 
-:::plot https://observablehq.com/@observablehq/plot-alphabet-bar-chart
+[Interactive example](https://observablehq.com/@observablehq/plot-alphabet-bar-chart)
 
 ```js
 Plot.barX(alphabet, { x: "frequency", y: "letter" }).plot();
 ```
-
-:::
 
 So instead of looking for a chart type, consider the shape of the primary
 graphical elements in your chart, and look for the corresponding mark type. If a
@@ -1267,7 +1206,7 @@ For example, below an [area](#plot-marks--area) and [line](#plot-marks--line)
 are used to plot the same sequence of values, while a [rule](#plot-marks--rule)
 emphasizes _y_ = 0.
 
-:::plot defer https://observablehq.com/@observablehq/plot-layered-marks-2
+[Interactive example](https://observablehq.com/@observablehq/plot-layered-marks-2)
 
 ```js
 Plot.plot({
@@ -1279,14 +1218,12 @@ Plot.plot({
 });
 ```
 
-:::
-
 Each mark supplies its own data; a quick way to combine multiple datasets into a
 chart is to declare a separate mark for each. You can even use
 [_array_.map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map)
 to create multiple marks from nested data.
 
-:::plot defer https://observablehq.com/@observablehq/plot-layered-marks-2
+[Interactive example](https://observablehq.com/@observablehq/plot-layered-marks-2)
 
 ```js
 Plot.plot({
@@ -1296,15 +1233,13 @@ Plot.plot({
 });
 ```
 
-:::
-
 Marks may also be a function which returns an
 [SVG element](https://developer.mozilla.org/en-US/docs/Web/SVG/Element), if you
 wish to insert arbitrary content. (Here we use
 [Hypertext Literal](https://github.com/observablehq/htl) to generate an SVG
 gradient.)
 
-:::plot defer https://observablehq.com/@observablehq/plot-gradient-bars
+[Interactive example](https://observablehq.com/@observablehq/plot-gradient-bars)
 
 ```js
 Plot.plot({
@@ -1327,19 +1262,10 @@ Plot.plot({
 });
 ```
 
-:::
-
 And marks may be null or undefined, which produce no output; this is useful for
 showing marks conditionally (_e.g._, when a box is checked).
 
-<p>
-  <label class="label-input">
-    Show area:
-    <input type="checkbox" v-model="area">
-  </label>
-</p>
-
-:::plot defer https://observablehq.com/@observablehq/plot-optional-marks
+[Interactive example](https://observablehq.com/@observablehq/plot-optional-marks)
 
 ```js
 Plot.plot({
@@ -1350,8 +1276,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 <a id="plot-features--marks--marks-use-scales"></a>
 
@@ -1372,7 +1296,7 @@ typically bound to the _color_ scale. Changing a scale’s definition, say by
 overriding its **domain** (the extent of abstract input values) or **type**,
 affects the appearance of all marks that use the scale.
 
-:::plot defer https://observablehq.com/@observablehq/plot-aapl-log-scale
+[Interactive example](https://observablehq.com/@observablehq/plot-aapl-log-scale)
 
 ```js {2-6}
 Plot.plot({
@@ -1387,8 +1311,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 <a id="plot-features--marks--marks-have-tidy-data"></a>
 
 ## Marks have tidy data
@@ -1396,37 +1318,30 @@ Plot.plot({
 A single mark can draw multiple shapes. A mark generally produces a shape — such
 as a rectangle or circle — for each element in the data.
 
-:::plot defer https://observablehq.com/@observablehq/plot-tidy-data
+[Interactive example](https://observablehq.com/@observablehq/plot-tidy-data)
 
 ```js
 Plot.dot(aapl, { x: "Date", y: "Close" }).plot();
 ```
 
-:::
-
 It’s more complicated than that, though, since some marks produce shapes that
 incorporate _multiple_ data points. Pass the same data to a
 [line](#plot-marks--line) and you’ll get a single polyline.
 
-:::plot defer https://observablehq.com/@observablehq/plot-tidy-data
+[Interactive example](https://observablehq.com/@observablehq/plot-tidy-data)
 
 ```js
 Plot.lineY(aapl, { x: "Date", y: "Close" }).plot();
 ```
 
-:::
-
 And a line mark isn’t even guaranteed to produce a single polyline — there can
 be multiple polylines, as in a line chart with multiple series (using **z**).
 
-:::plot defer
 https://observablehq.com/@observablehq/plot-multiple-series-line-chart
 
 ```js
 Plot.lineY(bls, { x: "date", y: "unemployment", z: "division" }).plot();
 ```
-
-:::
 
 Plot favors [tidy data](http://vita.had.co.nz/papers/tidy-data.html) structured
 as an array of objects, where each object represents an observation (a row), and
@@ -1449,27 +1364,25 @@ linedata = [
 ];
 ```
 
-:::tip For larger datasets, you can more efficiently pass data using an
+**Tip:** For larger datasets, you can more efficiently pass data using an
 [Apache Arrow](https://arrow.apache.org/docs/js/) table as a columnar data
-representation. <VersionBadge version="0.6.16" pr="2115" /> :::
+representation. (since v0.6.16)
 
 Then you can pass the data to the line mark, and extract named columns from the
 data for the desired options:
 
-:::plot https://observablehq.com/@observablehq/plot-accessors
+[Interactive example](https://observablehq.com/@observablehq/plot-accessors)
 
 ```js
 Plot.lineY(linedata, { x: "hour", y: "value", stroke: "sensor" }).plot();
 ```
-
-:::
 
 Another common way to extract a column from tabular data is an accessor
 function. This function is invoked for each element in the data (each row), and
 returns the corresponding observed value, as with
 [_array_.map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map).
 
-:::plot https://observablehq.com/@observablehq/plot-accessors
+[Interactive example](https://observablehq.com/@observablehq/plot-accessors)
 
 ```js
 Plot.lineY(linedata, {
@@ -1479,11 +1392,9 @@ Plot.lineY(linedata, {
 }).plot();
 ```
 
-:::
-
 For greater efficiency, Plot also supports columnar data: you can use an
 [Apache Arrow](https://arrow.apache.org/docs/js/) table as data instead of an
-array of objects. <VersionBadge version="0.6.16" pr="2115" /> You can even pass
+array of objects. (since v0.6.16) You can even pass
 parallel arrays of values, or Apache Arrow vectors, to each channel.
 
 ```js
@@ -1494,9 +1405,9 @@ Plot.lineY({ length: linedata.length }, {
 }).plot();
 ```
 
-:::tip Note that when accessor functions or parallel arrays are used instead of
+**Tip:** Note that when accessor functions or parallel arrays are used instead of
 field names, automatic axis labels (_hour_ and _value_) are lost. These can be
-restored using the **label** option on the _x_ and _y_ scales. :::
+restored using the **label** option on the _x_ and _y_ scales.
 
 <a id="plot-features--marks--marks-imply-data-types"></a>
 
@@ -1506,9 +1417,9 @@ Data comes in different types: quantitative (or temporal) values can be
 subtracted, ordinal values can be ordered, and nominal (or categorical) values
 can only be the same or different.
 
-:::info Because nominal values often need some arbitrary order for display
+**Info:** Because nominal values often need some arbitrary order for display
 purposes — often alphabetical — Plot uses the term _ordinal_ to refer to both
-ordinal and nominal data. :::
+ordinal and nominal data.
 
 Some marks work with any type of data, while other marks have certain
 requirements or assumptions of data. For example, a line should only be used
@@ -1518,17 +1429,15 @@ interpolate between adjacent points to draw line segments. If _x_ or _y_ is
 nominal — say the names of countries — it doesn’t make sense to use a line
 because there is no half-way point between two nominal values.
 
-:::plot https://observablehq.com/@observablehq/plot-dont-do-this
+[Interactive example](https://observablehq.com/@observablehq/plot-dont-do-this)
 
 ```js
 Plot.lineY(["please", "don’t", "do", "this"]).plot(); // 🌶️
 ```
 
-:::
-
-:::warning While Plot aspires to give good defaults and helpful warnings, Plot
+**Warning:** While Plot aspires to give good defaults and helpful warnings, Plot
 won’t prevent you from creating a meaningless chart. _Only you_ can prevent
-bogus charts! :::
+bogus charts!
 
 In particular, beware the simple “bar”! A bar mark is used for a bar chart, but
 a rect mark is needed for a histogram. Plot has four different mark types for
@@ -1543,15 +1452,13 @@ Plot encourages you to think about data types as you visualize because data
 types often imply semantics. For example, do you notice anything strange about
 the bar chart below?
 
-:::plot https://observablehq.com/@observablehq/plot-the-missing-bar
+[Interactive example](https://observablehq.com/@observablehq/plot-the-missing-bar)
 
 ```js
 Plot
   .barY(timeseries, { x: "year", y: "population" }) // 🌶️
   .plot({ x: { tickFormat: "" } });
 ```
-
-:::
 
 Here’s the underlying data:
 
@@ -1571,7 +1478,7 @@ implies an ordinal _x_ scale, the gap is hidden. Switching to the rectY mark
 (with the **interval** option to indicate that these are annual observations)
 reveals the missing data.
 
-:::plot https://observablehq.com/@observablehq/plot-the-missing-bar
+[Interactive example](https://observablehq.com/@observablehq/plot-the-missing-bar)
 
 ```js
 Plot
@@ -1579,20 +1486,16 @@ Plot
   .plot({ x: { tickFormat: "" } });
 ```
 
-:::
-
 Alternatively, you can keep the barY mark and apply the **interval** option to
 the _x_ scale.
 
-:::plot https://observablehq.com/@observablehq/plot-the-missing-bar
+[Interactive example](https://observablehq.com/@observablehq/plot-the-missing-bar)
 
 ```js
 Plot
   .barY(timeseries, { x: "year", y: "population" })
   .plot({ x: { tickFormat: "", interval: 1 } });
 ```
-
-:::
 
 <a id="plot-features--marks--marks-have-options"></a>
 
@@ -1604,13 +1507,11 @@ constructor. (The first argument is the required data.) For example, if you want
 filled dots instead of stroked ones, pass the desired color to the **fill**
 option:
 
-:::plot https://observablehq.com/@observablehq/plot-marks-have-options
+[Interactive example](https://observablehq.com/@observablehq/plot-marks-have-options)
 
 ```js
 Plot.dot(gistemp, { x: "Date", y: "Anomaly", fill: "red" }).plot();
 ```
-
-:::
 
 As the name suggests, options are generally optional; Plot tries to provide good
 defaults for whatever you don’t specify. Plot even has
@@ -1619,21 +1520,19 @@ for various common forms of data. Below, we extract an array of numbers from the
 `gistemp` dataset, and use the line mark shorthand to set _x_ = index and _y_ =
 identity.
 
-:::plot https://observablehq.com/@observablehq/plot-marks-have-options
+[Interactive example](https://observablehq.com/@observablehq/plot-marks-have-options)
 
 ```js
 Plot.lineY(gistemp.map((d) => d.Anomaly)).plot();
 ```
 
-:::
-
 Some marks even provide default
 [transforms](https://github.com/observablehq/plot/tree/v0.6.17/docs/features/transforms.md),
 say for [stacking](#plot-transforms--stack)!
 
-:::tip Because Plot strives to be concise, there are many default behaviors,
+**Tip:** Because Plot strives to be concise, there are many default behaviors,
 some of which can be subtle. If Plot isn’t doing what you expect, try disabling
-the defaults by specifying options explicitly. :::
+the defaults by specifying options explicitly.
 
 In addition to the standard options such as **fill** and **stroke** that are
 supported by all mark types, each mark type can support options unique to that
@@ -1659,15 +1558,15 @@ limitation — it would be harder to implement Plot if every option were
 expressible as a channel — but it also serves to guide you towards options that
 are intended for encoding data.
 
-:::tip To vary the definition of a constant option with data, create multiple
+**Tip:** To vary the definition of a constant option with data, create multiple
 marks with your different constant options, and then filter the data for each
-mark to achieve the desired result. :::
+mark to achieve the desired result.
 
 Some options can be either a channel or a constant depending on the provided
 value. For example, if you set the **fill** option to _purple_, Plot interprets
 it as a literal color.
 
-:::plot https://observablehq.com/@observablehq/plot-marks-have-channels
+[Interactive example](https://observablehq.com/@observablehq/plot-marks-have-channels)
 
 ```js
 Plot
@@ -1675,13 +1574,11 @@ Plot
   .plot({ y: { label: null, tickFormat: "" } });
 ```
 
-:::
-
 Whereas if the **fill** option is a string but _not_ a valid CSS color, Plot
 assumes you mean the corresponding column of the data and interprets it as a
 channel.
 
-:::plot https://observablehq.com/@observablehq/plot-marks-have-channels
+[Interactive example](https://observablehq.com/@observablehq/plot-marks-have-channels)
 
 ```js
 Plot
@@ -1689,11 +1586,9 @@ Plot
   .plot({ y: { label: null, tickFormat: "" } });
 ```
 
-:::
-
 If the **fill** option is a function, it is interpreted as a channel.
 
-:::plot https://observablehq.com/@observablehq/plot-marks-have-channels
+[Interactive example](https://observablehq.com/@observablehq/plot-marks-have-channels)
 
 ```js
 Plot
@@ -1701,13 +1596,11 @@ Plot
   .plot({ y: { label: null, tickFormat: "" } });
 ```
 
-:::
-
 Lastly, note that while channels are normally bound to a
 [scale](#plot-features--marks--marks-use-scales), you can bypass the _color_
 scale here by supplying literal color values to the **fill** channel.
 
-:::plot https://observablehq.com/@observablehq/plot-marks-have-channels
+[Interactive example](https://observablehq.com/@observablehq/plot-marks-have-channels)
 
 ```js
 Plot
@@ -1719,13 +1612,11 @@ Plot
   .plot({ y: { label: null, tickFormat: "" } });
 ```
 
-:::
-
 But rather than supplying literal values, it is more semantic to provide
 abstract values and use scales. In addition to centralizing the encoding
 definition (if used by multiple marks), it allows Plot to generate a legend.
 
-:::plot https://observablehq.com/@observablehq/plot-marks-have-channels
+[Interactive example](https://observablehq.com/@observablehq/plot-marks-have-channels)
 
 ```js
 Plot
@@ -1736,8 +1627,6 @@ Plot
   })
   .plot({ y: { label: null, tickFormat: "" }, color: { legend: true } });
 ```
-
-:::
 
 You can then specify the _color_ scale’s **domain** and **range** to control the
 encoding.
@@ -1846,7 +1735,7 @@ All marks support the following style options:
   (_e.g._, _multiply_)
 - **imageFilter** - a CSS
   [filter](https://developer.mozilla.org/en-US/docs/Web/CSS/filter) (_e.g._,
-  _blur(5px)_) <VersionBadge version="0.6.7" />
+  _blur(5px)_) (since v0.6.7)
 - **shapeRendering** - the
   [shape-rendering mode](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/shape-rendering)
   (_e.g._, _crispEdges_)
@@ -1859,7 +1748,7 @@ All marks support the following style options:
   **href** channel
 - **className** - the
   [class attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/class),
-  if any (defaults to null) <VersionBadge version="0.6.16" pr="1098" />
+  if any (defaults to null) (since v0.6.16)
 - **ariaDescription** - a textual description of the mark’s contents
 - **ariaHidden** - if true, hide this content from the accessibility tree
 - **pointerEvents** - the
@@ -1869,7 +1758,7 @@ All marks support the following style options:
 - **tip** - whether to generate an implicit
   [pointer](https://github.com/observablehq/plot/tree/v0.6.17/docs/interactions/pointer.md)
   [tip](https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/tip.md)
-  <VersionBadge version="0.6.7" />
+  (since v0.6.7)
 
 If the **clip**
 option<a id="plot-features--marks--clip" href="#plot-features--marks--clip" aria-label="Permalink to &quot;clip&quot;"></a>
@@ -1879,7 +1768,7 @@ not clipped. If the **clip** option is _sphere_, the mark will be clipped to the
 projected sphere (_e.g._, the front hemisphere when using the orthographic
 projection); a [geographic projection](#plot-features--projections) is required
 in this case. Lastly if the **clip** option is a GeoJSON object
-<VersionBadge version="0.6.17" pr="2243" />, the mark will be clipped to the
+(since v0.6.17), the mark will be clipped to the
 projected geometry.
 
 If the **tip** option is true, a
@@ -2014,7 +1903,7 @@ provides default insets. (Note that the
 ### Rounded corners
 
 Rect-like marks support rounded corners. Each corner (or side) is individually
-addressable <VersionBadge version="0.6.16" pr="2099" /> using the following
+addressable (since v0.6.16) using the following
 options:
 
 - **r** - the radius for all four corners
@@ -2039,7 +1928,7 @@ they are reduced proportionally.
 
 <a id="plot-features--marks--marks"></a>
 
-## marks(..._marks_) <VersionBadge version="0.2.0" />
+## marks(..._marks_) (since v0.2.0)
 
 ```js
 Plot.marks(
@@ -2067,8 +1956,9 @@ prev:
   link: /getting-started
 ---
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import * as htl from "htl";
@@ -2090,8 +1980,7 @@ onMounted(() => {
   d3.csv("../data/goog.csv", d3.autoType).then((data) => (goog.value = data));
   d3.csv("../data/penguins.csv", d3.autoType).then((data) => (penguins.value = data));
 });
-
-</script>
+```
 
 <a id="plot-features--plots--plots"></a>
 
@@ -2101,7 +1990,7 @@ To render a **plot** in Observable Plot, call
 [plot](#plot-features--plots--plot) (typically as `Plot.plot`), passing in the
 desired _options_. This function returns an SVG or HTML figure element.
 
-:::plot https://observablehq.com/@observablehq/plot-hello-world
+[Interactive example](https://observablehq.com/@observablehq/plot-hello-world)
 
 ```js
 Plot.plot({
@@ -2112,12 +2001,9 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip The returned plot element is detached; it must be inserted into the page
+**Tip:** The returned plot element is detached; it must be inserted into the page
 to be visible. For help, see the
 [getting started guide](https://github.com/observablehq/plot/tree/v0.6.17/docs/getting-started.md).
-:::
 
 <a id="plot-features--plots--marks-option"></a>
 
@@ -2143,7 +2029,9 @@ records a daily observation, with properties _Date_, _Open_, _High_, and so on.
 This is known as a “row-based” format since each object corresponds to a row in
 the table.
 
-```js-vue
+Interactive example template (values in `{{…}}` come from the upstream website):
+
+```text
 aapl = [
   {Date: new Date("2013-05-13"), Open: 64.501427, High: 65.414284, Low: 64.500000, Close: 64.962860, Volume: 79237200},
   {Date: new Date("2013-05-14"), Open: 64.835716, High: 65.028572, Low: 63.164288, Close: 63.408573, Volume: 111779500},
@@ -2153,7 +2041,7 @@ aapl = [
 ]
 ```
 
-:::tip Rather than baking data into JavaScript, use
+**Tip:** Rather than baking data into JavaScript, use
 [JSON](https://en.wikipedia.org/wiki/JSON) or
 [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) files to store data.
 You can use [d3.json](https://d3js.org/d3-fetch#json),
@@ -2161,14 +2049,14 @@ You can use [d3.json](https://d3js.org/d3-fetch#json),
 [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) to load a
 file. On Observable, you can also use a
 [file attachment](https://observablehq.com/@observablehq/file-attachments) or
-[SQL cell](https://observablehq.com/@observablehq/sql-cell). :::
+[SQL cell](https://observablehq.com/@observablehq/sql-cell).
 
 To use data with Plot, pass the data as the first argument to the mark
 constructor. We can then assign columns of data such as _Date_ and _Close_ to
 visual properties of the mark (or “channels”) such as horizontal↔︎ position **x**
 and vertical↕︎ position **y**.
 
-:::plot defer https://observablehq.com/@observablehq/plot-first-line-chart
+[Interactive example](https://observablehq.com/@observablehq/plot-first-line-chart)
 
 ```js
 Plot.plot({
@@ -2178,17 +2066,15 @@ Plot.plot({
 });
 ```
 
-:::
-
 A plot can have multiple marks, and each mark has its own data. For example, say
 we had a similar table `goog` representing the daily price of Google stock for
 the same period. Below, the
-<span style="border-bottom: solid 2px var(--vp-c-red);">red</span> line
+red line
 represents Google stock, while the
-<span style="border-bottom: solid 2px var(--vp-c-blue);">blue</span> line
+blue line
 represents Apple stock.
 
-:::plot defer https://observablehq.com/@observablehq/plot-layered-marks
+[Interactive example](https://observablehq.com/@observablehq/plot-layered-marks)
 
 ```js
 Plot.plot({
@@ -2200,17 +2086,15 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip When comparing the performance of different stocks, we typically want to
+**Tip:** When comparing the performance of different stocks, we typically want to
 normalize the return relative to a purchase price. See the
-[normalize transform](#plot-transforms--normalize) for an example. :::
+[normalize transform](#plot-transforms--normalize) for an example.
 
 Alternatively, the tables can be combined, say with a _Symbol_ column to
 distinguish AAPL from GOOG. This allows the use of a categorical _color_ scale
 and legend.
 
-:::plot defer https://observablehq.com/@observablehq/plot-stocks-multiline-chart
+[Interactive example](https://observablehq.com/@observablehq/plot-stocks-multiline-chart)
 
 ```js
 Plot.plot({
@@ -2222,19 +2106,16 @@ Plot.plot({
 });
 ```
 
-:::
-
 Each mark has its own options, and different mark types support different
 options. See the respective mark type (such as [bar](#plot-marks--bar) or
 [dot](#plot-marks--dot)) for details.
 
 Marks are drawn in the given order, with the last mark drawn on top. For
 example, below
-<span style="border-bottom: solid 2px var(--vp-c-green);">green</span> bars are
-drawn on top of <span style="border-bottom: solid 2px;">{{$dark ? "white" :
-"black"}}</span> bars.
+green bars are
+drawn on top of `$dark ? "white" : "black"` bars.
 
-:::plot https://observablehq.com/@observablehq/plot-marks-z-order
+[Interactive example](https://observablehq.com/@observablehq/plot-marks-z-order)
 
 ```js
 Plot.plot({
@@ -2251,8 +2132,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 <a id="plot-features--plots--layout-options"></a>
 
@@ -2272,31 +2151,6 @@ numbers in pixels:
 Experiment with the margins by adjusting the sliders below. Note that because
 the _x_ scale is a _band_ scale, the **round** option defaults to true, so the
 bars may jump when you adjust the horizontal margins to snap to crisp edges.
-
-<p>
-  <label class="label-input" style="display: flex;">
-    <span style="display: inline-block; width: 7em;">marginTop:</span>
-    <input type="range" v-model.number="marginTop" min="0" max="60" step="1">
-    <span style="font-variant-numeric: tabular-nums;">{{marginTop}}</span>
-  </label>
-  <label class="label-input" style="display: flex;">
-    <span style="display: inline-block; width: 7em;">marginRight:</span>
-    <input type="range" v-model.number="marginRight" min="0" max="60" step="1">
-    <span style="font-variant-numeric: tabular-nums;">{{marginRight}}</span>
-  </label>
-  <label class="label-input" style="display: flex;">
-    <span style="display: inline-block; width: 7em;">marginBottom:</span>
-    <input type="range" v-model.number="marginBottom" min="0" max="60" step="1">
-    <span style="font-variant-numeric: tabular-nums;">{{marginBottom}}</span>
-  </label>
-  <label class="label-input" style="display: flex;">
-    <span style="display: inline-block; width: 7em;">marginLeft:</span>
-    <input type="range" v-model.number="marginLeft" min="0" max="60" step="1">
-    <span style="font-variant-numeric: tabular-nums;">{{marginLeft}}</span>
-  </label>
-</p>
-
-:::plot hidden defer
 
 ```js
 Plot.plot({
@@ -2320,9 +2174,9 @@ Plot.plot({
 });
 ```
 
-:::
+Interactive example template (values in `{{…}}` come from the upstream website):
 
-```js-vue
+```text
 Plot.plot({
   marginTop: {{marginTop}},
   marginRight: {{marginRight}},
@@ -2336,8 +2190,8 @@ Plot.plot({
 })
 ```
 
-:::info To assist the explanation, the plot above is drawn with a light gray
-border. :::
+**Info:** To assist the explanation, the plot above is drawn with a light gray
+border.
 
 The default **width** is 640. On Observable, the width can be set to the
 [standard width](https://github.com/observablehq/stdlib/blob/main/README.md#width)
@@ -2348,15 +2202,15 @@ of the plot’s constituent [marks](#plot-features--plots--marks-option). While
 most marks default to zero margins (because they are drawn inside the chart
 area), Plot’s [axis mark](#plot-marks--axis) has non-zero default margins.
 
-:::tip Plot does not adjust margins automatically to make room for long tick
+**Tip:** Plot does not adjust margins automatically to make room for long tick
 labels. If your _y_ axis labels are too long, you can increase the
 **marginLeft** to make more room. Also consider using a different **tickFormat**
 for short labels (_e.g._, `s` for SI prefix notation), or a scale **transform**
-(say to convert units to millions or billions). :::
+(say to convert units to millions or billions).
 
 The **aspectRatio**
 option<a id="plot-features--plots--aspectRatio" href="#plot-features--plots--aspectRatio" aria-label="Permalink to &quot;aspectRatio&quot;"></a>
-<VersionBadge version="0.6.4" />, if not null, computes a default **height**
+(since v0.6.4), if not null, computes a default **height**
 such that a variation of one unit in the _x_ dimension is represented by the
 corresponding number of pixels as a variation in the _y_ dimension of one unit.
 The **aspectRatio** option is recommended only when _x_ and _y_ domains share
@@ -2366,14 +2220,7 @@ consecutive domain values are treated as one unit length apart; for example, if
 both _x_ and _y_ are ordinal, then an aspect ratio of one produces a square
 grid.
 
-<p>
-  <label class="label-input">
-    Use fixed aspect ratio:
-    <input type="checkbox" v-model="fixed">
-  </label>
-</p>
-
-:::plot defer https://observablehq.com/@observablehq/plot-intro-to-aspectratio
+[Interactive example](https://observablehq.com/@observablehq/plot-intro-to-aspectratio)
 
 ```js
 Plot.plot({
@@ -2392,10 +2239,8 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip When using facets, set the _fx_ and _fy_ scales’ **round** option to
-false if you need an exact aspect ratio. :::
+**Tip:** When using facets, set the _fx_ and _fy_ scales’ **round** option to
+false if you need an exact aspect ratio.
 
 <a id="plot-features--plots--other-options"></a>
 
@@ -2405,9 +2250,9 @@ By default, [plot](#plot-features--plots--plot) returns an SVG element; however,
 if the plot includes a title, subtitle, [legend](#plot-features--legends), or
 caption, plot wraps the SVG element with an HTML figure element. You can also
 force Plot to generate a figure element by setting the **figure** option
-<VersionBadge version="0.6.10" pr="1761" /> to true.
+(since v0.6.10) to true.
 
-The **title** & **subtitle** options <VersionBadge version="0.6.10" pr="1761" />
+The **title** & **subtitle** options (since v0.6.10)
 and the **caption** option accept either a string or an HTML element. If given
 an HTML element, say using the
 [`html` tagged template literal](http://github.com/observablehq/htl), the title
@@ -2415,7 +2260,7 @@ and subtitle are used as-is while the caption is wrapped in a figcaption
 element; otherwise, the specified text will be escaped and wrapped in an h2, h3,
 or figcaption, respectively.
 
-:::plot https://observablehq.com/@observablehq/plot-caption
+[Interactive example](https://observablehq.com/@observablehq/plot-caption)
 
 ```js
 Plot.plot({
@@ -2431,8 +2276,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 The **style** option allows custom styles to override Plot’s defaults. It may be
 specified either as a string of inline styles (_e.g._, `"color: red;"`, in the
 same fashion as assigning
@@ -2445,15 +2288,15 @@ Plot’s marks and axes default to
 [currentColor](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#currentcolor_keyword),
 meaning that they will inherit the surrounding content’s color.
 
-:::warning CAUTION Unitless numbers
+**Warning:** CAUTION Unitless numbers
 ([quirky lengths](https://www.w3.org/TR/css-values-4/#deprecated-quirky-length))
 such as `{padding: 20}` are not supported by some browsers; you should instead
-specify a string with units such as `{padding: "20px"}`. :::
+specify a string with units such as `{padding: "20px"}`.
 
 The generated SVG element has a class name which applies a default stylesheet.
 Use the top-level **className** option to specify that class name.
 
-The **clip** option <VersionBadge version="0.6.10" pr="1792" /> determines the
+The **clip** option (since v0.6.10) determines the
 default clipping behavior if the
 [mark **clip** option](#plot-features--marks--mark-options) is not specified;
 set it to true to enable clipping. This option does not affect
@@ -2539,8 +2382,9 @@ scales.
 Source:
 https://github.com/observablehq/plot/tree/v0.6.17/docs/features/projections.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import * as topojson from "topojson-client";
@@ -2566,12 +2410,11 @@ onMounted(() => {
   d3.json("../data/westport-house.json").then((data) => (westport.value = data));
   d3.json("../data/us-counties-10m.json").then((data) => (us.value = data));
 });
-
-</script>
+```
 
 <a id="plot-features--projections--projections"></a>
 
-# Projections <VersionBadge version="0.6.1" />
+# Projections (since v0.6.1)
 
 A **projection** maps abstract coordinates in _x_ and _y_ to pixel positions on
 screen. Most often, abstract coordinates are spherical (degrees longitude and
@@ -2580,15 +2423,7 @@ earthquakes in the last seven days with a magnitude of 2.5 or higher as reported
 by the [USGS](https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php).
 Use the slider to adjust the _orthographic_ projection’s center of longitude.
 
-<p>
-  <label class="label-input">
-    Longitude:
-    <input type="range" v-model.number="longitude" min="-180" max="180" step="1">
-    <span style="font-variant-numeric: tabular-nums;">{{longitude}}°</span>
-  </label>
-</p>
-
-:::plot defer https://observablehq.com/@observablehq/plot-earthquake-globe
+[Interactive example](https://observablehq.com/@observablehq/plot-earthquake-globe)
 
 ```js
 Plot.plot({
@@ -2609,8 +2444,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 Above, a [geo mark](#plot-marks--geo) draws polygons representing land and a
 [sphere mark](#plot-marks--geo--sphere) draws the outline of the globe. A
 [dot mark](#plot-marks--dot) draws earthquakes as circles sized by magnitude.
@@ -2629,40 +2462,18 @@ projections specially or to treat the projection as any other position scale.
 (For example, the [line mark](#plot-marks--line) is projection-aware to draw
 geodesics.)
 
-:::info Marks that require _band_ scales (bars, cells, and ticks) cannot be used
+**Info:** Marks that require _band_ scales (bars, cells, and ticks) cannot be used
 with projections. Likewise one-dimensional marks such as rules cannot be used,
-though see [#1164](https://github.com/observablehq/plot/issues/1164). :::
+though see [#1164](https://github.com/observablehq/plot/issues/1164).
 
 Plot provides a variety of built-in projections. And as above, all world
 projections can be rotated to show a different aspect.
 
-<p>
-  <label class="label-input">
-    Projection:
-    <select v-model="projection">
-      <!-- <option>albers-usa</option> -->
-      <!-- <option>albers</option> -->
-      <option>azimuthal-equal-area</option>
-      <option>azimuthal-equidistant</option>
-      <!-- <option>conic-conformal</option> -->
-      <option>conic-equal-area</option>
-      <option>conic-equidistant</option>
-      <option>equal-earth</option>
-      <option>equirectangular</option>
-      <option>gnomonic</option>
-      <!-- <option>identity</option> -->
-      <!-- <option>reflect-y</option> -->
-      <option>mercator</option>
-      <option>orthographic</option>
-      <option>stereographic</option>
-      <option>transverse-mercator</option>
-    </select>
-  </label>
-</p>
+[Interactive example](https://observablehq.com/@observablehq/plot-world-projections)
 
-:::plot defer https://observablehq.com/@observablehq/plot-world-projections
+Interactive example template (values in `{{…}}` come from the upstream website):
 
-```js-vue
+```text
 Plot.plot({
   projection: "{{projection}}",
   marks: [
@@ -2672,8 +2483,6 @@ Plot.plot({
   ]
 })
 ```
-
-:::
 
 Why so many? Each projection has its strengths and weaknesses:
 
@@ -2693,7 +2502,7 @@ conic equal-area projection with an inset of Alaska and Hawaii. (Note that the
 scale for Alaska is diminished: it is projected at 0.35× its true relative
 area.)
 
-:::plot defer https://observablehq.com/@observablehq/plot-albers-usa-projection
+[Interactive example](https://observablehq.com/@observablehq/plot-albers-usa-projection)
 
 ```js
 Plot.plot({
@@ -2705,9 +2514,7 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip Use the _albers-usa_ projection for U.S.-centric choropleth maps. :::
+**Tip:** Use the _albers-usa_ projection for U.S.-centric choropleth maps.
 
 For maps that focus on a specific region, use the **domain** option to zoom in.
 This object should be a GeoJSON object. For example, you can use
@@ -2715,15 +2522,7 @@ This object should be a GeoJSON object. For example, you can use
 a given radius centered at a given longitude and latitude. You can also use the
 **inset** options for a bit of padding around the **domain**.
 
-<p>
-  <label class="label-input">
-    Radius:
-    <input type="range" v-model.number="radius" min="10" max="50" step="0.1">
-    <span style="font-variant-numeric: tabular-nums;">{{radius.toFixed(1)}}°</span>
-  </label>
-</p>
-
-:::plot defer https://observablehq.com/@observablehq/plot-projection-domain
+[Interactive example](https://observablehq.com/@observablehq/plot-projection-domain)
 
 ```js
 Plot.plot({
@@ -2752,7 +2551,7 @@ specifying the **projection** option as a function that returns a D3 projection.
 Below, a map of Antarctica in a polar aspect of the _azimuthal-equidistant_
 projection.
 
-:::plot defer https://observablehq.com/@observablehq/plot-polar-projection
+[Interactive example](https://observablehq.com/@observablehq/plot-polar-projection)
 
 ```js
 Plot.plot({
@@ -2772,32 +2571,27 @@ Plot.plot({
 });
 ```
 
-:::
-
 While this notebook mostly details spherical projections, you can use the
 _identity_ projection to display planar geometry. For example, below we draw a
 schematic of the second floor of the
 [Westport House](https://en.wikipedia.org/wiki/Westport_House) in Dundee,
 Ireland.
 
-:::plot defer https://observablehq.com/@observablehq/plot-floor-plan
+[Interactive example](https://observablehq.com/@observablehq/plot-floor-plan)
 
 ```js
 Plot.geo(westport).plot({ projection: { type: "identity", domain: westport } });
 ```
 
-:::
-
-:::tip There’s also a _reflect-y_ projection in case _y_ points up↑, which is
+**Tip:** There’s also a _reflect-y_ projection in case _y_ points up↑, which is
 often the case with
 [projected reference systems](https://en.wikipedia.org/wiki/Projected_coordinate_system).
-:::
 
 Naturally, Plot’s projection system is compatible with its
 [faceting system](#plot-features--facets). Below, a comic strip of sorts shows
 the locations of Walmart store openings in past decades.
 
-:::plot defer https://observablehq.com/@observablehq/plot-map-small-multiples
+[Interactive example](https://observablehq.com/@observablehq/plot-map-small-multiples)
 
 ```js
 Plot.plot({
@@ -2823,11 +2617,9 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::info This uses the
+**Info:** This uses the
 [**interval** scale option](#plot-features--scales--scale-transforms) to bin
-temporal data into facets by decade. :::
+temporal data into facets by decade.
 
 To learn more about mapping with Plot, see our hands-on tutorials:
 
@@ -2920,8 +2712,9 @@ generated geometry and typically produces smaller SVG output.
 Source:
 https://github.com/observablehq/plot/tree/v0.6.17/docs/features/scales.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import {ref, shallowRef, onMounted} from "vue";
@@ -2945,8 +2738,7 @@ onMounted(() => {
   d3.csv("../data/goog.csv", d3.autoType).then((data) => (goog.value = data));
   d3.csv("../data/sf-temperatures.csv", d3.autoType).then((data) => (sftemp.value = data));
 });
-
-</script>
+```
 
 <a id="plot-features--scales--scales"></a>
 
@@ -2974,13 +2766,11 @@ might be mapped to _x_ = 40 (on the left) and 2016-12-01 might be mapped to _x_
 = 620 (on the right). Likewise, the _y_ scale maps temperature anomalies to
 vertical↕︎ positions.
 
-:::plot https://observablehq.com/@observablehq/plot-scales-intro
+[Interactive example](https://observablehq.com/@observablehq/plot-scales-intro)
 
 ```js
 Plot.lineY(gistemp, { x: "Date", y: "Anomaly" }).plot();
 ```
-
-:::
 
 In Plot, the [mark](#plot-features--marks) binds channels to scales; for
 example, the line’s **x** channel is bound to the _x_ scale. The channel name
@@ -3015,13 +2805,11 @@ to color, radius, length, opacity, and more. For example if we switch to a
 [rule](#plot-marks--rule) and use the **stroke** channel instead of **y**, we
 get a one-dimensional heatmap:
 
-:::plot https://observablehq.com/@observablehq/plot-scales-intro
+[Interactive example](https://observablehq.com/@observablehq/plot-scales-intro)
 
 ```js
 Plot.ruleX(gistemp, { x: "Date", stroke: "Anomaly" }).plot();
 ```
-
-:::
 
 While the resulting chart looks different, the _color_ scale here behaves
 similarly to the `y` function above — the only difference is that it
@@ -3039,11 +2827,11 @@ function color(anomaly) {
 Within a given [plot](#plot-features--plots), marks share scales. For example,
 if a plot has two line marks, such as the lines below visualizing the daily
 closing price of
-<span style="border-bottom: solid 2px var(--vp-c-red);">Google</span> and
-<span style="border-bottom: solid 2px var(--vp-c-blue);">Apple</span> stock,
+Google and
+Apple stock,
 both share the same _x_ and _y_ scales for a consistent encoding.
 
-:::plot defer https://observablehq.com/@observablehq/plot-layered-marks
+[Interactive example](https://observablehq.com/@observablehq/plot-layered-marks)
 
 ```js
 Plot.plot({
@@ -3055,13 +2843,11 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip When comparing the performance of different stocks, we typically want to
+**Tip:** When comparing the performance of different stocks, we typically want to
 normalize the return relative to a purchase price; see the
 [normalize transform](#plot-transforms--normalize) for an example. Also, not
 that we recommend them, but if you are interested in dual-axis charts, please
-upvote [#147](https://github.com/observablehq/plot/issues/147). :::
+upvote [#147](https://github.com/observablehq/plot/issues/147).
 
 Plot has many different scales; we categorize them by their _input_ (**domain**)
 and _output_ (**range**).
@@ -3078,10 +2864,6 @@ position scales, it is typically an extent such as [_left_, _right_] or
 _red_] or an array of discrete colors. The type of values that a scale outputs
 corresponds to the _name_ of the scale (_e.g._, _x_ or _color_).
 
-<!-- Position, color, radius, length, angle. In many cases this is just what the underlying interpolator is. For position, the output is a number, so we interpolate from the left to the right side. Whereas for color, the output is a color, we need a color space such as RGB or LCh to interpolate, or a fixed color ramp such as *turbo*.  -->
-
-<!-- There are also some special transforms we can apply as part of the visual encoding. For example, continuous transforms such as log and sqrt. And sometimes converting continuous values into discrete values, with quantile, quantize, threshold. The latter transforms especially are usually for color. -->
-
 Let’s look at some examples to make this less abstract.
 
 <a id="plot-features--scales--continuous-scales"></a>
@@ -3093,42 +2875,34 @@ _min_ and _max_ are numbers, such as temperatures. Below, the first domain value
 (_x_ = 0) corresponds to the left side of the plot while the second (_x_ = 100)
 corresponds to the right side.
 
-:::plot https://observablehq.com/@observablehq/plot-continuous-scales
+[Interactive example](https://observablehq.com/@observablehq/plot-continuous-scales)
 
 ```js
 Plot.plot({ x: { domain: [0, 100], grid: true } });
 ```
 
-:::
-
 Flipping the domain reverses the scale so that +_x_ points ←left instead of
 right→.
 
-:::plot https://observablehq.com/@observablehq/plot-continuous-scales
+[Interactive example](https://observablehq.com/@observablehq/plot-continuous-scales)
 
 ```js
 Plot.plot({ x: { domain: [100, 0], grid: true } });
 ```
 
-:::
-
 Alternatively, use the **reverse** option; this is convenient when the domain is
 implied from data rather than specified explicitly.
 
-:::plot https://observablehq.com/@observablehq/plot-continuous-scales
+[Interactive example](https://observablehq.com/@observablehq/plot-continuous-scales)
 
 ```js
 Plot.plot({ x: { domain: [0, 100], reverse: true, grid: true } });
 ```
 
-:::
-
 If the domain is dates, Plot will default to a UTC scale. This is a linear scale
 with ticks based on the Gregorian calendar.
 
-<!-- Plot doesn’t parse dates; convert your strings to [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) instances with [d3.utcParse](https://d3js.org/d3-time-format#utcParse) or [d3.autoType](https://d3js.org/d3-dsv#autoType). -->
-
-:::plot https://observablehq.com/@observablehq/plot-continuous-scales
+[Interactive example](https://observablehq.com/@observablehq/plot-continuous-scales)
 
 ```js
 Plot.plot({
@@ -3136,14 +2910,12 @@ Plot.plot({
 });
 ```
 
-:::
-
 To force a UTC scale, say when the data is milliseconds since UNIX epoch rather
 than Date instances, pass _utc_ as the **type** option. Though we recommend
 coercing strings and numbers to more specific types when you load data, rather
 than relying on scales to do it.
 
-:::plot https://observablehq.com/@observablehq/plot-continuous-scales
+[Interactive example](https://observablehq.com/@observablehq/plot-continuous-scales)
 
 ```js
 Plot.plot({
@@ -3151,12 +2923,10 @@ Plot.plot({
 });
 ```
 
-:::
-
 If the scale **type** is _time_, the ticks will be in local time — as with the
 dates below — rather than UTC.
 
-:::plot https://observablehq.com/@observablehq/plot-continuous-scales
+[Interactive example](https://observablehq.com/@observablehq/plot-continuous-scales)
 
 ```js
 Plot.plot({
@@ -3168,20 +2938,16 @@ Plot.plot({
 });
 ```
 
-:::
-
 When plotting values that vary widely, such as the luminosity of stars in an
 [HR diagram](https://observablehq.com/@mbostock/hertzsprung-russell-diagram), a
 _log_ scale may improve readability. Log scales default to base-10 ticks with
 SI-prefix notation.
 
-:::plot https://observablehq.com/@observablehq/plot-continuous-scales
+[Interactive example](https://observablehq.com/@observablehq/plot-continuous-scales)
 
 ```js
 Plot.plot({ x: { type: "log", domain: [1e0, 1e5], grid: true } });
 ```
-
-:::
 
 If you prefer conventional notation, you can specify the **tickFormat** option
 to change the behavior of the axis. The **tickFormat** option can either be a
@@ -3189,7 +2955,7 @@ to change the behavior of the axis. The **tickFormat** option can either be a
 value and returns the corresponding string. Note, however, that this may result
 in overlapping text.
 
-:::plot https://observablehq.com/@observablehq/plot-continuous-scales
+[Interactive example](https://observablehq.com/@observablehq/plot-continuous-scales)
 
 ```js
 Plot.plot({
@@ -3197,12 +2963,10 @@ Plot.plot({
 });
 ```
 
-:::
-
 Log scales also support a **base** option, say for powers of two. This does not
 affect the scale’s encoding, but it does change where ticks are shown.
 
-:::plot https://observablehq.com/@observablehq/plot-continuous-scales
+[Interactive example](https://observablehq.com/@observablehq/plot-continuous-scales)
 
 ```js
 Plot.plot({
@@ -3210,40 +2974,32 @@ Plot.plot({
 });
 ```
 
-:::
-
 The domain of a log scale cannot include (or cross) zero; for this, consider a
 [bi-symmetric log](https://d3js.org/d3-scale/symlog) scale instead.
 
-:::plot https://observablehq.com/@observablehq/plot-continuous-scales
+[Interactive example](https://observablehq.com/@observablehq/plot-continuous-scales)
 
 ```js
 Plot.plot({ x: { type: "symlog", domain: [-10, 10], grid: true } });
 ```
 
-:::
-
 Power scales and square-root scales are also supported. The _pow_ scale supports
 the **exponent** option, which defaults to 1 (for a linear scale). The _sqrt_
 scale is shorthand for a _pow_ scale with exponent 0.5.
 
-:::plot https://observablehq.com/@observablehq/plot-continuous-scales
+[Interactive example](https://observablehq.com/@observablehq/plot-continuous-scales)
 
 ```js
 Plot.plot({ x: { type: "sqrt", domain: [0, 100], grid: true } });
 ```
 
-:::
-
-:::plot https://observablehq.com/@observablehq/plot-continuous-scales
+[Interactive example](https://observablehq.com/@observablehq/plot-continuous-scales)
 
 ```js
 Plot.plot({
   x: { type: "pow", exponent: 1 / 3, domain: [0, 100], grid: true },
 });
 ```
-
-:::
 
 Continuous scales also support a **clamp** option which, if true, clamps input
 values to the scale’s domain before scaling. This is useful for preventing marks
@@ -3281,19 +3037,17 @@ A _point_ scale divides space into uniformly-spaced discrete values. It is
 commonly used for scatterplots (a [dot mark](#plot-marks--dot)) of ordinal data.
 It is the default scale type for ordinal data on the _x_ and _y_ scale.
 
-:::plot https://observablehq.com/@observablehq/plot-discrete-scales
+[Interactive example](https://observablehq.com/@observablehq/plot-discrete-scales)
 
 ```js
 Plot.plot({ x: { type: "point", domain: "ABCDEFGHIJ", grid: true } });
 ```
 
-:::
-
 A band scale divides space into uniformly-spaced and -sized discrete intervals.
 It is commonly used for bar charts (bar marks). To show the bands below, we use
 a [cell](#plot-marks--cell) instead of a [grid](#plot-marks--grid).
 
-:::plot https://observablehq.com/@observablehq/plot-discrete-scales
+[Interactive example](https://observablehq.com/@observablehq/plot-discrete-scales)
 
 ```js
 Plot
@@ -3305,26 +3059,11 @@ Plot
   .plot({ x: { type: "band", domain: "ABCDEFGHIJ" } });
 ```
 
-:::
-
 While _point_ and _band_ scales appear visually similar when only the grid is
 visible, the two are not identical — they differ respective to padding. Play
 with the options below to get a sense of their effect on the scale’s behavior.
 
-<p>
-  <label class="label-input">
-    <span>Padding:</span>
-    <input type="range" v-model.number="padding" min="0" max="1" step="0.01">
-    <span style="font-variant-numeric: tabular-nums;">{{padding.toFixed(2)}}</span>
-  </label>
-  <label class="label-input">
-    <span>Align:</span>
-    <input type="range" v-model.number="align" min="0" max="1" step="0.01">
-    <span style="font-variant-numeric: tabular-nums;">{{align.toFixed(2)}}</span>
-  </label>
-</p>
-
-:::plot hidden https://observablehq.com/@observablehq/plot-discrete-scales
+[Interactive example](https://observablehq.com/@observablehq/plot-discrete-scales)
 
 ```js
 Plot.plot({
@@ -3342,9 +3081,7 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::plot hidden https://observablehq.com/@observablehq/plot-discrete-scales
+[Interactive example](https://observablehq.com/@observablehq/plot-discrete-scales)
 
 ```js
 Plot.plot({
@@ -3361,8 +3098,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 Position scales also have a **round** option which forces the scale to snap to
 integer pixels. This defaults to true for point and band scales, and false for
@@ -3381,51 +3116,6 @@ The default quantitative color scale **type** is _linear_, and the default
 A wide variety of sequential, diverging, and cyclical schemes are supported,
 including ColorBrewer and [_viridis_](http://bids.github.io/colormap/).
 
-<p>
-  <label class="label-input">
-    Color scheme:
-    <select v-model="schemeq">
-      <optgroup label="sequential, single-hue">
-        <option value="blues">Blues</option>
-        <option value="greens">Greens</option>
-        <option value="greys">Greys</option>
-        <option value="purples">Purples</option>
-        <option value="reds">Reds</option>
-        <option value="oranges">Oranges</option>
-      </optgroup>
-      <optgroup label="sequential, multi-hue">
-        <option value="turbo" selected>Turbo</option>
-        <option value="viridis">Viridis</option>
-        <option value="magma">Magma</option>
-        <option value="inferno">Inferno</option>
-        <option value="plasma">Plasma</option>
-        <option value="cividis">Cividis</option>
-        <option value="cubehelix">Cubehelix</option>
-        <option value="warm">Warm</option>
-        <option value="cool">Cool</option>
-        <option value="bugn">BuGn</option>
-        <option value="bupu">BuPu</option>
-        <option value="gnbu">GnBu</option>
-        <option value="orrd">OrRd</option>
-        <option value="pubugn">PuBuGn</option>
-        <option value="pubu">PuBu</option>
-        <option value="purd">PuRd</option>
-        <option value="rdpu">RdPu</option>
-        <option value="ylgnbu">YlGnBu</option>
-        <option value="ylgn">YlGn</option>
-        <option value="ylorbr">YlOrBr</option>
-        <option value="ylorrd">YlOrRd</option>
-      </optgroup>
-      <optgroup label="cyclical">
-        <option value="rainbow">Rainbow</option>
-        <option value="sinebow">Sinebow</option>
-      </optgroup>
-    </select>
-  </label>
-</p>
-
-:::plot hidden
-
 ```js
 Plot.plot({
   axis: null,
@@ -3443,28 +3133,10 @@ Plot.plot({
 });
 ```
 
-:::
-
 You can implement a custom color scheme by specifying the scale’s **range**, or
 by passing an **interpolate** function that takes a parameter _t_ in [0, 1]. The
 **interpolate** option can specify a color space such as _rgb_, or a
 two-argument function that takes a pair of values from the range.
-
-<p>
-  <label class="label-input">
-    Color interpolate:
-    <select v-model="interpolateq">
-      <option value="rgb">rgb</option>
-      <option value="lab">lab</option>
-      <option value="hcl">hcl</option>
-      <option value="hsl">hsl</option>
-      <option value="rgb-gamma">d3.interpolateRgb.gamma(2)</option>
-      <option value="angry-rainbow">(t) => `hsl(${t * 360},100%,50%)`</option>
-    </select>
-  </label>
-</p>
-
-:::plot hidden
 
 ```js
 Plot.plot({
@@ -3491,8 +3163,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 And like position scales, you can apply a _sqrt_, _pow_, _log_, or _symlog_
 transform; these are often useful when working with non-uniformly distributed
 data.
@@ -3502,29 +3172,6 @@ more generally values above or below some **pivot** value. Diverging color
 scales default to the _RdBu_ (red–blue) color scheme. The pivot defaults to
 zero, but you can change it with the **pivot** option, which should ideally be a
 value near the middle of the domain.
-
-<p>
-  <label class="label-input">
-    Color scheme:
-    <select v-model="schemed">
-      <optgroup label="diverging">
-        <option value="brbg">BrBG</option>
-        <option value="prgn">PRGn</option>
-        <option value="piyg">PiYG</option>
-        <option value="puor">PuOr</option>
-        <option value="rdbu">RdBu</option>
-        <option value="rdgy">RdGy</option>
-        <option value="rdylbu">RdYlBu</option>
-        <option value="rdylgn">RdYlGn</option>
-        <option value="spectral">Spectral</option>
-        <option value="burd">BuRd</option>
-        <option value="buylrd">BuYlRd</option>
-      </optgroup>
-    </select>
-  </label>
-</p>
-
-:::plot hidden
 
 ```js
 Plot.plot({
@@ -3544,16 +3191,14 @@ Plot.plot({
 });
 ```
 
-:::
-
 Below we again show observed global surface temperatures. The reversed _BuRd_
 color scheme is used since
-<span :style="{borderBottom: `solid 2px ${d3.interpolateRdBu(0.9)}`}">blue</span>
+blue
 and
-<span :style="{borderBottom: `solid 2px ${d3.interpolateRdBu(0.1)}`}">red</span>
+red
 are semantically associated with cold and hot, respectively.
 
-:::plot https://observablehq.com/@observablehq/plot-diverging-color-scatterplot
+[Interactive example](https://observablehq.com/@observablehq/plot-diverging-color-scatterplot)
 
 ```js
 Plot.plot({
@@ -3569,69 +3214,9 @@ Plot.plot({
 });
 ```
 
-:::
-
 Plot also provides color schemes for discrete data. Use the _categorical_ type
 for categorical (nominal) unordered data, and the _ordinal_ type for ordered
 data.
-
-<p>
-  <label class="label-input">
-    Color scheme:
-    <select v-model="schemeo">
-      <optgroup label="categorical">
-        <option>Accent</option>
-        <option>Category10</option>
-        <option>Dark2</option>
-        <option>Observable10</option>
-        <option>Paired</option>
-        <option>Pastel1</option>
-        <option>Pastel2</option>
-        <option>Set1</option>
-        <option>Set2</option>
-        <option>Set3</option>
-        <option>Tableau10</option>
-      </optgroup>
-      <optgroup label="sequential, single-hue">
-        <option value="blues">Blues</option>
-        <option value="greens">Greens</option>
-        <option value="greys">Greys</option>
-        <option value="purples">Purples</option>
-        <option value="reds">Reds</option>
-        <option value="oranges">Oranges</option>
-      </optgroup>
-      <optgroup label="sequential, multi-hue">
-        <option value="turbo" selected>Turbo</option>
-        <option value="viridis">Viridis</option>
-        <option value="magma">Magma</option>
-        <option value="inferno">Inferno</option>
-        <option value="plasma">Plasma</option>
-        <option value="cividis">Cividis</option>
-        <option value="cubehelix">Cubehelix</option>
-        <option value="warm">Warm</option>
-        <option value="cool">Cool</option>
-        <option value="bugn">BuGn</option>
-        <option value="bupu">BuPu</option>
-        <option value="gnbu">GnBu</option>
-        <option value="orrd">OrRd</option>
-        <option value="pubugn">PuBuGn</option>
-        <option value="pubu">PuBu</option>
-        <option value="purd">PuRd</option>
-        <option value="rdpu">RdPu</option>
-        <option value="ylgnbu">YlGnBu</option>
-        <option value="ylgn">YlGn</option>
-        <option value="ylorbr">YlOrBr</option>
-        <option value="ylorrd">YlOrRd</option>
-      </optgroup>
-      <optgroup label="cyclical">
-        <option value="rainbow">Rainbow</option>
-        <option value="sinebow">Sinebow</option>
-      </optgroup>
-    </select>
-  </label>
-</p>
-
-:::plot hidden
 
 ```js
 Plot.plot({
@@ -3645,12 +3230,10 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::warning CAUTION Discrete color schemes are intended for data that has only a
+**Warning:** CAUTION Discrete color schemes are intended for data that has only a
 few unique values. If the size of the categorical domain exceeds the number of
 colors in the scheme, colors will be reused; combining values into an “other”
-category is recommended. :::
+category is recommended.
 
 <a id="plot-features--scales--other-scales"></a>
 
@@ -3662,15 +3245,7 @@ when used with the [dot mark](#plot-marks--dot), the resulting area is
 proportional to the **r** channel value. You can adjust the effective dot size
 by specifying an explicit **range**, as below.
 
-<p>
-  <label class="label-input">
-    Radius:
-    <input type="range" v-model.number="radius" min="1" max="20" step="0.1">
-    <span style="font-variant-numeric: tabular-nums;">{{radius.toFixed(1)}}</span>
-  </label>
-</p>
-
-:::plot https://observablehq.com/@observablehq/plot-radius-scale-range
+[Interactive example](https://observablehq.com/@observablehq/plot-radius-scale-range)
 
 ```js
 Plot.plot({
@@ -3684,8 +3259,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 The default **range** for the associated _r_ scale is constructed such that a
 zero value maps to zero for an accurate areal encoding, while the first quartile
@@ -3740,7 +3313,6 @@ The **transform** scale option allows you to apply a function to all values
 before they are passed through the scale. This is convenient for transforming a
 scale’s data, say to convert to thousands or between temperature units.
 
-:::plot defer
 https://observablehq.com/@observablehq/plot-fahrenheit-to-celsius-scale-transform
 
 ```js{5}
@@ -3757,12 +3329,10 @@ Plot.plot({
 })
 ```
 
-:::
-
 The **percent** scale option is shorthand for a **transform** that multiplies
 values by 100; it also adds a percent symbol (%) to the default label.
 
-:::plot https://observablehq.com/@observablehq/plot-percent-scale-transform
+[Interactive example](https://observablehq.com/@observablehq/plot-percent-scale-transform)
 
 ```js{2}
 Plot.plot({
@@ -3775,31 +3345,22 @@ Plot.plot({
 })
 ```
 
-:::
-
-:::warning CAUTION
+**Warning:** CAUTION
 [Mark transforms](https://github.com/observablehq/plot/tree/v0.6.17/docs/features/transforms.md)
 typically consume values _before_ they are passed through scales (_e.g._, when
 binning). In this case the mark transforms will see the values prior to the
 scale transform as input, and the scale transform will apply to the _output_ of
-the mark transform. :::
+the mark transform.
 
 The **interval** scale
 option<a id="plot-features--scales--interval" href="#plot-features--scales--interval" aria-label="Permalink to &quot;interval&quot;"></a>
-<VersionBadge version="0.5.1" /> sets an ordinal scale’s **domain** to the start
+(since v0.5.1) sets an ordinal scale’s **domain** to the start
 of every interval within the extent of the data. In addition, it implicitly sets
 the **transform** of the scale to _interval_.floor, rounding values down to the
 start of each interval. For example, below we generate a time-series bar chart;
 when an **interval** is specified, missing days are visible.
 
-<p>
-  <label class="label-input">
-    Use interval:
-    <input type="checkbox" v-model="intervaled">
-  </label>
-</p>
-
-:::plot https://observablehq.com/@observablehq/plot-band-scale-interval
+[Interactive example](https://observablehq.com/@observablehq/plot-band-scale-interval)
 
 ```js
 Plot.plot({
@@ -3820,11 +3381,9 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip As an added bonus, the **fontVariant** and **type** options are no longer
+**Tip:** As an added bonus, the **fontVariant** and **type** options are no longer
 needed because Plot now understands that the _x_ scale, despite being _ordinal_,
-represents daily observations. :::
+represents daily observations.
 
 While the example above relies on the **interval** being promoted to the scale’s
 **transform**, the [stack](#plot-transforms--stack),
@@ -3857,13 +3416,9 @@ corresponding scale name within the top-level
 
 For example, to set the domain for the _x_ scale:
 
-:::plot
-
 ```js
 Plot.plot({ x: { domain: [new Date("1880-01-01"), new Date("2016-11-01")] } });
 ```
-
-:::
 
 Plot supports many scale types. Some scale types are for quantitative data:
 values that can be added or subtracted, such as temperature or time. Other scale
@@ -3934,9 +3489,9 @@ For position scales (_x_ and _y_), an _identity_ scale is still quantitative and
 may produce an axis, yet unlike a _linear_ scale the domain and range are fixed
 based on the plot layout.
 
-:::tip To opt-out of a scale for a single channel, you can specify the channel
+**Tip:** To opt-out of a scale for a single channel, you can specify the channel
 values as a `{value, scale}` object; see
-[mark options](#plot-features--marks--mark-options). :::
+[mark options](#plot-features--marks--mark-options).
 
 Quantitative scales, as well as identity position scales, coerce channel values
 to numbers; both null and undefined are coerced to NaN. Similarly, time scales
@@ -4000,7 +3555,7 @@ a number, in which case it will be promoted to a numeric interval with the given
 step. The option can alternatively be specified as a string (_second_, _minute_,
 _hour_, _day_, _week_, _month_, _quarter_, _half_, _year_, _monday_, _tuesday_,
 _wednesday_, _thursday_, _friday_, _saturday_, _sunday_)
-<VersionBadge version="0.6.2" /> naming the corresponding time interval, or a
+(since v0.6.2) naming the corresponding time interval, or a
 skip interval consisting of a number followed by the interval name (possibly
 pluralized), such as _3 months_ or _10 years_. This option sets the default
 _scale_.transform to the given interval’s _interval_.floor function. In
@@ -4052,7 +3607,7 @@ for color:
 - _quantile_ - discretizes by computing quantile thresholds; defaults to
   _rdylbu_
 - _quantize_ - discretizes by computing uniform thresholds; defaults to _rdylbu_
-  <VersionBadge version="0.4.3" />
+  (since v0.4.3)
 - _diverging_ - like _linear_, but with a pivot; defaults to _rdbu_
 - _diverging-log_ - like _log_, but with a pivot that defaults to 1; defaults to
   _rdbu_
@@ -4086,8 +3641,6 @@ to compute, and thus the number of elements in the scale’s range; it defaults 
 
 The following sequential scale schemes are supported for both quantitative and
 ordinal data:
-
-:::plot defer hidden
 
 ```js
 Plot.plot({
@@ -4138,8 +3691,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 The default color scheme, _turbo_, was chosen primarily to ensure high-contrast
 visibility. Color schemes such as _blues_ make low-value marks difficult to see
 against a white background, for better or for worse. To use a subset of a
@@ -4151,8 +3702,6 @@ value without hue, consider using _opacity_ rather than _color_ (e.g., use
 Plot.dot’s _strokeOpacity_ instead of _stroke_).
 
 The following diverging scale schemes are supported:
-
-:::plot defer hidden
 
 ```js
 Plot.plot({
@@ -4187,8 +3736,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 Picking a diverging color scheme name defaults the scale type to _diverging_;
 set the scale type to _linear_ to treat the color scheme as sequential instead.
 Diverging color scales support a _scale_.**pivot** option, which defaults to
@@ -4197,8 +3744,6 @@ zero. Values below the pivot will use the lower half of the color scheme
 upper half (grays for _rdgy_).
 
 The following cylical color schemes are supported:
-
-:::plot defer hidden
 
 ```js
 Plot.plot({
@@ -4224,11 +3769,7 @@ Plot.plot({
 });
 ```
 
-:::
-
 The following categorical color schemes are supported:
-
-:::plot defer hidden
 
 ```js
 Plot.plot({
@@ -4260,8 +3801,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 The following color interpolators are supported:
 
@@ -4356,7 +3895,7 @@ are also available as scale options, applying to the implicit axis:
 - **labelAnchor** - the label anchor: _top_, _right_, _bottom_, _left_, or
   _center_
 - **labelArrow** - the label arrow: _auto_ (default), _up_, _right_, _down_,
-  _left_, _none_, or true <VersionBadge version="0.6.7" />
+  _left_, _none_, or true (since v0.6.7)
 - **labelOffset** - the label position offset (in pixels; default depends on
   margins and orientation)
 - **ariaLabel** - a short label representing the axis in the accessibility tree
@@ -4378,7 +3917,7 @@ tick values, show corresponding grid lines.
 
 <a id="plot-features--scales--sort-mark-option"></a>
 
-## Sort mark option <VersionBadge version="0.2.0" />
+## Sort mark option (since v0.2.0)
 
 If an ordinal scale’s domain is not set, it defaults to natural ascending order;
 to order the domain by associated values in another dimension, either compute
@@ -4401,7 +3940,7 @@ sorting the _x_ domain, if no **x** channel is defined, **x2** will be used
 instead if available, and similarly for _y_ and **y2**; this is useful for marks
 that implicitly stack such as [area](#plot-marks--area),
 [bar](#plot-marks--bar), and [rect](#plot-marks--rect). A sort value may also be
-specified as _width_ or _height_ <VersionBadge version="0.4.2" />, representing
+specified as _width_ or _height_ (since v0.4.2), representing
 derived channels |_x2_ - _x1_| and |_y2_ - _y1_| respectively.
 
 Note that there may be multiple associated values in the secondary dimension for
@@ -4499,7 +4038,7 @@ options and a mark sort transform, use
 
 <a id="plot-features--scales--scale"></a>
 
-## scale(_options_) <VersionBadge version="0.4.0" />
+## scale(_options_) (since v0.4.0)
 
 You can also create a standalone scale with Plot.**scale**(_options_). The
 _options_ object must define at least one scale; see
@@ -4537,13 +4076,9 @@ color.apply("apple"); // "#4e79a7"
 To apply a standalone scale object to a plot, pass it to Plot.plot as the
 corresponding scale options, such as **color**:
 
-:::plot
-
 ```js
 Plot.cellX(["apple", "apple", "orange", "pear", "orange"]).plot({ color });
 ```
-
-:::
 
 As another example, below are two plots with different options where the second
 plot uses the _color_ scale from the first plot:
@@ -4561,15 +4096,15 @@ const plot2 = Plot.plot({ ...options2, color: plot1.scale("color") });
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/area.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import aapl from "../data/aapl.ts";
 import industries from "../data/bls-industry-unemployment.ts";
 import sftemp from "../data/sf-temperatures.ts";
-
-</script>
+```
 
 <a id="plot-marks--area--area-mark"></a>
 
@@ -4580,13 +4115,11 @@ topline (**x2**, **y2**) as in an area chart. Often the baseline represents _y_
 = 0, and because the area mark interpolates between adjacent data points,
 typically both the _x_ and _y_ scales are quantitative or temporal.
 
-:::plot https://observablehq.com/@observablehq/plot-area-simple
+[Interactive example](https://observablehq.com/@observablehq/plot-area-simple)
 
 ```js
 Plot.areaY(aapl, { x: "Date", y: "Close" }).plot();
 ```
-
-:::
 
 The area mark has three constructors: [areaY](#plot-marks--area--areaY) for when
 the baseline and topline share _x_ values, as in a time-series area chart where
@@ -4598,7 +4131,7 @@ where the baseline and topline share neither _x_ nor _y_ values.
 The area mark is often paired with a [line](#plot-marks--line) and
 [rule](#plot-marks--rule) mark to accentuate the topline and baseline.
 
-:::plot https://observablehq.com/@observablehq/plot-area-and-line
+[Interactive example](https://observablehq.com/@observablehq/plot-area-and-line)
 
 ```js
 Plot.plot({
@@ -4613,8 +4146,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 With the default definitions of **x** = index and **y** =
 [identity](https://github.com/observablehq/plot/tree/v0.6.17/docs/features/transforms.md#identity),
 you can pass an array of numbers as data. Below, a random walk is constructed
@@ -4622,42 +4153,36 @@ with [d3.cumsum](https://observablehq.com/@d3/d3-cumsum?collection=@d3/d3-array)
 and
 [d3.randomNormal](https://observablehq.com/@d3/d3-random?collection=@d3/d3-random).
 
-:::plot defer https://observablehq.com/@observablehq/plot-random-walk-area
+[Interactive example](https://observablehq.com/@observablehq/plot-random-walk-area)
 
 ```js
 Plot.areaY(d3.cumsum({ length: 600 }, d3.randomNormal())).plot();
 ```
-
-:::
 
 As with [lines](#plot-marks--line), points in areas are connected in input
 order: the first point is connected to the second point, the second is connected
 to the third, and so on. Area data is typically in chronological order. Unsorted
 data may produce gibberish.
 
-:::plot defer https://observablehq.com/@observablehq/plot-area-sort
+[Interactive example](https://observablehq.com/@observablehq/plot-area-sort)
 
 ```js
 Plot.areaY(d3.shuffle(aapl.slice()), { x: "Date", y: "Close" }).plot(); // 🌶️
 ```
 
-:::
-
 If your data isn’t sorted, use the [sort transform](#plot-transforms--sort).
 
-:::plot defer https://observablehq.com/@observablehq/plot-area-sort
+[Interactive example](https://observablehq.com/@observablehq/plot-area-sort)
 
 ```js
 Plot.areaY(d3.shuffle(aapl.slice()), { x: "Date", y: "Close", sort: "Date" })
   .plot();
 ```
 
-:::
-
 When the baseline is not _y_ = 0 but instead represents another dimension of
 data as in a band chart, specify **y1** and **y2** instead of **y**.
 
-:::plot defer https://observablehq.com/@observablehq/plot-temperature-band
+[Interactive example](https://observablehq.com/@observablehq/plot-temperature-band)
 
 ```js
 Plot.plot({
@@ -4671,19 +4196,16 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip Since **y1** and **y2** refer to different fields here, a _y_-scale label
+**Tip:** Since **y1** and **y2** refer to different fields here, a _y_-scale label
 is specified to improve readability. Also, the band above is spiky; you can
 smooth it by applying a
 [window transform](https://github.com/observablehq/plot/tree/v0.6.17/docs/transforms/window.md).
-:::
 
 While charts typically put _y_ = 0 on the bottom edge, such that the area grows
 up↑, this is not required; reversing the _y_ scale will produce a “hanging” area
 that grows down↓.
 
-:::plot defer https://observablehq.com/@observablehq/plot-top-down-area-chart
+[Interactive example](https://observablehq.com/@observablehq/plot-top-down-area-chart)
 
 ```js
 Plot.plot({
@@ -4702,13 +4224,11 @@ Plot.plot({
 });
 ```
 
-:::
-
 For a vertically-oriented baseline and topline, such as when time goes up↑
 instead of right→, use [areaX](#plot-marks--area--areaX) instead of
 [areaY](#plot-marks--area--areaY) and swap **x** and **y**.
 
-:::plot defer https://observablehq.com/@observablehq/plot-vertical-area-chart
+[Interactive example](https://observablehq.com/@observablehq/plot-vertical-area-chart)
 
 ```js
 Plot.plot({
@@ -4723,13 +4243,10 @@ Plot.plot({
 });
 ```
 
-:::
-
 If some channel values are undefined (or null or NaN), gaps will appear between
 adjacent points. To demonstrate, below we set the **y** value to NaN for the
 first three months of each year.
 
-:::plot defer
 https://observablehq.com/@observablehq/plot-area-chart-with-missing-data
 
 ```js
@@ -4752,13 +4269,9 @@ Plot.plot({
 });
 ```
 
-:::
-
 Supplying undefined values is not the same as filtering the data: the latter
 will interpolate between the data points. Observe the conspicuous straight lines
 below!
-
-:::plot defer
 
 ```js
 Plot.plot({
@@ -4781,12 +4294,10 @@ Plot.plot({
 });
 ```
 
-:::
-
 If a **fill** channel is specified, it is assumed to be ordinal or nominal; data
 is grouped into series and then implicitly [stacked](#plot-transforms--stack).
 
-:::plot defer https://observablehq.com/@observablehq/plot-stacked-areas
+[Interactive example](https://observablehq.com/@observablehq/plot-stacked-areas)
 
 ```js
 Plot.plot({
@@ -4801,15 +4312,13 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::warning CAUTION This area chart uses color but does not include a
+**Warning:** CAUTION This area chart uses color but does not include a
 [legend](#plot-features--legends). This should usually be avoided because color
-cannot be interpreted without a legend, titles, or labels. :::
+cannot be interpreted without a legend, titles, or labels.
 
 Or, as a streamgraph with the **offset** stack transform option:
 
-:::plot defer https://observablehq.com/@observablehq/plot-centered-streamgraph
+[Interactive example](https://observablehq.com/@observablehq/plot-centered-streamgraph)
 
 ```js
 Plot.plot({
@@ -4828,8 +4337,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 The **z** channel determines how data is grouped: if the **z** channel is not
 specified, but a varying **fill** channel is, the **fill** channel is used for
 **z**; the **z** channel will further fallback to a varying **stroke** channel
@@ -4840,7 +4347,7 @@ The **z** channel (either implicitly or explicitly) is typically used with the
 streamgraph. You can disable the implicit stack transform and produce
 overlapping areas by setting **y2** instead of **y**.
 
-:::plot defer https://observablehq.com/@observablehq/plot-overlapping-areas
+[Interactive example](https://observablehq.com/@observablehq/plot-overlapping-areas)
 
 ```js
 Plot.plot({
@@ -4861,11 +4368,9 @@ Plot.plot({
 });
 ```
 
-:::
-
 To vary **fill** within a single series, set the **z** option to null.
 
-:::plot defer https://observablehq.com/@observablehq/plot-variable-fill-area
+[Interactive example](https://observablehq.com/@observablehq/plot-variable-fill-area)
 
 ```js
 Plot.plot({
@@ -4880,12 +4385,10 @@ Plot.plot({
 });
 ```
 
-:::
-
 As an alternative to overlapping or stacking, [faceting](#plot-features--facets)
 will produce small multiples, here arranged vertically with a shared _x_-axis.
 
-:::plot defer https://observablehq.com/@observablehq/plot-faceted-areas
+[Interactive example](https://observablehq.com/@observablehq/plot-faceted-areas)
 
 ```js
 Plot.plot({
@@ -4908,21 +4411,20 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip Above, smaller industries such as agriculture and mining & extraction are
+**Tip:** Above, smaller industries such as agriculture and mining & extraction are
 dwarfed by larger industries such as wholesale & retail trade. To emphasize each
 industry’s trend, instead of comparing absolute numbers across industries, you
-could use the [normalize transform](#plot-transforms--normalize). :::
+could use the [normalize transform](#plot-transforms--normalize).
 
 Or, as a [horizon chart](https://observablehq.com/@observablehq/plot-horizon),
 where the area is repeated at different scales with different colors, showing
 both small-scale variation in position and large-scale variation in color:
 
-:::plot defer
 https://observablehq.com/@observablehq/plot-unemployment-horizon-chart
 
-```js-vue
+Interactive example template (values in `{{…}}` come from the upstream website):
+
+```text
 Plot.plot((() => {
   const bands = 7;
   const step = d3.max(industries, (d) => d.unemployed) / bands;
@@ -4940,8 +4442,6 @@ Plot.plot((() => {
   };
 })())
 ```
-
-:::
 
 See also the
 [ridgeline chart](https://observablehq.com/@observablehq/plot-ridgeline)
@@ -5100,8 +4600,9 @@ where the baseline and topline share **y** values.
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/arrow.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import metros from "../data/metros.ts";
@@ -5119,15 +4620,14 @@ function samegroup({source, target}) {
   target = miserables.groups.get(target);
   return source === target ? source : null;
 }
-
-</script>
+```
 
 <a id="plot-marks--arrow--arrow-mark"></a>
 
-# Arrow mark <VersionBadge version="0.4.0" />
+# Arrow mark (since v0.4.0)
 
-:::tip See also the [vector mark](#plot-marks--vector), which draws arrows of a
-given length and direction. :::
+**Tip:** See also the [vector mark](#plot-marks--vector), which draws arrows of a
+given length and direction.
 
 The **arrow mark** draws arrows between two points [**x1**, **y1**] and [**x2**,
 **y2**] in quantitative dimensions. It is similar to the
@@ -5141,7 +4641,7 @@ in 2015. The arrow’s **stroke** redundantly encodes the change in inequality:
 red indicates rising inequality, while blue (there are only four) indicates
 declining inequality.
 
-:::plot defer https://observablehq.com/@observablehq/plot-arrow-variation-chart
+[Interactive example](https://observablehq.com/@observablehq/plot-arrow-variation-chart)
 
 ```js
 Plot.plot({
@@ -5183,12 +4683,10 @@ Plot.plot({
 });
 ```
 
-:::
-
 The arrow mark is also useful for drawing directed graph edges, say representing
 transition frequencies in a finite state machine.
 
-:::plot https://observablehq.com/@observablehq/plot-finite-state-machine
+[Interactive example](https://observablehq.com/@observablehq/plot-finite-state-machine)
 
 ```js
 Plot.plot({
@@ -5218,13 +4716,11 @@ Plot.plot({
 });
 ```
 
-:::
-
 For undirected edges, as in the arc diagram of character co-occurrence in _Les
 Misérables_ below, set the **sweep** option to the desired orientation: _-y_ for
 right-bulging links whose endpoints are vertically separated.
 
-:::plot https://observablehq.com/@observablehq/plot-arc-diagram
+[Interactive example](https://observablehq.com/@observablehq/plot-arc-diagram)
 
 ```js
 Plot.plot({
@@ -5262,8 +4758,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 <a id="plot-marks--arrow--arrow-options"></a>
 
@@ -5304,7 +4798,7 @@ and 180°. The **headLength** determines the scale of the arrowhead relative to
 the stroke width. Assuming the default of stroke width 1.5px, the **headLength**
 is the length of the arrowhead’s side in pixels.
 
-The **sweep** option <VersionBadge version="0.6.10" pr="1740" /> controls the
+The **sweep** option (since v0.6.10) controls the
 bend orientation. It defaults to 1 indicating a positive (clockwise) bend angle;
 -1 indicates a negative (anticlockwise) bend angle; 0 effectively clears the
 bend angle. If _-x_, the bend angle is flipped when the ending point is to the
@@ -5337,8 +4831,9 @@ Returns a new arrow with the given _data_ and _options_.
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/axis.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import {ref} from "vue";
@@ -5357,12 +4852,11 @@ const responses = [
   {name: "Discovered how to “like” things mentally", value: 0.27},
   {name: "Not enough politics", value: 0.12}
 ];
-
-</script>
+```
 
 <a id="plot-marks--axis--axis-mark"></a>
 
-# Axis mark <VersionBadge version="0.6.3" />
+# Axis mark (since v0.6.3)
 
 The **axis mark** conveys the meaning of a position
 [scale](#plot-features--scales): _x_ or _y_, and _fx_ or _fy_ when
@@ -5373,7 +4867,7 @@ options or by explicitly declaring an axis mark.
 For example, the **axis** scale option specifies the side of the frame to draw
 the axis. Setting it to _both_ will repeat the axis on both sides.
 
-:::plot https://observablehq.com/@observablehq/plot-axis-both
+[Interactive example](https://observablehq.com/@observablehq/plot-axis-both)
 
 ```js
 Plot.plot({
@@ -5385,14 +4879,12 @@ Plot.plot({
 });
 ```
 
-:::
-
 The above is equivalent to declaring two explicit axis marks, one with the _top_
 **anchor** and the other with the _bottom_ **anchor**, and one explicit
 [grid mark](#plot-marks--grid). A benefit of declaring explicit axes is that you
 can draw them atop other marks.
 
-:::plot https://observablehq.com/@observablehq/plot-axis-both
+[Interactive example](https://observablehq.com/@observablehq/plot-axis-both)
 
 ```js
 Plot.plot({
@@ -5407,12 +4899,10 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::info The **interval** option above instructs the grid lines to be drawn at
+**Info:** The **interval** option above instructs the grid lines to be drawn at
 unit intervals, _i.e._ whole percentages. As an alternative, you can use the
 **ticks** option to specify the desired number of ticks or the **tickSpacing**
-option to specify the desired separation between adjacent ticks in pixels. :::
+option to specify the desired separation between adjacent ticks in pixels.
 
 If you don’t declare an axis mark for a position scale, Plot will implicitly add
 one for you below (before) all other marks. To disable an implicit axis, set the
@@ -5431,7 +4921,7 @@ labels (and even soft hyphens). Note this option is expressed in ems, not
 pixels, and you may have to reserve additional **marginBottom** to make room for
 multiple lines.
 
-:::plot https://observablehq.com/@observablehq/plot-wrap-tick-labels
+[Interactive example](https://observablehq.com/@observablehq/plot-wrap-tick-labels)
 
 ```js
 Plot.plot({
@@ -5445,13 +4935,11 @@ Plot.plot({
 });
 ```
 
-:::
-
 Or, you can use the **textAnchor** option to extend the _y_-axis tick labels to
 the right and into the frame, and the **fill** option to specify the color of
 the text.
 
-:::plot https://observablehq.com/@observablehq/plot-anchor-tick-labels
+[Interactive example](https://observablehq.com/@observablehq/plot-anchor-tick-labels)
 
 ```js
 Plot.plot({
@@ -5465,13 +4953,11 @@ Plot.plot({
 });
 ```
 
-:::
-
 Layering several marks makes it possible to create
 [ggplot2-style axes](https://ggplot2.tidyverse.org/reference/guide_axis.html)
 with a filled [frame](#plot-marks--frame) and white grid lines.
 
-:::plot https://observablehq.com/@observablehq/plot-ggplot2-style-axes
+[Interactive example](https://observablehq.com/@observablehq/plot-ggplot2-style-axes)
 
 ```js
 Plot.plot({
@@ -5485,13 +4971,11 @@ Plot.plot({
 });
 ```
 
-:::
-
 Or you could emulate the style of _The New York Times_, with tick labels above
 dashed grid lines, and a custom tick format to show units (here dollars) on the
 first tick.
 
-:::plot https://observablehq.com/@observablehq/plot-nyt-style-axes
+[Interactive example](https://observablehq.com/@observablehq/plot-nyt-style-axes)
 
 ```js
 Plot.plot({
@@ -5516,14 +5000,12 @@ Plot.plot({
 });
 ```
 
-:::
-
 Time axes default to a consistent multi-line tick format
-<VersionBadge version="0.6.9" />,
+(since v0.6.9),
 [à la Datawrapper](https://blog.datawrapper.de/new-axis-ticks/), for example
 showing the first month of each quarter, and the year:
 
-:::plot https://observablehq.com/@observablehq/plot-datawrapper-style-date-axis
+[Interactive example](https://observablehq.com/@observablehq/plot-datawrapper-style-date-axis)
 
 ```js
 Plot.plot({
@@ -5536,8 +5018,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 The format is inferred from the tick interval, and consists of two fields
 (_e.g._, month and year, day and month, minutes and hours); when a tick has the
 same second field value as the previous tick (_e.g._, “19 Jan” after “17 Jan”),
@@ -5545,7 +5025,7 @@ only the first field (“19”) is shown for brevity. Alternatively, you can spe
 multiple explicit axes with options for hierarchical time intervals, here
 showing weeks, months, and years.
 
-:::plot https://observablehq.com/@observablehq/plot-multiscale-date-axis
+[Interactive example](https://observablehq.com/@observablehq/plot-multiscale-date-axis)
 
 ```js
 Plot.plot({
@@ -5579,15 +5059,13 @@ Plot.plot({
 });
 ```
 
-:::
-
 You can even style an axis dynamically based on data! The data associated with
 an axis or grid mark are the tick values sampled from the associated scale’s
 domain. If you don’t specify the data explicitly, the ticks will be chosen
 through a combination of the **ticks**, **tickSpacing**, and **interval**
 options.
 
-:::plot https://observablehq.com/@observablehq/plot-data-based-axis
+[Interactive example](https://observablehq.com/@observablehq/plot-data-based-axis)
 
 ```js
 Plot.plot({
@@ -5608,8 +5086,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 The color of an axis can be controlled with the **color**, **stroke**, and
 **fill** options, which affect the axis’ component marks differently. The
 **stroke** option affects the tick vector; the **fill** option affects the label
@@ -5618,15 +5094,13 @@ texts. The **color** option is shorthand for setting both **fill** and
 _red_ or the default _currentColor_), they can be specified as channels to
 assign colors dynamically based on the associated tick value.
 
-:::plot https://observablehq.com/@observablehq/plot-axes-with-color
+[Interactive example](https://observablehq.com/@observablehq/plot-axes-with-color)
 
 ```js
 Plot.axisX(d3.ticks(0, 1, 10), { color: "red" }).plot(); // text fill and tick stroke
 ```
 
-:::
-
-:::plot https://observablehq.com/@observablehq/plot-axes-with-color
+[Interactive example](https://observablehq.com/@observablehq/plot-axes-with-color)
 
 ```js
 Plot.axisX(d3.ticks(0, 1, 10), {
@@ -5636,21 +5110,17 @@ Plot.axisX(d3.ticks(0, 1, 10), {
 }).plot(); // tick stroke
 ```
 
-:::
-
-:::plot https://observablehq.com/@observablehq/plot-axes-with-color
+[Interactive example](https://observablehq.com/@observablehq/plot-axes-with-color)
 
 ```js
 Plot.axisX(d3.ticks(0, 1, 10), { fill: "red" }).plot(); // text fill
 ```
 
-:::
-
 To draw an outline around the tick labels, say to improve legibility when
 drawing an axes atop other marks, use the **textStroke** (default _none_),
 **textStrokeWidth** (default 3), and **textStrokeOpacity** (default 1) options.
 
-:::plot https://observablehq.com/@observablehq/plot-axes-with-color
+[Interactive example](https://observablehq.com/@observablehq/plot-axes-with-color)
 
 ```js
 Plot.plot({
@@ -5668,8 +5138,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 When faceting, the _x_- and _y_-axes are typically repeated across facets. A
 _bottom_-anchored _x_-axis is by default drawn on any facet _with empty space
@@ -5697,32 +5165,11 @@ option are:
 
 The interactive chart below shows the different possibilities. Note that we
 place the facet _fx_-axis (in
-<span style="border-bottom: solid 2px var(--vp-c-blue);">blue</span>) opposite
+blue) opposite
 the _x_-axis (in
-<span style="border-bottom: solid 2px var(--vp-c-red);">red</span>).
+red).
 
-<p>
-  <label class="label-input">
-    anchor:
-    <select v-model="anchor">
-      <option>bottom</option>
-      <option>top</option>
-    </select>
-  </label>
-  <label class="label-input">
-    facetAnchor:
-    <select v-model="facetAnchor">
-      <option>auto</option>
-      <option>bottom-empty</option>
-      <option>bottom</option>
-      <option>top-empty</option>
-      <option>top</option>
-      <option>null</option>
-    </select>
-  </label>
-</p>
-
-:::plot https://observablehq.com/@observablehq/plot-facetanchor
+[Interactive example](https://observablehq.com/@observablehq/plot-facetanchor)
 
 ```js
 Plot.plot({
@@ -5750,13 +5197,11 @@ Plot.plot({
 });
 ```
 
-:::
-
 The **labelAnchor** option controls the position of the axis label. For the _x_
 or _fx_ axis, the label anchor may be _left_, _center_, or _right_. It defaults
 to _center_ for ordinal scales and _right_ for quantitative scales.
 
-:::plot https://observablehq.com/@observablehq/plot-labelanchor
+[Interactive example](https://observablehq.com/@observablehq/plot-labelanchor)
 
 ```js
 Plot.plot({
@@ -5794,15 +5239,13 @@ Plot.plot({
 });
 ```
 
-:::
-
 For the _y_ and _fy_ axis, the label anchor may be _top_, _center_, or _bottom_.
 It defaults to _center_ for ordinal scales and _top_ for quantitative scales.
 When the label anchor is _center_, the label is rotated by 90° to fit, though
 you may need to adjust the margins to avoid overlap between the tick labels and
 the axis label.
 
-:::plot https://observablehq.com/@observablehq/plot-labelanchor
+[Interactive example](https://observablehq.com/@observablehq/plot-labelanchor)
 
 ```js
 Plot.plot({
@@ -5838,8 +5281,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 <a id="plot-marks--axis--axis-options"></a>
 
@@ -5883,7 +5324,7 @@ supports the following options:
 - **labelAnchor** - the label anchor: _top_, _right_, _bottom_, _left_, or
   _center_
 - **labelArrow** - the label arrow: _auto_ (default), _up_, _right_, _down_,
-  _left_, _none_, or true <VersionBadge version="0.6.7" />
+  _left_, _none_, or true (since v0.6.7)
 - **labelOffset** - the label position offset (in pixels; default depends on
   margins and orientation)
 - **color** - the color of the ticks and labels (defaults to _currentColor_)
@@ -5977,8 +5418,9 @@ Returns a new _fy_ axis with the given _options_.
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/bar.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import {ref} from "vue";
@@ -5999,29 +5441,26 @@ const timeseries = [
   {year: 2019, population: 7713.468100},
   {year: 2020, population: 7794.798739}
 ];
-
-</script>
+```
 
 <a id="plot-marks--bar--bar-mark"></a>
 
 # Bar mark
 
-:::tip The bar mark is a variant of the [rect mark](#plot-marks--rect) for use
+**Tip:** The bar mark is a variant of the [rect mark](#plot-marks--rect) for use
 when one dimension is ordinal and the other is quantitative. See also the
-[cell mark](#plot-marks--cell). :::
+[cell mark](#plot-marks--cell).
 
 The **bar mark** comes in two orientations: [barY](#plot-marks--bar--barY)
 extends vertically↑ as in a vertical bar chart or column chart, while
 [barX](#plot-marks--bar--barX) extends horizontally→. For example, the bar chart
 below shows the frequency of letters in the English language.
 
-:::plot https://observablehq.com/@observablehq/plot-vertical-bars
+[Interactive example](https://observablehq.com/@observablehq/plot-vertical-bars)
 
 ```js
 Plot.barY(alphabet, { x: "letter", y: "frequency" }).plot();
 ```
-
-:::
 
 Ordinal domains are sorted naturally (alphabetically) by default. Either set the
 [scale **domain**](#plot-features--scales) explicitly to change the order, or
@@ -6029,13 +5468,11 @@ use the mark [**sort** option](#plot-features--scales--sort-mark-option) to
 derive the scale domain from a channel. For example, to sort **x** by descending
 **y**:
 
-:::plot https://observablehq.com/@observablehq/plot-vertical-bars
+[Interactive example](https://observablehq.com/@observablehq/plot-vertical-bars)
 
 ```js
 Plot.barY(alphabet, { x: "letter", y: "frequency", sort: { x: "-y" } }).plot();
 ```
-
-:::
 
 There is typically one ordinal value associated with each bar, such as a name
 (or above, letter), and two quantitative values defining a lower and upper
@@ -6050,7 +5487,7 @@ likewise barX implicitly applies stackX. The stacked horizontal bar chart below
 draws one bar (of unit width in **x**) per penguin, colored and sorted by the
 penguin’s body mass, and grouped by species along **y**.
 
-:::plot defer https://observablehq.com/@observablehq/plot-stacked-unit-chart
+[Interactive example](https://observablehq.com/@observablehq/plot-stacked-unit-chart)
 
 ```js
 Plot.plot({
@@ -6071,17 +5508,15 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip The [group transform](#plot-transforms--group) with the _count_ reducer
-could be used to produce one bar per species. :::
+**Tip:** The [group transform](#plot-transforms--group) with the _count_ reducer
+could be used to produce one bar per species.
 
 You can opt-out of the implicit stack transform by specifying the bar’s extent
 with two quantitative values: **x1** and **x2** for barX, or **y1** and **y2**
 for barY. For example, here is a historical timeline of civilizations, where
 each has a beginning and an end.
 
-:::plot https://observablehq.com/@observablehq/plot-civilizations-timeline
+[Interactive example](https://observablehq.com/@observablehq/plot-civilizations-timeline)
 
 ```js
 Plot.plot({
@@ -6110,21 +5545,19 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip This uses a [text mark](#plot-marks--text) to label the bars directly
+**Tip:** This uses a [text mark](#plot-marks--text) to label the bars directly
 instead of a _y_ axis. It also uses a custom tick format for the _x_ axis to
-show the calendar era. :::
+show the calendar era.
 
 For a diverging bar chart, simply specify a negative value. The chart below
 shows change in population from 2010 to 2019. States whose population increased
 are
-<span :style="{borderBottom: `solid ${d3.schemePiYG[3][2]} 3px`}">green</span>,
+green,
 while states whose population decreased are
-<span :style="{borderBottom: `solid ${d3.schemePiYG[3][0]} 3px`}">pink</span>.
+pink.
 (Puerto Rico’s population declined sharply after hurricanes Maria and Irma.)
 
-:::plot https://observablehq.com/@observablehq/plot-state-population-change
+[Interactive example](https://observablehq.com/@observablehq/plot-state-population-change)
 
 ```js
 Plot.plot({
@@ -6154,11 +5587,9 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip The **percent** scale option is useful for showing percentages; it
+**Tip:** The **percent** scale option is useful for showing percentages; it
 applies a [scale transform](#plot-features--scales--scale-transforms) that
-multiplies associated channel values by 100. :::
+multiplies associated channel values by 100.
 
 When ordinal data is regular, such as the yearly observations of the time-series
 bar chart of world population below, use the **interval** option to enforce
@@ -6167,14 +5598,7 @@ such as _hour_ or _day_, a number for numeric intervals, a
 [d3-time interval](https://d3js.org/d3-time#_interval), or a custom
 implementation.
 
-<p>
-  <label class="label-input">
-    Use interval:
-    <input type="checkbox" v-model="checked">
-  </label>
-</p>
-
-:::plot https://observablehq.com/@observablehq/plot-ordinal-scale-interval
+[Interactive example](https://observablehq.com/@observablehq/plot-ordinal-scale-interval)
 
 ```js
 Plot
@@ -6182,19 +5606,16 @@ Plot
   .plot({ x: { tickFormat: "", interval: checked ? 1 : undefined } });
 ```
 
-:::
-
-:::tip You can also make a time-series bar chart with a
+**Tip:** You can also make a time-series bar chart with a
 [rect mark](#plot-marks--rect), possibly with the
 [bin transform](#plot-transforms--bin) to bin observations at regular intervals.
-:::
 
 A bar’s ordinal dimension is optional; if missing, the bar spans the chart along
 this dimension. Such bars typically also have a color encoding. For example,
 here are [warming stripes](https://showyourstripes.info/) showing the increase
 in average temperature globally over the last 172 years.
 
-:::plot https://observablehq.com/@observablehq/plot-warming-stripes-2
+[Interactive example](https://observablehq.com/@observablehq/plot-warming-stripes-2)
 
 ```js
 Plot.plot({
@@ -6211,13 +5632,11 @@ Plot.plot({
 });
 ```
 
-:::
-
 With the [stack transform](#plot-transforms--stack), a one-dimensional bar can
 show the proportions of each value relative to the whole, as a compact
 alternative to a pie or donut chart.
 
-:::plot https://observablehq.com/@observablehq/plot-stacked-percentages
+[Interactive example](https://observablehq.com/@observablehq/plot-stacked-percentages)
 
 ```js
 Plot.plot({
@@ -6236,16 +5655,14 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip Although barX applies an implicit stackX transform,
+**Tip:** Although barX applies an implicit stackX transform,
 [textX](#plot-marks--text) does not; this example uses an explicit stackX
-transform in both cases for clarity. :::
+transform in both cases for clarity.
 
 For a grouped bar chart, use [faceting](#plot-features--facets). The chart below
 uses **fy** to partition the bar chart of penguins by island.
 
-:::plot defer https://observablehq.com/@observablehq/plot-grouped-unit-chart
+[Interactive example](https://observablehq.com/@observablehq/plot-grouped-unit-chart)
 
 ```js
 Plot.plot({
@@ -6260,8 +5677,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 <a id="plot-marks--bar--bar-options"></a>
 
@@ -6356,8 +5771,9 @@ are also supported; see [scale options](#plot-features--scales--scale-options).
 Source:
 https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/bollinger.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import {ref} from "vue";
@@ -6365,12 +5781,11 @@ import aapl from "../data/aapl.ts";
 
 const n = ref(20);
 const k = ref(2);
-
-</script>
+```
 
 <a id="plot-marks--bollinger--bollinger-mark"></a>
 
-# Bollinger mark <VersionBadge version="0.6.10" pr="1772" />
+# Bollinger mark (since v0.6.10)
 
 The **bollinger mark** is a [composite mark](#plot-features--marks--marks)
 consisting of a [line](#plot-marks--line) representing a moving average and an
@@ -6380,39 +5795,22 @@ used to [analyze the price](https://en.wikipedia.org/wiki/Bollinger_Bands) of
 financial instruments such as stocks.
 
 For example, the chart below shows the price of Apple stock from 2013 to 2018,
-with a window size _n_ of {{n}} days and radius _k_ of {{k}} standard
+with a window size _n_ of `n` days and radius _k_ of `k` standard
 deviations.
-
-<p>
-  <label class="label-input">
-    <span>Window size (n):</span>
-    <input type="range" v-model.number="n" min="1" max="100" step="1" />
-    <span style="font-variant-numeric: tabular-nums;">{{n.toLocaleString("en-US")}}</span>
-  </label>
-  <label class="label-input">
-    <span>Radius (k):</span>
-    <input type="range" v-model.number="k" min="0" max="10" step="0.1" />
-    <span style="font-variant-numeric: tabular-nums;">{{k.toLocaleString("en-US")}}</span>
-  </label>
-</p>
-
-:::plot hidden
 
 ```js
 Plot.bollingerY(aapl, { x: "Date", y: "Close", n, k }).plot();
 ```
 
-:::
+Interactive example template (values in `{{…}}` come from the upstream website):
 
-```js-vue
+```text
 Plot.bollingerY(aapl, {x: "Date", y: "Close", n: {{n}}, k: {{k}}}).plot()
 ```
 
 For more control, you can also use the
 [bollinger map method](#plot-marks--bollinger--bollinger) directly with the
 [map transform](https://github.com/observablehq/plot/tree/v0.6.17/docs/transforms/map.md).
-
-:::plot
 
 ```js
 Plot.plot({
@@ -6438,13 +5836,9 @@ Plot.plot({
 });
 ```
 
-:::
-
 Below a candlestick chart is constructed from two
 [rule marks](#plot-marks--rule), with a bollinger mark underneath to emphasize
 the days when the stock was more volatile.
-
-:::plot
 
 ```js
 Plot.plot({
@@ -6477,33 +5871,23 @@ Plot.plot({
 });
 ```
 
-:::
-
 The bollinger mark has two constructors: the common
 [bollingerY](#plot-marks--bollinger--bollingerY) for when time goes right→ (or
 ←left); and the rare [bollingerX](#plot-marks--bollinger--bollingerX) for when
 time goes up↑ (or down↓).
 
-:::plot
-
 ```js
 Plot.bollingerX(aapl, { y: "Date", x: "Close" }).plot();
 ```
-
-:::
 
 As
 [shorthand](https://github.com/observablehq/plot/tree/v0.6.17/docs/features/shorthand.md),
 you can pass an array of numbers as data. Below, the _x_ axis represents the
 zero-based index into the data (_i.e._, trading days since May 13, 2013).
 
-:::plot
-
 ```js
 Plot.bollingerY(aapl.map((d) => d.Close)).plot();
 ```
-
-:::
 
 <a id="plot-marks--bollinger--bollinger-options"></a>
 
@@ -6586,8 +5970,9 @@ The **k** option here defaults to zero instead of two.
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/box.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import {shallowRef, onMounted} from "vue";
@@ -6598,12 +5983,11 @@ const diamonds = shallowRef([]);
 onMounted(() => {
   d3.csv("../data/diamonds.csv", d3.autoType).then((data) => (diamonds.value = data));
 });
-
-</script>
+```
 
 <a id="plot-marks--box--box-mark"></a>
 
-# Box mark <VersionBadge version="0.4.2" />
+# Box mark (since v0.4.2)
 
 The **box mark** summarizes one-dimensional distributions as boxplots. It is a
 [composite mark](#plot-features--marks--marks) consisting of a
@@ -6617,7 +6001,7 @@ For example, the boxplot below shows
 [A.A. Michelson’s experimental measurements](https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/morley.html)
 of the speed of light. (Speed is in km/sec minus 299,000.)
 
-:::plot https://observablehq.com/@observablehq/plot-vertical-box-plot
+[Interactive example](https://observablehq.com/@observablehq/plot-vertical-box-plot)
 
 ```js
 Plot.plot({
@@ -6631,12 +6015,10 @@ Plot.plot({
 });
 ```
 
-:::
-
 [boxY](#plot-marks--box--boxY) produces vertical boxplots; for horizontal
 boxplots, use [boxX](#plot-marks--box--boxX) and swap **x** and **y**.
 
-:::plot https://observablehq.com/@observablehq/plot-horizontal-box-plot
+[Interactive example](https://observablehq.com/@observablehq/plot-horizontal-box-plot)
 
 ```js
 Plot.plot({
@@ -6650,19 +6032,15 @@ Plot.plot({
 });
 ```
 
-:::
-
 As
 [shorthand](https://github.com/observablehq/plot/tree/v0.6.17/docs/features/shorthand.md),
 you can pass an array of numbers for a single boxplot.
 
-:::plot https://observablehq.com/@observablehq/plot-shorthand-box-plot
+[Interactive example](https://observablehq.com/@observablehq/plot-shorthand-box-plot)
 
 ```js
 Plot.boxX([0, 3, 4.4, 4.5, 4.6, 5, 7]).plot();
 ```
-
-:::
 
 Since the box mark uses the [group transform](#plot-transforms--group), the
 secondary dimension must be ordinal. To group quantitative values, bin manually,
@@ -6670,7 +6048,7 @@ say with
 [Math.floor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/floor);
 see [#1330](https://github.com/observablehq/plot/issues/1330).
 
-:::plot defer https://observablehq.com/@observablehq/plot-binned-box-plot
+[Interactive example](https://observablehq.com/@observablehq/plot-binned-box-plot)
 
 ```js
 Plot.plot({
@@ -6692,8 +6070,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 This chart is slightly easier to construct with
 [faceting](#plot-features--facets) using the
 [**interval** scale option](#plot-features--scales--scale-transforms) on the
@@ -6701,7 +6077,7 @@ _fx_ scale. (This technique cannot be used with the _x_ scale above because the
 scale interval transform is applied _after_ the box mark applies the group
 transform.)
 
-:::plot defer https://observablehq.com/@observablehq/plot-binned-box-plot
+[Interactive example](https://observablehq.com/@observablehq/plot-binned-box-plot)
 
 ```js
 Plot.plot({
@@ -6722,8 +6098,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 <a id="plot-marks--box--box-options"></a>
 
@@ -6785,8 +6159,9 @@ it should represent an ordinal (discrete) value.
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/cell.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import {shallowRef, onMounted} from "vue";
@@ -6802,15 +6177,14 @@ onMounted(() => {
   d3.csv("../data/seattle-weather.csv", d3.autoType).then((data) => (seattle.value = data));
   d3.csv("../data/simpsons.csv", d3.autoType).then((data) => (simpsons.value = data));
 });
-
-</script>
+```
 
 <a id="plot-marks--cell--cell-mark"></a>
 
 # Cell mark
 
-:::tip The cell mark is a variant of the [rect mark](#plot-marks--rect) for use
-when both dimensions are ordinal. See also the [bar mark](#plot-marks--bar). :::
+**Tip:** The cell mark is a variant of the [rect mark](#plot-marks--rect) for use
+when both dimensions are ordinal. See also the [bar mark](#plot-marks--bar).
 
 The **cell mark** draws rectangles positioned in two ordinal dimensions. Hence,
 the plot’s _x_ and _y_ scales are [band scales](#plot-features--scales). Cells
@@ -6821,7 +6195,7 @@ For example, the heatmap below shows the decline of _The Simpsons_ after Season
 episode ever — cue Comic Book Guy — is season 23’s
 [“Lisa Goes Gaga”](https://en.wikipedia.org/wiki/Lisa_Goes_Gaga).)
 
-:::plot defer https://observablehq.com/@observablehq/plot-simpsons-ratings
+[Interactive example](https://observablehq.com/@observablehq/plot-simpsons-ratings)
 
 ```js
 Plot.plot({
@@ -6848,14 +6222,12 @@ Plot.plot({
 });
 ```
 
-:::
-
 With [faceting](#plot-features--facets), we can produce a calendar of multiple
 years, where **x** represents week-of-year and **y** represents day-of-week.
 Below shows almost twenty years of daily changes of the Dow Jones Industrial
 Average.
 
-:::plot defer https://observablehq.com/@observablehq/plot-dow-jones-calendar
+[Interactive example](https://observablehq.com/@observablehq/plot-dow-jones-calendar)
 
 ```js
 Plot.plot({
@@ -6881,8 +6253,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 The cell mark can be combined with the
 [group transform](#plot-transforms--group), which groups data by ordinal value.
 (The [bin transform](#plot-transforms--bin), on the other hand, is intended for
@@ -6890,7 +6260,6 @@ quantitative data and is typically paired with the
 [rect mark](#plot-marks--rect).) The heatmap below shows the maximum observed
 temperature by month (**y**) and date (**x**) in Seattle from 2012 through 2015.
 
-:::plot defer
 https://observablehq.com/@observablehq/plot-seattle-temperature-heatmap
 
 ```js
@@ -6911,12 +6280,10 @@ Plot.plot({
 });
 ```
 
-:::
-
 A one-dimensional cell is produced by specifying only **x** or only **y**. The
 plot below collapses the history of _The Simpsons_ to a single line.
 
-:::plot defer https://observablehq.com/@observablehq/plot-simpsons-barcode
+[Interactive example](https://observablehq.com/@observablehq/plot-simpsons-barcode)
 
 ```js
 Plot.plot({
@@ -6937,25 +6304,21 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::info Here the _x_-scale domain contains the _id_ of every episode. An ordinal
+**Info:** Here the _x_-scale domain contains the _id_ of every episode. An ordinal
 scale by default draws a tick for every domain value; setting **ticks** to just
 the first episode of each season prevents overlapping labels. The **tickFormat**
 function finds the row corresponding to the episode id and returns the
-corresponding _season_ number. :::
+corresponding _season_ number.
 
 One-dimensional cells can be a compact alternative to a bar chart, where the
 _fill_ color of the cell replaces the length of the bar. However, position is a
 more salient encoding and should be preferred to color if space is available.
 
-:::plot https://observablehq.com/@observablehq/plot-color-cells
+[Interactive example](https://observablehq.com/@observablehq/plot-color-cells)
 
 ```js
 Plot.cell(alphabet, { x: "letter", fill: "frequency" }).plot();
 ```
-
-:::
 
 When ordinal data is regular, such as the yearly observations of the warming
 stripes below, use the **interval** scale option to enforce uniformity and show
@@ -6964,7 +6327,7 @@ _day_, a number for numeric intervals, a
 [d3-time interval](https://d3js.org/d3-time#_interval), or a custom
 implementation.
 
-:::plot https://observablehq.com/@observablehq/plot-ordinal-scale-interval-2
+[Interactive example](https://observablehq.com/@observablehq/plot-ordinal-scale-interval-2)
 
 ```js{5}
 Plot.plot({
@@ -6983,12 +6346,10 @@ Plot.plot({
 })
 ```
 
-:::
-
-:::tip When an ordinal scale domain has high cardinality, the **ticks** scale
+**Tip:** When an ordinal scale domain has high cardinality, the **ticks** scale
 option can be used to specify which ticks to label. Alternatively, consider
 using a quantitative or temporal scale instead, as by switching to a
-[bar mark](#plot-marks--bar). :::
+[bar mark](#plot-marks--bar).
 
 <a id="plot-marks--cell--cell-options"></a>
 
@@ -7062,8 +6423,9 @@ function and assumes that _data_ = [_y₀_, _y₁_, _y₂_, …].
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/contour.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import {shallowRef, onMounted} from "vue";
@@ -7084,16 +6446,15 @@ function mandelbrot(x, y) {
     if (zr * zr + zi * zi > 4) return n;
   }
 }
-
-</script>
+```
 
 <a id="plot-marks--contour--contour-mark"></a>
 
-# Contour mark <VersionBadge version="0.6.2" />
+# Contour mark (since v0.6.2)
 
-:::tip To produce a heatmap instead of contours, see the
+**Tip:** To produce a heatmap instead of contours, see the
 [raster mark](#plot-marks--raster). For contours of estimated point density, see
-the [density mark](#plot-marks--density). :::
+the [density mark](#plot-marks--density).
 
 The **contour mark** draws
 [isolines](https://en.wikipedia.org/wiki/Contour_line) to delineate regions
@@ -7108,16 +6469,14 @@ _f_(_x_,_y_) along the grid.
 
 For example, the contours below show the topography of the
 [Maungawhau volcano](https://en.wikipedia.org/wiki/Maungawhau), produced from a
-{{volcano.width}}×{{volcano.height}} grid of elevation samples.
+`volcano.width`×`volcano.height` grid of elevation samples.
 
-:::plot defer https://observablehq.com/@observablehq/plot-stroked-contours
+[Interactive example](https://observablehq.com/@observablehq/plot-stroked-contours)
 
 ```js
 Plot.contour(volcano.values, { width: volcano.width, height: volcano.height })
   .plot();
 ```
-
-:::
 
 Whereas the **value** option produces isolines suitable for stroking, the
 **fill** option produces filled contours. Setting the **fill** to
@@ -7125,7 +6484,7 @@ Whereas the **value** option produces isolines suitable for stroking, the
 will apply a color encoding to the contour values, allowing the contour values
 to be read via a _color_ legend.
 
-:::plot defer https://observablehq.com/@observablehq/plot-filled-contours
+[Interactive example](https://observablehq.com/@observablehq/plot-filled-contours)
 
 ```js
 Plot.plot({
@@ -7144,11 +6503,9 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::info Contours are drawn in ascending value order, with the highest value on
+**Info:** Contours are drawn in ascending value order, with the highest value on
 top; hence, filled contour polygons overlap! If you are interested in isobands,
-please upvote [#1420](https://github.com/observablehq/plot/issues/1420). :::
+please upvote [#1420](https://github.com/observablehq/plot/issues/1420).
 
 The grid (`volcano.values` above) is a list of numbers `[103, 104, 104, …]`. The
 first number `103` is the elevation of the bottom-left corner. This grid is in
@@ -7270,7 +6627,7 @@ using the same color encoding. Notice that the image below is flipped vertically
 relative to the data: the first row of the data is the _bottom_ of the image
 because below _y_ points up↑.
 
-:::plot https://observablehq.com/@observablehq/plot-small-grid-contours
+[Interactive example](https://observablehq.com/@observablehq/plot-small-grid-contours)
 
 ```js
 Plot.plot({
@@ -7288,13 +6645,11 @@ Plot.plot({
 });
 ```
 
-:::
-
 Also notice that the grid points are offset by 0.5: they represent the _middle_
 of each pixel rather than the corner. Below, the contour mark is laid under the
 text mark to show filled contours.
 
-:::plot defer https://observablehq.com/@observablehq/plot-small-grid-contours
+[Interactive example](https://observablehq.com/@observablehq/plot-small-grid-contours)
 
 ```js
 Plot.plot({
@@ -7314,8 +6669,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 Similar to the [bin transform](#plot-transforms--bin), contour levels can be
 specified either with the **interval** option (above, a contour at each multiple
@@ -7345,7 +6698,7 @@ Using a [dot mark](#plot-marks--dot), we can make a quick scatterplot to see the
 irregular grid. We’ll use a _diverging_ color scale to distinguish positive and
 negative values.
 
-:::plot defer https://observablehq.com/@observablehq/plot-igrf90-dots
+[Interactive example](https://observablehq.com/@observablehq/plot-igrf90-dots)
 
 ```js
 Plot.dot(ca55, { x: "LONGITUDE", y: "LATITUDE", fill: "MAG_IGRF90" }).plot({
@@ -7353,11 +6706,9 @@ Plot.dot(ca55, { x: "LONGITUDE", y: "LATITUDE", fill: "MAG_IGRF90" }).plot({
 });
 ```
 
-:::
-
 Pass the same arguments to the contour mark for continuous contours.
 
-:::plot defer https://observablehq.com/@observablehq/plot-igrf90-contours
+[Interactive example](https://observablehq.com/@observablehq/plot-igrf90-contours)
 
 ```js
 Plot.contour(ca55, { x: "LONGITUDE", y: "LATITUDE", fill: "MAG_IGRF90" }).plot({
@@ -7365,12 +6716,10 @@ Plot.contour(ca55, { x: "LONGITUDE", y: "LATITUDE", fill: "MAG_IGRF90" }).plot({
 });
 ```
 
-:::
-
 As with the raster mark, the **blur** option applies a Gaussian blur to the
 underlying raster grid, resulting in smoother contours.
 
-:::plot defer https://observablehq.com/@observablehq/plot-blurred-contours
+[Interactive example](https://observablehq.com/@observablehq/plot-blurred-contours)
 
 ```js
 Plot.contour(ca55, {
@@ -7381,17 +6730,15 @@ Plot.contour(ca55, {
 }).plot({ color: { type: "diverging" } });
 ```
 
-:::
-
-:::tip The contour mark also supports the **interpolate** option for control
-over [spatial interpolation](#plot-marks--raster--spatial-interpolators). :::
+**Tip:** The contour mark also supports the **interpolate** option for control
+over [spatial interpolation](#plot-marks--raster--spatial-interpolators).
 
 The contour mark supports Plot’s
 [projection system](#plot-features--projections). The chart below shows global
 atmospheric water vapor measurements from
 [NASA Earth Observations](https://neo.gsfc.nasa.gov/view.php?datasetId=MYDAL2_M_SKY_WV).
 
-:::plot defer https://observablehq.com/@observablehq/plot-contours-projection
+[Interactive example](https://observablehq.com/@observablehq/plot-contours-projection)
 
 ```js
 Plot.plot({
@@ -7421,15 +6768,13 @@ Plot.plot({
 });
 ```
 
-:::
-
 As an alternative to interpolating discrete samples, you can supply values as a
 continuous function _f_(_x_,_y_); the contour mark will invoke this function for
 the midpoint of each pixel in the raster grid, similar to a WebGL fragment
 shader. For example, below we visualize the trigonometric function sin(_x_)
 cos(_y_), producing a checkerboard-like pattern.
 
-:::plot defer https://observablehq.com/@observablehq/plot-function-contour-2
+[Interactive example](https://observablehq.com/@observablehq/plot-function-contour-2)
 
 ```js
 Plot.plot({
@@ -7449,10 +6794,8 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip When faceting, the sample function _f_(_x_,_y_) is passed a third
-argument of the facet values {_fx_, _fy_}. :::
+**Tip:** When faceting, the sample function _f_(_x_,_y_) is passed a third
+argument of the facet values {_fx_, _fy_}.
 
 <a id="plot-marks--contour--contour-options"></a>
 
@@ -7566,8 +6909,9 @@ Returns a new contour mark with the given (optional) _data_ and _options_.
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/delaunay.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import * as topojson from "topojson-client";
@@ -7582,12 +6926,11 @@ onMounted(() => {
   d3.tsv("../data/walmarts.tsv", d3.autoType).then((data) => (walmarts.value = data));
   d3.json("../data/us-counties-10m.json").then((data) => (us.value = data));
 });
-
-</script>
+```
 
 <a id="plot-marks--delaunay--delaunay-marks"></a>
 
-# Delaunay marks <VersionBadge version="0.5.1" />
+# Delaunay marks (since v0.5.1)
 
 Given set of points in **x** and **y**, the **Delaunay marks** compute the
 [Delaunay triangulation](https://en.wikipedia.org/wiki/Delaunay_triangulation),
@@ -7600,7 +6943,7 @@ to each point (its _Voronoi cell_). The cell can be empty if another point
 shares the exact same coordinates. Together, the cells cover the entire plot.
 Voronoi diagrams can group related points with color, for example.
 
-:::plot https://observablehq.com/@observablehq/plot-voronoi-scatterplot
+[Interactive example](https://observablehq.com/@observablehq/plot-voronoi-scatterplot)
 
 ```js
 Plot.plot({
@@ -7623,8 +6966,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 Each cell is associated with a particular data point, and channels such as
 **stroke**, **fill**, **fillOpacity**, **strokeOpacity**, **href**, _etc._, work
 as they do on other marks, such as [dots](#plot-marks--dot).
@@ -7634,7 +6975,7 @@ once with [voronoiMesh](#plot-marks--delaunay--voronoiMesh). Whereas the
 [voronoi mark](#plot-marks--delaunay--voronoi) will draw shared cell boundaries
 twice, the mesh will draw them only once.
 
-:::plot https://observablehq.com/@observablehq/plot-voronoi-mesh
+[Interactive example](https://observablehq.com/@observablehq/plot-voronoi-mesh)
 
 ```js
 Plot.plot({
@@ -7649,15 +6990,13 @@ Plot.plot({
 });
 ```
 
-:::
-
 The boundary between two neighboring Voronoi cells is a line segment defined by
 equal distance from their two respective points. The construction of the Voronoi
 diagram involves the computation of the Delaunay graph, which defines these
 neighbors. Use [delaunayMesh](#plot-marks--delaunay--delaunayMesh) to draw the
 graph.
 
-:::plot https://observablehq.com/@observablehq/plot-delaunay-mesh
+[Interactive example](https://observablehq.com/@observablehq/plot-delaunay-mesh)
 
 ```js
 Plot.plot({
@@ -7678,8 +7017,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 As shown above, the Delaunay graph is computed separately for each color;
 specifying **z**, **stroke**, or **fill** creates independent series.
 
@@ -7687,7 +7024,7 @@ Another derivative of the Delaunay graph is the convex hull of a set of points:
 the polygon with the minimum perimeter that contains all the points. The
 [hull mark](#plot-marks--delaunay--hull) will draw this hull.
 
-:::plot defer https://observablehq.com/@observablehq/plot-convex-hull
+[Interactive example](https://observablehq.com/@observablehq/plot-convex-hull)
 
 ```js
 Plot.plot({
@@ -7707,14 +7044,12 @@ Plot.plot({
 });
 ```
 
-:::
-
 Using independent series is not recommended in the case of the voronoi and
 voronoiMesh marks as it will result in an unreadable chart due to overlapping
 Voronoi diagrams, but it can be useful to color the links of the Delaunay graph
 based on some property of data, such as the body mass of penguins below.
 
-:::plot defer https://observablehq.com/@observablehq/plot-delaunay-links
+[Interactive example](https://observablehq.com/@observablehq/plot-delaunay-links)
 
 ```js
 Plot.plot({
@@ -7730,14 +7065,11 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::warning CAUTION The link color is driven by one arbitrary extremity of each
-edge; this might change in the future. :::
+**Warning:** CAUTION The link color is driven by one arbitrary extremity of each
+edge; this might change in the future.
 
 The Delaunay marks can be one-dimensional, too.
 
-:::plot defer
 https://observablehq.com/@observablehq/plot-one-dimensional-voronoi
 
 ```js
@@ -7753,13 +7085,11 @@ Plot.plot({
 });
 ```
 
-:::
-
 The [Delaunay marks](#plot-marks--delaunay) also work with Plot’s
 [projection system](#plot-features--projections), as in this Voronoi diagram
 showing the distribution of Walmart stores in the contiguous United States.
 
-:::plot defer https://observablehq.com/@observablehq/plot-walmart-voronoi
+[Interactive example](https://observablehq.com/@observablehq/plot-walmart-voronoi)
 
 ```js
 Plot.plot({
@@ -7777,14 +7107,12 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::warning CAUTION Distances between projected points are not exactly
+**Warning:** CAUTION Distances between projected points are not exactly
 proportional to the corresponding distances on the sphere. This
 [creates a discrepancy](https://observablehq.com/@observablehq/planar-vs-spherical-voronoi)
 between the planar Voronoi diagram and its spherical counterpart. For greater
 accuracy, use [d3-geo-voronoi](https://github.com/Fil/d3-geo-voronoi) with the
-[geo mark](#plot-marks--geo). :::
+[geo mark](#plot-marks--geo).
 
 <a id="plot-marks--delaunay--delaunayLink"></a>
 
@@ -7881,8 +7209,9 @@ separate Voronoi tessellations are constructed for each group.
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/density.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import * as topojson from "topojson-client";
@@ -7904,15 +7233,14 @@ onMounted(() => {
   d3.tsv("../data/walmarts.tsv", d3.autoType).then((data) => (walmarts.value = data));
   d3.json("../data/us-counties-10m.json").then((data) => (us.value = data));
 });
-
-</script>
+```
 
 <a id="plot-marks--density--density-mark"></a>
 
-# Density mark <VersionBadge version="0.5.1" />
+# Density mark (since v0.5.1)
 
-:::tip For contours of spatially-distributed quantitative values, see the
-[contour mark](#plot-marks--contour). :::
+**Tip:** For contours of spatially-distributed quantitative values, see the
+[contour mark](#plot-marks--contour).
 
 The **density mark** shows the
 [estimated density](https://en.wikipedia.org/wiki/Multivariate_kernel_density_estimation)
@@ -7920,7 +7248,7 @@ of two-dimensional point clouds. Contours guide the eye towards the local peaks
 of concentration of the data, much like a topographic map does with elevation.
 This is especially useful given overplotting in dense datasets.
 
-:::plot https://observablehq.com/@observablehq/plot-point-cloud-density
+[Interactive example](https://observablehq.com/@observablehq/plot-point-cloud-density)
 
 ```js
 Plot.plot({
@@ -7948,8 +7276,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 The **bandwidth** option specifies the radius of the
 [Gaussian kernel](https://en.wikipedia.org/wiki/Gaussian_function) describing
 the influence of each point as a function of distance; this kernel is summed
@@ -7958,15 +7284,7 @@ derived for values between 0 (exclusive) and the maximum density (exclusive)
 using the
 [marching squares algorithm](https://en.wikipedia.org/wiki/Marching_squares).
 
-<p>
-  <label class="label-input">
-    Bandwidth:
-    <input type="range" v-model.number="bandwidth" min="0" max="40" step="0.2">
-    <span style="font-variant-numeric: tabular-nums;">{{bandwidth.toLocaleString("en-US", {minimumFractionDigits: 1})}}</span>
-  </label>
-</p>
-
-:::plot defer https://observablehq.com/@observablehq/plot-density-options
+[Interactive example](https://observablehq.com/@observablehq/plot-density-options)
 
 ```js
 Plot.plot({
@@ -7978,22 +7296,12 @@ Plot.plot({
 });
 ```
 
-:::
-
 The **thresholds** option specifies the number of contour lines (minus one) to
 be computed, or an explicit array of threshold values. For example, with 4
 thresholds and a maximum density of 10, contour lines would be drawn for the
 values 2.5, 5, and 7.5. The default number of thresholds is 20.
 
-<p>
-  <label class="label-input">
-    Thresholds:
-    <input type="range" v-model.number="thresholds" min="1" max="40" step="1">
-    <span style="font-variant-numeric: tabular-nums;">{{thresholds}}</span>
-  </label>
-</p>
-
-:::plot defer https://observablehq.com/@observablehq/plot-density-options
+[Interactive example](https://observablehq.com/@observablehq/plot-density-options)
 
 ```js
 Plot.plot({
@@ -8005,11 +7313,8 @@ Plot.plot({
 });
 ```
 
-:::
-
 The density mark also works with one-dimensional values:
 
-:::plot defer
 https://observablehq.com/@observablehq/plot-one-dimensional-density
 
 ```js
@@ -8034,16 +7339,16 @@ Plot.plot({
 });
 ```
 
-:::
-
 The density mark supports Plot’s
 [projection system](#plot-features--projections), as in this heatmap showing the
 density of Walmart stores across the contiguous United States (which is a decent
 proxy for population density).
 
-:::plot defer https://observablehq.com/@observablehq/plot-walmart-density
+[Interactive example](https://observablehq.com/@observablehq/plot-walmart-density)
 
-```js-vue
+Interactive example template (values in `{{…}}` come from the upstream website):
+
+```text
 Plot.plot({
   projection: "albers",
   color: {scheme: "{{$dark ? "turbo" : "YlGnBu"}}"},
@@ -8056,14 +7361,12 @@ Plot.plot({
 })
 ```
 
-:::
-
-:::tip Use an equal-area projection with the density mark. :::
+**Tip:** Use an equal-area projection with the density mark.
 
 By using the _density_ keyword as a **fill** or **stroke** color, you can draw
 regions with a sequential color encoding.
 
-:::plot defer https://observablehq.com/@observablehq/plot-density-stroke
+[Interactive example](https://observablehq.com/@observablehq/plot-density-stroke)
 
 ```js
 Plot.plot({
@@ -8077,25 +7380,13 @@ Plot.plot({
 });
 ```
 
-:::
-
 To facilitate comparison across facets (**fx** or **fy**) and series (**z**,
 **stroke**, or **fill**), the thresholds are determined by the series with the
 highest density. For instance, the chart below shows the highest concentration
 of penguins, arranged by flipper length and culmen length, on Biscoe island; the
 contours in the other facets use the same thresholds.
 
-<!-- ```js
-Plot.plot({
-  axis: null,
-  marks: [
-    Plot.dot(penguins, {x: "flipper_length_mm", y: "culmen_length_mm"}),
-    Plot.density(penguins, {x: "flipper_length_mm", y: "culmen_length_mm"})
-  ]
-})
-``` -->
-
-:::plot defer https://observablehq.com/@observablehq/plot-density-faceted
+[Interactive example](https://observablehq.com/@observablehq/plot-density-faceted)
 
 ```js
 Plot.plot({
@@ -8112,24 +7403,12 @@ Plot.plot({
 });
 ```
 
-:::
-
-<!-- With the default settings, the density is the local average number of dots on an area of ${tex`100\text{px}^2`} — a square of 10px by 10px. This can be multiplied by the dots’ weights. -->
-
 The **weight** channel specifies the contribution of each data point to the
 estimated density; it defaults to 1, weighing each point equally. This can be
 used to give some points more influence than others. Try adjusting the skew
 slider below to transition between female- and male-weighted density.
 
-<p>
-  <label class="label-input">
-    Skew (-F/+M):
-    <input type="range" v-model.number="skew" min="-1" max="1" step="0.01">
-    <span style="font-variant-numeric: tabular-nums;">{{skew.toLocaleString("en-US", {minimumFractionDigits: 2, signDisplay: "always"})}}</span>
-  </label>
-</p>
-
-:::plot defer https://observablehq.com/@observablehq/plot-density-weighted
+[Interactive example](https://observablehq.com/@observablehq/plot-density-weighted)
 
 ```js
 Plot.plot({
@@ -8154,12 +7433,9 @@ Plot.plot({
 });
 ```
 
-:::
-
 You can specify a negative weight for points that the density contours should
 avoid, resulting in regions of influence that do not overlap.
 
-:::plot defer
 https://observablehq.com/@observablehq/plot-non-overlapping-density-regions
 
 ```js
@@ -8186,8 +7462,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 <a id="plot-marks--density--density-options"></a>
 
@@ -8235,8 +7509,9 @@ Returns a new density mark for the given _data_ and _options_.
 Source:
 https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/difference.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import {computed, shallowRef, onMounted} from "vue";
@@ -8252,12 +7527,11 @@ onMounted(() => {
   d3.csv("../data/tsa.csv",d3.autoType).then((data) => (tsa.value = data));
   d3.csv("../data/sf-sj-temperatures.csv", d3.autoType).then((data) => (temperature.value = data.filter((d) => d.date.getUTCFullYear() === 2020)));
 });
-
-</script>
+```
 
 <a id="plot-marks--difference--difference-mark"></a>
 
-# Difference mark <VersionBadge version="0.6.12" pr="1896" />
+# Difference mark (since v0.6.12)
 
 The **difference mark** puts a metric in context by comparing it. Like the
 [area mark](#plot-marks--area), the region between two lines is filled; unlike
@@ -8268,12 +7542,10 @@ In the simplest case, the difference mark compares a metric to a constant. For
 example, the plot below shows the
 [global surface temperature anomaly](https://data.giss.nasa.gov/gistemp/) from
 1880–2016; 0° represents the 1951–1980 average; above-average temperatures are
-in <span style="border-bottom: solid var(--vp-c-red) 3px;">red</span>, while
+in red, while
 below-average temperatures are in
-<span style="border-bottom: solid var(--vp-c-blue) 3px;">blue</span>. (It’s
+blue. (It’s
 getting hotter.)
-
-:::plot
 
 ```js
 Plot.differenceY(gistemp, {
@@ -8285,13 +7557,9 @@ Plot.differenceY(gistemp, {
 }).plot({ y: { grid: true } });
 ```
 
-:::
-
 A 24-month
 [moving average](https://github.com/observablehq/plot/tree/v0.6.17/docs/transforms/window.md)
 improves readability by smoothing out the noise.
-
-:::plot
 
 ```js
 Plot.differenceY(
@@ -8306,19 +7574,15 @@ Plot.differenceY(
 ).plot({ y: { grid: true } });
 ```
 
-:::
-
 More powerfully, the difference mark compares two metrics. For example, the plot
 below shows the number of travelers per day through TSA checkpoints in 2020
 compared to 2019. (This in effect compares a metric against itself, but as the
 data represents each year as a separate column, it is equivalent to two
 metrics.) In the first two months of 2020, there were on average
-<span style="border-bottom: solid #01ab63 3px;">more travelers</span> per day
+more travelers per day
 than 2019; yet when COVID-19 hit, there were many
-<span style="border-bottom: solid #4269d0 3px;">fewer travelers</span> per day,
+fewer travelers per day,
 dropping almost to zero.
-
-:::plot
 
 ```js
 Plot.plot({
@@ -8340,8 +7604,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 If the data is “tall” rather than “wide” — that is, if the two metrics we wish
 to compare are represented by separate _rows_ rather than separate _columns_
 — we can use the [group transform](#plot-transforms--group) with the
@@ -8349,11 +7611,9 @@ to compare are represented by separate _rows_ rather than separate _columns_
 then find the desired **y1** and **y2** for each group. The plot below shows
 daily minimum temperature for San Francisco compared to San Jose. Notice how the
 insulating fog keeps San Francisco
-<span style="border-bottom: solid #01ab63 3px;">warmer</span> in winter and
-<span style="border-bottom: solid #4269d0 3px;">cooler</span> in summer,
+warmer in winter and
+cooler in summer,
 reducing seasonal variation.
-
-:::plot
 
 ```js
 Plot.plot({
@@ -8382,13 +7642,9 @@ Plot.plot({
 });
 ```
 
-:::
-
 The difference mark can also be used to compare a metric to itself using the
 [shift transform](https://github.com/observablehq/plot/tree/v0.6.17/docs/transforms/shift.md).
 The chart below shows year-over-year growth in the price of Apple stock.
-
-:::plot
 
 ```js
 Plot.differenceY(aapl, Plot.shiftX("+1 year", { x: "Date", y: "Close" })).plot({
@@ -8396,13 +7652,11 @@ Plot.differenceY(aapl, Plot.shiftX("+1 year", { x: "Date", y: "Close" })).plot({
 });
 ```
 
-:::
-
 For most of the covered time period, you would have
-<span style="border-bottom: solid #01ab63 3px;">made a profit</span> by holding
+made a profit by holding
 Apple stock for a year; however, if you bought in 2015 and sold in 2016, you
-would likely have <span style="border-bottom: solid #4269d0 3px;">lost
-money</span>.
+would likely have lost
+money.
 
 <a id="plot-marks--difference--difference-options"></a>
 
@@ -8428,9 +7682,9 @@ The standard **fill** option is ignored; instead, there are separate channels
 based on the sign of the difference:
 
 - **positiveFill** - the color for when the metric is greater, defaults to
-  <span style="border-bottom:solid #01ab63 3px;">green</span>
+  green
 - **negativeFill** - the color for when the comparison is greater, defaults to
-  <span style="border-bottom:solid #4269d0 3px;">blue</span>
+  blue
 - **fillOpacity** - the areas’ opacity, defaults to 1
 - **positiveFillOpacity** - the positive area’s opacity, defaults to _opacity_
 - **negativeFillOpacity** - the negative area’s opacity, defaults to _opacity_
@@ -8460,7 +7714,7 @@ area extending from the comparison to the bottom of the frame.
 
 <a id="plot-marks--difference--differenceX"></a>
 
-## differenceX(_data_, _options_) <VersionBadge version="0.6.16" pr="1922" />
+## differenceX(_data_, _options_) (since v0.6.16)
 
 ```js
 Plot.differenceX(gistemp, { y: "Date", x: "Anomaly" });
@@ -8477,8 +7731,9 @@ Returns a new horizontal difference with the given _data_ and _options_. See
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/dot.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import * as topojson from "topojson-client";
@@ -8517,8 +7772,7 @@ onMounted(() => {
     stateage.value = Object.assign(ages.flatMap((age) => data.map((d) => ({state: d.name, age, population: d[age]}))), {ages});
   });
 });
-
-</script>
+```
 
 <a id="plot-marks--dot--dot-mark"></a>
 
@@ -8529,19 +7783,17 @@ in a scatterplot. For example, the chart below shows the roughly-inverse
 relationship between car horsepower in _y_↑ and fuel efficiency in miles per
 gallon in _x_→.
 
-:::plot https://observablehq.com/@observablehq/plot-basic-scatterplot
+[Interactive example](https://observablehq.com/@observablehq/plot-basic-scatterplot)
 
 ```js
 Plot.dot(cars, { x: "economy (mpg)", y: "power (hp)" }).plot({ grid: true });
 ```
 
-:::
-
 Using a function for **x**, we can instead plot the roughly-linear relationship
 when fuel efficiency is represented as gallons per 100 miles. (For fans of the
 metric system, 1 gallon per 100 miles is roughly 2.4 liters per 100 km.)
 
-:::plot https://observablehq.com/@observablehq/plot-derived-value-scatterplot
+[Interactive example](https://observablehq.com/@observablehq/plot-derived-value-scatterplot)
 
 ```js
 Plot.plot({
@@ -8555,14 +7807,11 @@ Plot.plot({
 });
 ```
 
-:::
-
 Dots support **stroke** and **fill** channels in addition to position along
 **x** and **y**. Below, color is used as a redundant encoding to emphasize the
 rising trend in average global surface temperatures. A _diverging_ color scale
 encodes values below zero blue and above zero red.
 
-:::plot defer
 https://observablehq.com/@observablehq/plot-diverging-color-scatterplot
 
 ```js
@@ -8582,15 +7831,12 @@ Plot.plot({
 });
 ```
 
-:::
-
 Dots also support an **r** channel allowing dot size to represent quantitative
 value. Below, each dot represents a day of trading; the _x_-position represents
 the day’s change, while the _y_-position and area (**r**) represent the day’s
 trading volume. As you might expect, days with higher volatility have higher
 trading volume.
 
-:::plot defer
 https://observablehq.com/@observablehq/plot-proportional-symbol-scatterplot
 
 ```js
@@ -8616,13 +7862,10 @@ Plot.plot({
 });
 ```
 
-:::
-
 With the [bin transform](#plot-transforms--bin), sized dots can also be used as
 an alternative to a [rect-based](#plot-marks--rect) heatmap to show a
 two-dimensional distribution.
 
-:::plot defer
 https://observablehq.com/@observablehq/plot-proportional-dot-heatmap
 
 ```js
@@ -8642,30 +7885,26 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip For hexagonal binning, use the
+**Tip:** For hexagonal binning, use the
 [hexbin transform](https://github.com/observablehq/plot/tree/v0.6.17/docs/transforms/hexbin.md)
-instead of the bin transform. :::
+instead of the bin transform.
 
 While dots are typically positioned in two dimensions (**x** and **y**),
 one-dimensional dots (only **x** or only **y**) are also supported. Below, dot
 area is used to represent the frequency of letters in the English language as a
 compact alternative to a bar chart.
 
-:::plot https://observablehq.com/@observablehq/plot-dot-area-chart
+[Interactive example](https://observablehq.com/@observablehq/plot-dot-area-chart)
 
 ```js
 Plot.dot(alphabet, { x: "letter", r: "frequency" }).plot();
 ```
 
-:::
-
 Dots, together with [rules](#plot-marks--rule), can be used as a stylistic
 alternative to [bars](#plot-marks--bar) to produce a lollipop 🍭 chart. (Sadly
 these lollipops cannot be eaten.)
 
-:::plot https://observablehq.com/@observablehq/plot-lollipop
+[Interactive example](https://observablehq.com/@observablehq/plot-lollipop)
 
 ```js
 Plot.plot({
@@ -8683,8 +7922,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 A dot may have an ordinal dimension on either **x** and **y**, as in the plot
 below comparing the demographics of states: color represents age group, **y**
 represents the state, and **x** represents the proportion of the state’s
@@ -8694,7 +7931,7 @@ relative proportion of each age group within each state, while the
 [group transform](#plot-transforms--group) is used to pull out the _min_ and
 _max_ values for each state for a horizontal [rule](#plot-marks--rule).
 
-:::plot defer https://observablehq.com/@observablehq/plot-dot-plot
+[Interactive example](https://observablehq.com/@observablehq/plot-dot-plot)
 
 ```js
 Plot.plot({
@@ -8726,21 +7963,19 @@ Plot.plot({
 });
 ```
 
-:::
-
 ```js
 xy = Plot.normalizeX("sum", { x: "population", y: "state", z: "state" });
 ```
 
-:::tip To reduce code duplication, pull shared options out into an object (here
+**Tip:** To reduce code duplication, pull shared options out into an object (here
 `xy`) and then merge them into each mark’s options using the spread operator
-(`...`). :::
+(`...`).
 
 To improve accessibility, particularly for readers with color vision deficiency,
 the **symbol** channel can be used in addition to color (or instead of it) to
 represent ordinal data.
 
-:::plot defer https://observablehq.com/@observablehq/plot-symbol-channel
+[Interactive example](https://observablehq.com/@observablehq/plot-symbol-channel)
 
 ```js
 Plot.plot({
@@ -8759,11 +7994,7 @@ Plot.plot({
 });
 ```
 
-:::
-
 Plot uses the following default symbols for filled dots:
-
-:::plot
 
 ```js
 Plot.dotX([
@@ -8777,11 +8008,7 @@ Plot.dotX([
 ], { fill: "currentColor", symbol: Plot.identity }).plot();
 ```
 
-:::
-
 There is a separate set of default symbols for stroked dots:
-
-:::plot
 
 ```js
 Plot.dotX([
@@ -8795,21 +8022,19 @@ Plot.dotX([
 ], { stroke: "currentColor", symbol: Plot.identity }).plot();
 ```
 
-:::
-
-:::info The stroked symbols are based on
+**Info:** The stroked symbols are based on
 [Heman Robinson’s research](https://www.tandfonline.com/doi/abs/10.1080/10618600.2019.1637746).
 There is also a _hexagon_ symbol; it is primarily intended for the
 [hexbin transform](https://github.com/observablehq/plot/tree/v0.6.17/docs/transforms/hexbin.md).
 You can even specify a D3 or custom symbol type as an object that implements the
 [_symbol_.draw(_context_, _size_)](https://d3js.org/d3-shape/symbol#symbolType_draw)
-method. :::
+method.
 
 The dot mark can be combined with the
 [stack transform](#plot-transforms--stack). The diverging stacked dot plot below
 shows the age and gender distribution of the U.S. Congress in 2023.
 
-:::plot defer https://observablehq.com/@observablehq/plot-stacked-dots
+[Interactive example](https://observablehq.com/@observablehq/plot-stacked-dots)
 
 ```js
 Plot.plot({
@@ -8836,31 +8061,22 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::info The stackY2 transform places each dot at the upper bound of the
+**Info:** The stackY2 transform places each dot at the upper bound of the
 associated stacked interval, rather than the middle of the interval as when
 using stackY. Hence, the first male dot is placed at _y_ = 1, and the first
-female dot is placed at _y_ = -1. :::
+female dot is placed at _y_ = -1.
 
-:::tip The
+**Tip:** The
 [dodge transform](https://github.com/observablehq/plot/tree/v0.6.17/docs/transforms/dodge.md)
 can also be used to produce beeswarm plots; this is particularly effective when
-dots have varying radius. :::
+dots have varying radius.
 
-Dots are sorted by descending radius by default <VersionBadge version="0.5.0" />
+Dots are sorted by descending radius by default (since v0.5.0)
 to mitigate occlusion; the smallest dots are drawn on top. Set the **sort**
 option to null to draw them in input order. Use the checkbox below to see the
 effect of sorting on a bubble map of U.S. county population.
 
-<p>
-  <label class="label-input">
-    Use default sort:
-    <input type="checkbox" v-model="sorted">
-  </label>
-</p>
-
-:::plot defer https://observablehq.com/@observablehq/plot-dot-sort
+[Interactive example](https://observablehq.com/@observablehq/plot-dot-sort)
 
 ```js
 Plot.plot({
@@ -8881,8 +8097,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 The dot mark can also be used to construct a
 [quantile-quantile (QQ) plot](https://observablehq.com/@observablehq/qq-plot)
 for comparing two univariate distributions.
@@ -8900,7 +8114,7 @@ the following optional channels are supported:
   _sqrt_
 - **rotate** - the rotation angle in degrees clockwise
 - **symbol** - the categorical symbol; bound to the _symbol_ scale
-  <VersionBadge version="0.4.0" />
+  (since v0.4.0)
 
 If either of the **x** or **y** channels are not specified, the corresponding
 position is controlled by the **frameAnchor** option.
@@ -8910,7 +8124,7 @@ The following dot-specific constant options are also supported:
 - **r** - the effective radius (length); a number in pixels
 - **rotate** - the rotation angle in degrees clockwise; defaults to 0
 - **symbol** - the categorical symbol; defaults to _circle_
-  <VersionBadge version="0.4.0" />
+  (since v0.4.0)
 - **frameAnchor** - how to position the dot within the frame; defaults to
   _middle_
 
@@ -8982,14 +8196,14 @@ are also supported; see [scale options](#plot-features--scales--scale-options).
 
 <a id="plot-marks--dot--circle"></a>
 
-## circle(_data_, _options_) <VersionBadge version="0.5.0" />
+## circle(_data_, _options_) (since v0.5.0)
 
 Equivalent to [dot](#plot-marks--dot--dot) except that the **symbol** option is
 set to _circle_.
 
 <a id="plot-marks--dot--hexagon"></a>
 
-## hexagon(_data_, _options_) <VersionBadge version="0.5.0" />
+## hexagon(_data_, _options_) (since v0.5.0)
 
 Equivalent to [dot](#plot-marks--dot--dot) except that the **symbol** option is
 set to _hexagon_.
@@ -9002,8 +8216,9 @@ set to _hexagon_.
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/frame.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import {ref, shallowRef, onMounted} from "vue";
@@ -9016,8 +8231,7 @@ const faithful = shallowRef([]);
 onMounted(() => {
   d3.tsv("../data/faithful.tsv", d3.autoType).then((data) => (faithful.value = data));
 });
-
-</script>
+```
 
 <a id="plot-marks--frame--frame-mark"></a>
 
@@ -9025,26 +8239,13 @@ onMounted(() => {
 
 The **frame mark** draws a rectangle around the plot area.
 
-:::plot
-
 ```js
 Plot.frame().plot({ x: { domain: [0, 1], grid: true } });
 ```
 
-:::
-
 Frames are most commonly used in conjunction with facets to provide better
 separation (Gestalt grouping) of faceted marks. Without a frame, it can be hard
 to tell where one facet ends and the next begins.
-
-<p>
-  <label class="label-input">
-    Show frame:
-    <input type="checkbox" v-model="framed">
-  </label>
-</p>
-
-:::plot
 
 ```js
 Plot.plot({
@@ -9066,31 +8267,23 @@ Plot.plot({
 });
 ```
 
-:::
-
 Unlike most marks, a frame never takes _data_; the first argument to
 [frame](#plot-marks--frame--frame) is the _options_ object. (For data-driven
 rectangles, see the [rect mark](#plot-marks--rect).)
-
-:::plot
 
 ```js
 Plot.frame({ stroke: "red" }).plot({ x: { domain: [0, 1], grid: true } });
 ```
 
-:::
-
 While options are often specified in literal values, such as
-<span style="border-bottom: solid 2px var(--vp-c-red);">_red_</span> above, the
+_red_ above, the
 standard [mark channels](#plot-features--marks--mark-options) such as **fill**
 and **stroke** can also be specified as abstract values. For example, in the
 density heatmap below comparing the delay between eruptions of the Old Faithful
 geyser (_waiting_) in _x_→ and the duration of the eruption (_eruptions_) in
 _y_↑, both in minutes, we fill the frame with
-<span :style="{borderBottom: `solid 2px ${d3.interpolateTurbo(0)}`}">black</span>
+black
 representing zero density.
-
-:::plot defer
 
 ```js
 Plot.plot({
@@ -9102,16 +8295,12 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip This is equivalent to a [rect](#plot-marks--rect):
-`Plot.rect({length: 1}, {fill: 0})`. :::
+**Tip:** This is equivalent to a [rect](#plot-marks--rect):
+`Plot.rect({length: 1}, {fill: 0})`.
 
 You can also place a frame on a specific facet using the **fx** or **fy**
 option. Below, a frame emphasizes the _Gentoo_ facet, say to draw attention to
 how much bigger they are. 🐧
-
-:::plot
 
 ```js
 Plot.plot({
@@ -9124,16 +8313,11 @@ Plot.plot({
 });
 ```
 
-:::
+**Tip:** Or: `Plot.rect({length: 1}, {fy: ["Gentoo"], stroke: "currentColor"})`.
 
-:::tip Or: `Plot.rect({length: 1}, {fy: ["Gentoo"], stroke: "currentColor"})`.
-:::
-
-The **anchor** option <VersionBadge version="0.6.3" />, if specified to a value
+The **anchor** option (since v0.6.3), if specified to a value
 of _left_, _right_, _top_ or _bottom_, draws only that side of the frame. In
 that case, the **fill** and **rx**, **ry** options are ignored.
-
-:::plot
 
 ```js
 Plot.plot({
@@ -9146,8 +8330,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 <a id="plot-marks--frame--frame-options"></a>
 
@@ -9182,8 +8364,9 @@ Returns a new frame mark with the specified _options_.
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/geo.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import * as topojson from "topojson-client";
@@ -9212,12 +8395,11 @@ onMounted(() => {
     us.value = _us;
   });
 });
-
-</script>
+```
 
 <a id="plot-marks--geo--geo-mark"></a>
 
-# Geo mark <VersionBadge version="0.6.1" />
+# Geo mark (since v0.6.1)
 
 The **geo mark** draws geographic features — polygons, lines, points, and other
 geometry — often as thematic maps. It works with Plot’s
@@ -9225,7 +8407,7 @@ geometry — often as thematic maps. It works with Plot’s
 [choropleth map](https://en.wikipedia.org/wiki/Choropleth_map) below shows
 unemployment by county in the United States.
 
-:::plot defer https://observablehq.com/@observablehq/plot-us-choropleth
+[Interactive example](https://observablehq.com/@observablehq/plot-us-choropleth)
 
 ```js
 Plot.plot({
@@ -9247,15 +8429,13 @@ Plot.plot({
 });
 ```
 
-:::
-
 A geo mark’s data is typically [GeoJSON](https://geojson.org/). You can pass a
 single GeoJSON object, a feature or geometry collection, or an array or iterable
 of GeoJSON objects; Plot automatically normalizes these into an array of
 features or geometries. When a mark’s data is GeoJSON, Plot will look for the
 specified field name (such as _unemployment_ above, for **fill**) in the GeoJSON
 object’s `properties` if the object does not have this property directly.
-<VersionBadge version="0.6.16" pr="2092" />
+(since v0.6.16)
 
 The size of Point and MultiPoint geometries is controlled by the **r** option.
 For example, below we show earthquakes in the last seven days with a magnitude
@@ -9267,7 +8447,7 @@ proportional to its value. And likewise point geometries are by default sorted
 by descending radius to reduce occlusion, drawing the smallest circles on top.
 Set the **sort** option to null to use input order instead.
 
-:::plot defer https://observablehq.com/@observablehq/plot-live-earthquake-map
+[Interactive example](https://observablehq.com/@observablehq/plot-live-earthquake-map)
 
 ```js
 Plot.plot({
@@ -9289,9 +8469,7 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip Click on any of the earthquakes above to see details. :::
+**Tip:** Click on any of the earthquakes above to see details.
 
 The [graticule](#plot-marks--geo--graticule) helper draws a uniform grid of
 meridians (lines of constant longitude) and parallels (lines of constant
@@ -9299,7 +8477,7 @@ latitude) every 10° between ±80° latitude; for the polar regions, meridians a
 drawn every 90°. The [sphere](#plot-marks--geo--sphere) helper draws the outline
 of the projected sphere.
 
-:::plot https://observablehq.com/@observablehq/plot-sphere-and-graticule
+[Interactive example](https://observablehq.com/@observablehq/plot-sphere-and-graticule)
 
 ```js
 Plot.plot({
@@ -9312,15 +8490,13 @@ Plot.plot({
 });
 ```
 
-:::
-
 The geo mark’s **geometry** channel can be used to generate geometry from a
 non-GeoJSON data source. For example, below we visualize the shockwave created
 by the explosion of the
 [Hunga Tonga–Hunga Haʻapai volcano](https://en.wikipedia.org/wiki/2021–22_Hunga_Tonga–Hunga_Haʻapai_eruption_and_tsunami)
 on January 15, 2022 with a series of geodesic circles of increasing radius.
 
-:::plot defer https://observablehq.com/@observablehq/plot-shockwave
+[Interactive example](https://observablehq.com/@observablehq/plot-shockwave)
 
 ```js
 Plot.plot({
@@ -9346,16 +8522,14 @@ Plot.plot({
 });
 ```
 
-:::
-
 By default, the geo mark doesn’t have **x** and **y** channels; when you use the
 [**tip** option](https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/tip.md),
 the [centroid transform](#plot-transforms--centroid) is implicitly applied on
 the geometries to compute the tip position by generating **x** and **y**
-channels. <VersionBadge version="0.6.16" pr="2088" /> You can alternatively
+channels. (since v0.6.16) You can alternatively
 specify these channels explicitly. The centroids are shown below in red.
 
-:::plot defer https://observablehq.com/@observablehq/plot-state-centroids
+[Interactive example](https://observablehq.com/@observablehq/plot-state-centroids)
 
 ```js
 Plot.plot({
@@ -9371,12 +8545,10 @@ Plot.plot({
 });
 ```
 
-:::
-
 The geo mark supports [faceting](#plot-features--facets). Below, a comic strip
 of sorts shows the locations of Walmart store openings in past decades.
 
-:::plot defer https://observablehq.com/@observablehq/plot-map-large-multiples
+[Interactive example](https://observablehq.com/@observablehq/plot-map-large-multiples)
 
 ```js
 Plot.plot({
@@ -9403,11 +8575,9 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::info This uses the
+**Info:** This uses the
 [**interval** scale option](#plot-features--scales--scale-transforms) to bin
-temporal data into facets by decade. :::
+temporal data into facets by decade.
 
 Lastly, the geo mark is not limited to spherical geometries!
 [Plot’s projection system](#plot-features--projections) includes planar
@@ -9431,7 +8601,7 @@ radius are not drawn. If **r** is a channel, geometries will be sorted by
 descending radius by default.
 
 The **x** and **y** position channels may also be specified in conjunction with
-the **tip** option. <VersionBadge version="0.6.16" pr="2088" /> These are bound
+the **tip** option. (since v0.6.16) These are bound
 to the _x_ and _y_ scale (or projection), respectively.
 
 <a id="plot-marks--geo--geo"></a>
@@ -9451,7 +8621,7 @@ to be a GeoJSON object or an iterable of GeoJSON objects.
 
 <a id="plot-marks--geo--sphere"></a>
 
-## sphere(_options_) <VersionBadge version="0.6.1" />
+## sphere(_options_) (since v0.6.1)
 
 ```js
 Plot.sphere();
@@ -9461,7 +8631,7 @@ Returns a new geo mark with a _Sphere_ geometry object and the given _options_.
 
 <a id="plot-marks--geo--graticule"></a>
 
-## graticule(_options_) <VersionBadge version="0.6.1" />
+## graticule(_options_) (since v0.6.1)
 
 ```js
 Plot.graticule();
@@ -9479,35 +8649,26 @@ object and the given _options_.
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/grid.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import {ref} from "vue";
 import alphabet from "../data/alphabet.ts";
 
 const atop = ref(true);
-
-</script>
+```
 
 <a id="plot-marks--grid--grid-mark"></a>
 
-# Grid mark <VersionBadge version="0.6.3" />
+# Grid mark (since v0.6.3)
 
 The **grid mark** is a specially-configured [rule](#plot-marks--rule) for
 drawing an axis-aligned grid. Like the [axis mark](#plot-marks--axis), a grid
 mark is automatically generated by Plot when you use the **grid** scale option.
 But you can also declare a grid mark explicitly, for example to draw grid lines
 atop rather than below bars.
-
-<p>
-  <label class="label-input">
-    Show grid on top:
-    <input type="checkbox" v-model="atop">
-  </label>
-</p>
-
-:::plot
 
 ```js
 Plot.plot({
@@ -9526,46 +8687,32 @@ Plot.plot({
 });
 ```
 
-:::
-
 The **interval** option above instructs the grid lines to be drawn at unit
 intervals, _i.e._ whole percentages. As an alternative, you can use the
 **ticks** option to specify the desired number of ticks or the **tickSpacing**
 option to specify the desired separation between adjacent ticks in pixels.
 
-:::plot
-
 ```js
 Plot.gridX().plot({ x: { type: "linear" } });
 ```
-
-:::
 
 The color of the grid lines can be controlled with the **stroke** option (or the
 alias **color**). While this option is are typically set to a constant color
 (such as _red_ or the default _currentColor_), it can be specified as a channel
 to assign colors dynamically based on the associated tick value.
 
-:::plot
-
 ```js
 Plot.gridX(d3.range(101), { stroke: Plot.identity, strokeOpacity: 1 }).plot();
 ```
 
-:::
-
 You can set other [stroke options](#plot-features--marks--mark-options) to
 further customize the appearance, say for dashed strokes.
-
-:::plot
 
 ```js
 Plot.gridX({ strokeDasharray: "2", strokeOpacity: 1 }).plot({
   x: { type: "linear" },
 });
 ```
-
-:::
 
 See the [axis mark](#plot-marks--axis) for more details and examples.
 
@@ -9640,17 +8787,17 @@ Returns a new _fy_ grid with the given _options_.
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/hexgrid.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import penguins from "../data/penguins.ts";
-
-</script>
+```
 
 <a id="plot-marks--hexgrid--hexgrid-mark"></a>
 
-# Hexgrid mark <VersionBadge version="0.5.0" />
+# Hexgrid mark (since v0.5.0)
 
 The **hexgrid mark** draws a hexagonal grid spanning the frame. It can be used
 with the
@@ -9659,7 +8806,7 @@ to show how points are binned. The **binWidth** option specifies the distance
 between centers of neighboring hexagons in pixels; it defaults to 20, matching
 the hexbin transform.
 
-:::plot https://observablehq.com/@observablehq/plot-hexgrid-example
+[Interactive example](https://observablehq.com/@observablehq/plot-hexgrid-example)
 
 ```js
 Plot.plot({
@@ -9676,8 +8823,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 <a id="plot-marks--hexgrid--hexgrid-options"></a>
 
@@ -9710,8 +8855,9 @@ Returns a new hexgrid mark with the specified _options_.
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/image.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import {shallowRef, onMounted} from "vue";
@@ -9722,12 +8868,11 @@ const presidents = shallowRef([]);
 onMounted(() => {
   d3.csv("../data/us-president-favorability.csv", d3.autoType).then((data) => (presidents.value = data));
 });
-
-</script>
+```
 
 <a id="plot-marks--image--image-mark"></a>
 
-# Image mark <VersionBadge version="0.3.0" />
+# Image mark (since v0.3.0)
 
 The **image mark** draws images centered at the given position in **x** and
 **y**. It is often used to construct scatterplots in place of a
@@ -9735,7 +8880,7 @@ The **image mark** draws images centered at the given position in **x** and
 [Robert Lesser](https://observablehq.com/@rlesser/when-presidents-fade-away),
 shows the favorability of U.S. presidents over time alongside their portraits.
 
-:::plot defer https://observablehq.com/@observablehq/plot-image-scatterplot
+[Interactive example](https://observablehq.com/@observablehq/plot-image-scatterplot)
 
 ```js
 Plot.plot({
@@ -9757,8 +8902,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 Images are drawn in input order by default. This dataset is ordered
 chronologically, and hence above the more recent presidents are drawn on top.
 You can change the order with the [sort transform](#plot-transforms--sort).
@@ -9769,7 +8912,7 @@ Use the
 to control which part of the image appears within the circle; below, we favor
 the top part of the image to show the presidential head.
 
-:::plot defer https://observablehq.com/@observablehq/plot-image-medals
+[Interactive example](https://observablehq.com/@observablehq/plot-image-medals)
 
 ```js
 Plot.plot({
@@ -9791,10 +8934,8 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip You can also use the **r** channel as a size encoding, and the **rotate**
-channel, as with dots. :::
+**Tip:** You can also use the **r** channel as a size encoding, and the **rotate**
+channel, as with dots.
 
 The **r** option works well with the
 [dodge transform](https://github.com/observablehq/plot/tree/v0.6.17/docs/transforms/dodge.md)
@@ -9802,7 +8943,7 @@ for an image beeswarm plot. This chart isn’t particularly interesting because
 new presidents are inaugurated at a fairly consistent rate, but at least it
 avoids overlapping portraits.
 
-:::plot defer https://observablehq.com/@observablehq/plot-image-dodge
+[Interactive example](https://observablehq.com/@observablehq/plot-image-dodge)
 
 ```js
 Plot.plot({
@@ -9823,13 +8964,11 @@ Plot.plot({
 });
 ```
 
-:::
-
 The default size of an image is only 16×16 pixels. This may be acceptable if the
 image is a small glyph, such as a categorical symbol in a scatterplot. But often
 you will want to set **width**, **height**, or **r** to increase the image size.
 
-:::plot defer https://observablehq.com/@observablehq/plot-image-scatterplot-2
+[Interactive example](https://observablehq.com/@observablehq/plot-image-scatterplot-2)
 
 ```js
 Plot.plot({
@@ -9850,15 +8989,13 @@ Plot.plot({
 });
 ```
 
-:::
-
 If — _for reasons_ — you want to style the plot with a background image, you can
 do that using the top-level **style** option rather than an image mark. Below,
 Kristen Gorman’s penguins dataset is visualized atop her photograph of sea ice
 near Palmer Station on the Antarctic peninsula, where she collected the
 measurements.
 
-:::plot defer https://observablehq.com/@observablehq/plot-background-image
+[Interactive example](https://observablehq.com/@observablehq/plot-background-image)
 
 ```js
 Plot.plot({
@@ -9883,8 +9020,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 <a id="plot-marks--image--image-options"></a>
 
 ## Image options
@@ -9902,9 +9037,9 @@ the following optional channels are supported:
 - **width** - the image width (in pixels)
 - **height** - the image height (in pixels)
 - **r** - the image radius; bound to the _r_ scale
-  <VersionBadge version="0.6.6" />
+  (since v0.6.6)
 - **rotate** - the rotation angle in degrees clockwise
-  <VersionBadge version="0.6.6" />
+  (since v0.6.6)
 
 If either of the **x** or **y** channels are not specified, the corresponding
 position is controlled by the **frameAnchor** option.
@@ -9933,7 +9068,7 @@ The following image-specific constant options are also supported:
   behavior
 - **imageRendering** - the
   [image-rendering attribute](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/image-rendering);
-  defaults to _auto_ (bilinear) <VersionBadge version="0.6.4" />
+  defaults to _auto_ (bilinear) (since v0.6.4)
 
 To crop the image instead of scaling it to fit, set **preserveAspectRatio** to
 _xMidYMid slice_. The **imageRendering** option may be set to _pixelated_ to
@@ -9969,8 +9104,9 @@ array of pairs [[_x₀_, _y₀_], [_x₁_, _y₁_], [_x₂_, _y₂_], …] such 
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/line.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import * as topojson from "topojson-client";
@@ -10003,8 +9139,7 @@ onMounted(() => {
     stocks.value = d3.zip(["AAPL", "AMZN", "GOOG", "IBM"], [aapl].concat(datas)).flatMap(([Symbol, data]) => data.map((d) => ({Symbol, ...d})));
   });
 });
-
-</script>
+```
 
 <a id="plot-marks--line--line-mark"></a>
 
@@ -10015,29 +9150,25 @@ line mark interpolates between adjacent data points, typically both the _x_ and
 _y_ scales are quantitative or temporal. For example, below is a line chart of
 the closing price of Apple stock.
 
-:::plot https://observablehq.com/@observablehq/plot-simple-line-chart
+[Interactive example](https://observablehq.com/@observablehq/plot-simple-line-chart)
 
 ```js
 Plot.line(aapl, { x: "Date", y: "Close" }).plot({ y: { grid: true } });
 ```
 
-:::
-
 If the **x** and **y** options are not defined, the line mark assumes that the
 data is an iterable of points [[_x₁_, _y₁_], [_x₂_, _y₂_], …], allowing for
 [shorthand](https://github.com/observablehq/plot/tree/v0.6.17/docs/features/shorthand.md).
 
-:::plot https://observablehq.com/@observablehq/plot-shorthand-line-chart
+[Interactive example](https://observablehq.com/@observablehq/plot-shorthand-line-chart)
 
 ```js
 Plot.line(aapl.map((d) => [d.Date, d.Close])).plot();
 ```
 
-:::
-
-:::tip This shorthand loses the automatic _x_- and _y_-axis labels, reducing
+**Tip:** This shorthand loses the automatic _x_- and _y_-axis labels, reducing
 legibility. Use the **label** [scale option](#plot-features--scales) to restore
-them. :::
+them.
 
 The [lineY constructor](#plot-marks--line--lineY) provides default channel
 definitions of **x** = index and **y** =
@@ -10049,43 +9180,36 @@ right→. Below, a random walk is made using
 [d3.cumsum](https://observablehq.com/@d3/d3-cumsum?collection=@d3/d3-array) and
 [d3.randomNormal](https://observablehq.com/@d3/d3-random?collection=@d3/d3-random).
 
-:::plot defer https://observablehq.com/@observablehq/plot-shorthand-liney
+[Interactive example](https://observablehq.com/@observablehq/plot-shorthand-liney)
 
 ```js
 Plot.lineY(d3.cumsum({ length: 600 }, d3.randomNormal())).plot();
 ```
-
-:::
 
 As with [areas](#plot-marks--area), points in lines are connected in input
 order: the first point is connected to the second point, the second is connected
 to the third, and so on. Line data is typically in chronological order. Unsorted
 data may produce gibberish.
 
-:::plot defer https://observablehq.com/@observablehq/plot-line-sort
+[Interactive example](https://observablehq.com/@observablehq/plot-line-sort)
 
 ```js
 Plot.lineY(d3.shuffle(aapl.slice()), { x: "Date", y: "Close" }).plot(); // 🌶️
 ```
 
-:::
-
 If your data isn’t sorted, use the [sort transform](#plot-transforms--sort).
 
-:::plot defer https://observablehq.com/@observablehq/plot-line-sort
+[Interactive example](https://observablehq.com/@observablehq/plot-line-sort)
 
 ```js
 Plot.lineY(d3.shuffle(aapl.slice()), { x: "Date", y: "Close", sort: "Date" })
   .plot();
 ```
 
-:::
-
 While the _x_ scale of a line chart often represents time, this is not required.
 For example, we can plot the elevation profile of a Tour de France stage — and
 imagine how tiring it must be to start a climb after riding 160km! ⛰🚴💦
 
-:::plot defer
 https://observablehq.com/@observablehq/plot-tour-de-france-elevation-profile
 
 ```js
@@ -10104,8 +9228,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 There is no requirement that **y** be dependent on **x**; lines can be used in
 connected scatterplots to show two independent (but often correlated) variables.
 (See also [phase plots](https://en.wikipedia.org/wiki/Phase_portrait).) The
@@ -10113,7 +9235,7 @@ chart below recreates Hannah Fairfield’s
 [“Driving Shifts Into Reverse”](http://www.nytimes.com/imagepages/2010/05/02/business/02metrics.html)
 from 2009.
 
-:::plot defer https://observablehq.com/@observablehq/plot-connected-scatterplot
+[Interactive example](https://observablehq.com/@observablehq/plot-connected-scatterplot)
 
 ```js
 Plot.plot({
@@ -10139,14 +9261,12 @@ Plot.plot({
 });
 ```
 
-:::
-
 To draw multiple lines, use the **z** channel to group
 [tidy data](https://r4ds.had.co.nz/tidy-data.html) into series. For example, the
 chart below shows unemployment rates of various metro areas from the Bureau of
 Labor Statistics; the **z** value is the metro division name.
 
-:::plot defer https://observablehq.com/@observablehq/plot-multiple-line-chart
+[Interactive example](https://observablehq.com/@observablehq/plot-multiple-line-chart)
 
 ```js
 Plot.plot({
@@ -10161,19 +9281,15 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip If your data is not tidy, you can use
+**Tip:** If your data is not tidy, you can use
 [_array_.flatMap](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flatMap)
-to pivot. :::
-
-<!-- Below, we load additional CSV files for other stocks to compare their performance. -->
+to pivot.
 
 If a **stroke** (or **fill**) channel is specified, the **z** option defaults to
 the same, automatically grouping series. For this reason, both **stroke** and
 **z** are typically ordinal or categorical.
 
-:::plot defer https://observablehq.com/@observablehq/plot-index-chart
+[Interactive example](https://observablehq.com/@observablehq/plot-index-chart)
 
 ```js
 Plot.plot({
@@ -10208,20 +9324,18 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::info Here the [normalize transform](#plot-transforms--normalize) normalizes
+**Info:** Here the [normalize transform](#plot-transforms--normalize) normalizes
 each time series (**z**) relative to its initial value, while the
 [select transform](https://github.com/observablehq/plot/tree/v0.6.17/docs/transforms/select.md)
 extracts the last point for labeling. A custom tick format converts multiples to
-percentage change (_e.g._, 1.6× = +60%). :::
+percentage change (_e.g._, 1.6× = +60%).
 
 Varying-color lines are supported. If the **stroke** value varies within series,
 the line will be segmented by color. (The same behavior applies to other
 channels, such as **strokeWidth** and **title**.) Specifying the **z** channel
 (say to null for a single series) is recommended.
 
-:::plot defer https://observablehq.com/@observablehq/plot-varying-stroke-line
+[Interactive example](https://observablehq.com/@observablehq/plot-varying-stroke-line)
 
 ```js
 Plot.plot({
@@ -10244,12 +9358,9 @@ Plot.plot({
 });
 ```
 
-:::
-
 Color encodings can also be used to highlight specific series, such as here to
 emphasize high unemployment in Michigan.
 
-:::plot defer
 https://observablehq.com/@observablehq/plot-multiple-line-highlight
 
 ```js
@@ -10275,8 +9386,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 When using **z**, lines are drawn in input order. The
 [sort transform](#plot-transforms--sort) above places the red lines on top of
 the gray ones to improve readability.
@@ -10287,7 +9396,7 @@ For example, below we plot the a 14-day moving average of the daily highs and
 lows in temperate San Francisco using the
 [window transform](https://github.com/observablehq/plot/tree/v0.6.17/docs/transforms/window.md).
 
-:::plot defer https://observablehq.com/@observablehq/plot-moving-average-line
+[Interactive example](https://observablehq.com/@observablehq/plot-moving-average-line)
 
 ```js
 Plot.plot({
@@ -10309,13 +9418,11 @@ Plot.plot({
 });
 ```
 
-:::
-
 If some channel values are undefined (or null or NaN), gaps will appear between
 adjacent points. To demonstrate, below we set the **y** value to NaN for the
 first three months of each year.
 
-:::plot defer https://observablehq.com/@observablehq/plot-line-chart-with-gaps
+[Interactive example](https://observablehq.com/@observablehq/plot-line-chart-with-gaps)
 
 ```js
 Plot.plot({
@@ -10331,13 +9438,11 @@ Plot.plot({
 });
 ```
 
-:::
-
 Supplying undefined values is not the same as filtering the data: the latter
 will interpolate between the data points. Observe the conspicuous straight lines
 below!
 
-:::plot defer https://observablehq.com/@observablehq/plot-line-chart-with-gaps
+[Interactive example](https://observablehq.com/@observablehq/plot-line-chart-with-gaps)
 
 ```js
 Plot.plot({
@@ -10359,15 +9464,13 @@ Plot.plot({
 });
 ```
 
-:::
-
 While uncommon, you can draw a line with ordinal position values. For example
 below, each line represents a U.S. state; **x** represents an (ordinal) age
 group while **y** represents the proportion of the state’s population in that
 age group. This chart emphasizes the overall age distribution of the United
 States, while giving a hint to variation across states.
 
-:::plot defer https://observablehq.com/@observablehq/plot-ordinal-line
+[Interactive example](https://observablehq.com/@observablehq/plot-ordinal-line)
 
 ```js
 Plot.plot({
@@ -10397,8 +9500,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 With a [spherical projection](#plot-features--projections), line segments become
 [geodesics](https://en.wikipedia.org/wiki/Great-circle_distance), taking the
 shortest path between two points on the sphere and wrapping around the
@@ -10406,7 +9507,7 @@ antimeridian at 180° longitude. The line below shows Charles Darwin’s voyage 
 HMS _Beagle_. (Data via
 [Benjamin Schmidt](https://observablehq.com/@bmschmidt/data-driven-projections-darwins-world).)
 
-:::plot defer https://observablehq.com/@observablehq/plot-spherical-line
+[Interactive example](https://observablehq.com/@observablehq/plot-spherical-line)
 
 ```js
 Plot.plot({
@@ -10419,16 +9520,13 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip Disable spherical interpolation by setting the **curve** option to
-_linear_ instead of the default _auto_. :::
+**Tip:** Disable spherical interpolation by setting the **curve** option to
+_linear_ instead of the default _auto_.
 
 A projected line can use varying color, too. Below, color reveals the westward
 direction of the Beagle’s journey around the world, starting and ending in
 London.
 
-:::plot defer
 https://observablehq.com/@observablehq/plot-spherical-line-with-a-varying-stroke
 
 ```js
@@ -10441,10 +9539,8 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::info Setting **z** to null forces a single line; we want the **stroke** to
-vary within the line instead of producing a separate line for each color. :::
+**Info:** Setting **z** to null forces a single line; we want the **stroke** to
+vary within the line instead of producing a separate line for each color.
 
 Interpolation is controlled by the [**curve** option](#plot-features--curves).
 The default curve is _linear_, which draws straight line segments between pairs
@@ -10582,8 +9678,9 @@ expect one sample per day, use "day" as the interval.
 Source:
 https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/linear-regression.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import {ref} from "vue";
@@ -10591,12 +9688,11 @@ import cars from "../data/cars.ts";
 import penguins from "../data/penguins.ts";
 
 const m = ref(0);
-
-</script>
+```
 
 <a id="plot-marks--linear-regression--linear-regression-mark"></a>
 
-# Linear regression mark <VersionBadge version="0.5.1" />
+# Linear regression mark (since v0.5.1)
 
 The **linear regression** mark draws
 [linear regression](https://en.wikipedia.org/wiki/Linear_regression) lines with
@@ -10605,7 +9701,7 @@ variable (typically **y**) on an independent variable (typically **x**). Below
 we can see that, in this example dataset at least, the weight of a car is a good
 linear predictor of its power.
 
-:::plot https://observablehq.com/@observablehq/plot-cars-linear-regression
+[Interactive example](https://observablehq.com/@observablehq/plot-cars-linear-regression)
 
 ```js
 Plot.plot({
@@ -10620,8 +9716,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 A linear model posits that _y_ is determined by an underlying affine function
 _y_ = _a_ ﹢ _b&thinsp;x_, where _a_ is a constant (intercept of the line on the
 _y_-axis when _x_ = 0) and _b_ is the slope. Given a set of points in **x** and
@@ -10630,27 +9724,18 @@ _b_ for the linear model, as well as a confidence band showing the range where
 these parameters lie with a certain probability, called **ci** (for confidence
 interval), which defaults to 0.95.
 
-:::info The regression line is fit using the
+**Info:** The regression line is fit using the
 [least squares](https://en.wikipedia.org/wiki/Least_squares) approach. See
 Torben Jansen’s
 [“Linear regression with confidence bands”](https://observablehq.com/@toja/linear-regression-with-confidence-bands)
 and
 [this StatExchange question](https://stats.stackexchange.com/questions/101318/understanding-shape-and-calculation-of-confidence-bands-in-linear-regression)
-for details. :::
+for details.
 
 Use the slider below to build a linear model from a subset of the data with
 **m** points. As you can see, the model gives a line as soon as two points are
 available, and gets more refined and stable as the size of the subset increases.
 
-<p>
-  <label class="label-input">
-    Number of points (m):
-    <input type="range" v-model.number="m" min="0" :max="cars.length" step="1">
-    <span style="font-variant-numeric: tabular-nums;">{{m.toLocaleString("en-US")}}</span>
-  </label>
-</p>
-
-:::plot
 https://observablehq.com/@observablehq/plot-linear-regression-confidence-band
 
 ```js
@@ -10672,10 +9757,8 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip When operating on a subset of the data (the “training dataset”, in
-machine learning parlance), randomly shuffling the data can reduce bias. :::
+**Tip:** When operating on a subset of the data (the “training dataset”, in
+machine learning parlance), randomly shuffling the data can reduce bias.
 
 This type of model is regularly criticized for pushing people to the wrong
 conclusions about their data when the actual underlying structure or process is
@@ -10689,7 +9772,7 @@ negative. This is called
 applies to any data that contains underlying populations with different
 properties or outcomes.
 
-:::plot https://observablehq.com/@observablehq/plot-linear-regression-simpson
+[Interactive example](https://observablehq.com/@observablehq/plot-linear-regression-simpson)
 
 ```js
 Plot.plot({
@@ -10714,8 +9797,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 Finally, note that regression is not a symmetric method: the model computed to
 express _y_ as a function of _x_ (linearRegressionY) doesn’t give the same
 result as the regression of _x_ as a function of _y_ (linearRegressionX) unless
@@ -10724,7 +9805,6 @@ are statistically independent, the linear regression of _y_ against _x_ is an
 horizontal line, whereas the linear regression of _x_ against _y_ is a vertical
 line.
 
-:::plot
 https://observablehq.com/@observablehq/plot-linear-regression-is-not-symmetric
 
 ```js
@@ -10749,8 +9829,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 <a id="plot-marks--linear-regression--linear-regression-options"></a>
 
@@ -10802,8 +9880,9 @@ is the independent variable. (This is the common orientation.)
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/link.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import * as topojson from "topojson-client";
@@ -10819,8 +9898,7 @@ const land = computed(() => world.value ? topojson.feature(world.value, world.va
 onMounted(() => {
   d3.json("../data/countries-110m.json").then((data) => (world.value = data));
 });
-
-</script>
+```
 
 <a id="plot-marks--link--link-mark"></a>
 
@@ -10838,7 +9916,7 @@ same in 2015. The link’s **stroke** redundantly encodes the change in
 inequality: red indicates rising inequality, while blue (there are only four)
 indicates declining inequality.
 
-:::plot defer https://observablehq.com/@observablehq/plot-link-variation-chart
+[Interactive example](https://observablehq.com/@observablehq/plot-link-variation-chart)
 
 ```js
 Plot.plot({
@@ -10880,14 +9958,12 @@ Plot.plot({
 });
 ```
 
-:::
-
 The link mark is used by the composite [tree mark](#plot-marks--tree) to render
 a link from parent to child in a hierarchy. The
 [treeLink transform](https://github.com/observablehq/plot/tree/v0.6.17/docs/transforms/tree.md)
 sets the default [curve option](#plot-features--curves) to _bump-x_.
 
-:::plot https://observablehq.com/@observablehq/plot-tree-and-link
+[Interactive example](https://observablehq.com/@observablehq/plot-tree-and-link)
 
 ```js
 Plot.plot({
@@ -10911,8 +9987,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 In this example, `gods` is an array of slash-separated paths representing the
 ancestry of mythological Greek gods.
 
@@ -10933,7 +10007,7 @@ the shortest path between two points on the surface of the sphere. Setting the
 **curve** to _linear_ will instead draw a straight line between the projected
 points. For example, below we draw two links from San Francisco to Paris.
 
-:::plot defer https://observablehq.com/@observablehq/plot-projected-link
+[Interactive example](https://observablehq.com/@observablehq/plot-projected-link)
 
 ```js
 Plot.plot({
@@ -10952,8 +10026,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 ```js
 xy = { x1: -122.4194, y1: 37.7749, x2: 2.3522, y2: 48.8566 };
 ```
@@ -10965,7 +10037,7 @@ depicts the gender gap in wages, segmented by education and age, in the U.S. A
 regular grid would make the gender disparity much less clear, even with the
 domains explicitly set to be equal.
 
-:::plot https://observablehq.com/@observablehq/plot-gender-income-inequality
+[Interactive example](https://observablehq.com/@observablehq/plot-gender-income-inequality)
 
 ```js
 Plot.plot({
@@ -11000,8 +10072,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 <a id="plot-marks--link--link-options"></a>
 
@@ -11055,8 +10125,9 @@ Returns a new link with the given _data_ and _options_.
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/raster.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import {shallowRef, onMounted} from "vue";
@@ -11078,15 +10149,14 @@ function mandelbrot(x, y) {
     if (zr * zr + zi * zi > 4) return n;
   }
 }
-
-</script>
+```
 
 <a id="plot-marks--raster--raster-mark"></a>
 
-# Raster mark <VersionBadge version="0.6.2" />
+# Raster mark (since v0.6.2)
 
-:::tip To produce contours instead of a heatmap, see the
-[contour mark](#plot-marks--contour). :::
+**Tip:** To produce contours instead of a heatmap, see the
+[contour mark](#plot-marks--contour).
 
 The **raster mark** renders a
 [raster image](https://en.wikipedia.org/wiki/Raster_graphics) — that is, an
@@ -11099,9 +10169,9 @@ along the grid.
 
 For example, the heatmap below shows the topography of the
 [Maungawhau volcano](https://en.wikipedia.org/wiki/Maungawhau), produced from a
-{{volcano.width}}×{{volcano.height}} grid of elevation samples.
+`volcano.width`×`volcano.height` grid of elevation samples.
 
-:::plot defer https://observablehq.com/@observablehq/plot-volcano-raster
+[Interactive example](https://observablehq.com/@observablehq/plot-volcano-raster)
 
 ```js
 Plot.plot({
@@ -11114,8 +10184,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 The grid (`volcano.values` above) is a list of numbers `[103, 104, 104, …]`. The
 first number `103` is the elevation of the bottom-left corner. This grid is in
@@ -11237,7 +10305,7 @@ using the same color encoding. Notice that the image below is flipped vertically
 relative to the data: the first row of the data is the _bottom_ of the image
 because below _y_ points up↑.
 
-:::plot https://observablehq.com/@observablehq/plot-small-grid-raster
+[Interactive example](https://observablehq.com/@observablehq/plot-small-grid-raster)
 
 ```js
 Plot.plot({
@@ -11255,13 +10323,11 @@ Plot.plot({
 });
 ```
 
-:::
-
 Also notice that the grid points are offset by 0.5: they represent the _middle_
 of each pixel rather than the corner. Below, the raster mark is laid under the
 text mark to show the raster image.
 
-:::plot defer https://observablehq.com/@observablehq/plot-small-grid-raster
+[Interactive example](https://observablehq.com/@observablehq/plot-small-grid-raster)
 
 ```js
 Plot.plot({
@@ -11281,10 +10347,8 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::warning CAUTION Safari does not currently support the **imageRendering**
-option. :::
+**Warning:** CAUTION Safari does not currently support the **imageRendering**
+option.
 
 While the raster mark provides convenient shorthand for strictly gridded data,
 as above, it _also_ works with samples in arbitrary positions and arbitrary
@@ -11309,7 +10373,7 @@ Using a [dot mark](#plot-marks--dot), we can make a quick scatterplot to see the
 irregular grid. We’ll use a _diverging_ color scale to distinguish positive and
 negative values.
 
-:::plot defer https://observablehq.com/@observablehq/plot-igrf90-dots
+[Interactive example](https://observablehq.com/@observablehq/plot-igrf90-dots)
 
 ```js
 Plot.dot(ca55, { x: "LONGITUDE", y: "LATITUDE", fill: "MAG_IGRF90" }).plot({
@@ -11317,12 +10381,10 @@ Plot.dot(ca55, { x: "LONGITUDE", y: "LATITUDE", fill: "MAG_IGRF90" }).plot({
 });
 ```
 
-:::
-
 And using a [line mark](#plot-marks--line), we can connect the line segments to
 reveal the flight paths.
 
-:::plot defer https://observablehq.com/@observablehq/plot-igrf90-flight-paths
+[Interactive example](https://observablehq.com/@observablehq/plot-igrf90-flight-paths)
 
 ```js
 Plot.line(ca55, {
@@ -11333,8 +10395,6 @@ Plot.line(ca55, {
 }).plot({ color: { type: "diverging" } });
 ```
 
-:::
-
 The image above starts to be readable, but it would be frustrating to not do
 more with this data given all the effort that went into collecting it!
 Fortunately the raster mark’s **interpolate** option can quickly produce a
@@ -11343,7 +10403,7 @@ continuous image.
 The _nearest_ interpolator assigns the value of each pixel in the grid using the
 nearest sample in the data. In effect, this produces a Voronoi diagram.
 
-:::plot defer https://observablehq.com/@observablehq/plot-igfr90-raster
+[Interactive example](https://observablehq.com/@observablehq/plot-igfr90-raster)
 
 ```js
 Plot.raster(ca55, {
@@ -11354,10 +10414,8 @@ Plot.raster(ca55, {
 }).plot({ color: { type: "diverging" } });
 ```
 
-:::
-
-:::tip You can also make this Voronoi diagram with the
-[voronoi mark](#plot-marks--delaunay). :::
+**Tip:** You can also make this Voronoi diagram with the
+[voronoi mark](#plot-marks--delaunay).
 
 If the observed phenomenon is continuous, we can use the _barycentric_
 interpolator. This constructs a Delaunay triangulation of the samples, and then
@@ -11365,7 +10423,7 @@ paints each triangle by interpolating the values of the triangle’s vertices in
 [barycentric coordinates](https://en.wikipedia.org/wiki/Barycentric_coordinate_system).
 (Points outside the convex hull are extrapolated.)
 
-:::plot defer https://observablehq.com/@observablehq/plot-igfr90-barycentric
+[Interactive example](https://observablehq.com/@observablehq/plot-igfr90-barycentric)
 
 ```js
 Plot.raster(ca55, {
@@ -11376,15 +10434,13 @@ Plot.raster(ca55, {
 }).plot({ color: { type: "diverging" } });
 ```
 
-:::
-
 Finally, the _random-walk_ interpolator assigns the value at each grid location
 simply by taking a random walk that stops after reaching a minimum distance from
 any sample! The interpolator uses the
 [walk on spheres](https://observablehq.com/@fil/walk-on-spheres) algorithm,
 limited to 2 consecutive jumps.
 
-:::plot defer https://observablehq.com/@observablehq/plot-igrf90-random-walk
+[Interactive example](https://observablehq.com/@observablehq/plot-igrf90-random-walk)
 
 ```js
 Plot.raster(ca55, {
@@ -11395,12 +10451,10 @@ Plot.raster(ca55, {
 }).plot({ color: { type: "diverging" } });
 ```
 
-:::
-
 With the _random-walk_ method, the image is grainy, reflecting the uncertainty
 of the random walk. Use the **blur** option to make it smoother.
 
-:::plot defer https://observablehq.com/@observablehq/plot-igrf90-random-walk
+[Interactive example](https://observablehq.com/@observablehq/plot-igrf90-random-walk)
 
 ```js
 Plot.raster(ca55, {
@@ -11412,16 +10466,14 @@ Plot.raster(ca55, {
 }).plot({ color: { type: "diverging" } });
 ```
 
-:::
-
-:::tip If none of the built-in
+**Tip:** If none of the built-in
 [spatial interpolators](#plot-marks--raster--spatial-interpolators) suffice, you
-can write your own as a custom function! :::
+can write your own as a custom function!
 
 The raster mark can interpolate categorical values, too! Below, this creates an
 interesting “map” of penguin species in the space of culmen length _vs._ depth.
 
-:::plot defer https://observablehq.com/@observablehq/plot-nominal-random-walk
+[Interactive example](https://observablehq.com/@observablehq/plot-nominal-random-walk)
 
 ```js
 Plot.plot({
@@ -11438,8 +10490,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 As an alternative to interpolating discrete samples, you can supply values as a
 continuous function _f_(_x_,_y_); the raster mark will invoke this function for
 the midpoint of each pixel in the raster grid, similar to a WebGL fragment
@@ -11447,15 +10497,13 @@ shader. For example, below we visualize the
 [Mandelbrot set](https://en.wikipedia.org/wiki/Mandelbrot_set) by counting the
 number of iterations needed until the point “escapes”.
 
-:::plot defer https://observablehq.com/@observablehq/plot-mandelbrot-set
+[Interactive example](https://observablehq.com/@observablehq/plot-mandelbrot-set)
 
 ```js
 Plot.raster({ fill: mandelbrot, x1: -2, x2: 1, y1: -1.164, y2: 1.164 }).plot({
   aspectRatio: 1,
 });
 ```
-
-:::
 
 ```js
 function mandelbrot(x, y) {
@@ -11468,24 +10516,22 @@ function mandelbrot(x, y) {
 
 Or to visualize the arctangent function:
 
-:::plot defer https://observablehq.com/@observablehq/plot-arctangent-raster
+[Interactive example](https://observablehq.com/@observablehq/plot-arctangent-raster)
 
 ```js
 Plot.raster({ x1: -1, x2: 1, y1: -1, y2: 1, fill: (x, y) => Math.atan2(y, x) })
   .plot();
 ```
 
-:::
-
-:::tip When faceting, the sample function _f_(_x_,_y_) is passed a third
-argument of the facet values {_fx_, _fy_}. :::
+**Tip:** When faceting, the sample function _f_(_x_,_y_) is passed a third
+argument of the facet values {_fx_, _fy_}.
 
 The raster mark supports Plot’s
 [projection system](#plot-features--projections). The chart below shows global
 atmospheric water vapor measurements from
 [NASA Earth Observations](https://neo.gsfc.nasa.gov/view.php?datasetId=MYDAL2_M_SKY_WV).
 
-:::plot defer https://observablehq.com/@observablehq/plot-raster-projection
+[Interactive example](https://observablehq.com/@observablehq/plot-raster-projection)
 
 ```js
 Plot.plot({
@@ -11512,8 +10558,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 <a id="plot-marks--raster--raster-options"></a>
 
@@ -11707,8 +10751,9 @@ fixed seed (for deterministic results).
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/rect.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import * as topojson from "topojson-client";
@@ -11731,8 +10776,7 @@ onMounted(() => {
   d3.csv("../data/povcalnet.csv", d3.autoType).then((data) => (povcalnet.value = data));
   d3.json("../data/us-counties-10m.json").then((data) => (us.value = data));
 });
-
-</script>
+```
 
 <a id="plot-marks--rect--rect-mark"></a>
 
@@ -11743,7 +10787,7 @@ The **rect mark** draws axis-aligned rectangles defined by **x1**, **y1**,
 U.S. counties represented as [_x1_, _y1_, _x2_, _y2_] tuples, where _x1_ & _x2_
 are degrees longitude and _y1_ & _y2_ are degrees latitude.
 
-:::plot defer https://observablehq.com/@observablehq/plot-county-boxes
+[Interactive example](https://observablehq.com/@observablehq/plot-county-boxes)
 
 ```js
 Plot.plot({
@@ -11760,28 +10804,24 @@ Plot.plot({
 });
 ```
 
-:::
-
 The rect mark is often used to produce histograms or heatmaps of quantitative
 data. For example, given some binned observations computed by
 [d3.bin](https://d3js.org/d3-array/bin), we can produce a basic histogram with
 [rectY](#plot-marks--rect--rectY) as follows:
 
-:::plot https://observablehq.com/@observablehq/plot-rects-and-bins
+[Interactive example](https://observablehq.com/@observablehq/plot-rects-and-bins)
 
 ```js
 Plot.rectY(bins, { x1: "x0", x2: "x1", y: "length" }).plot({ round: true });
 ```
 
-:::
-
 ```js
 bins = d3.bin()(d3.range(1000).map(d3.randomNormal()));
 ```
 
-:::info d3.bin uses _x0_ and _x1_ to represent the lower and upper bound of each
+**Info:** d3.bin uses _x0_ and _x1_ to represent the lower and upper bound of each
 bin, whereas the rect mark uses **x1** and **x2**. The _length_ field is the
-count of values in each bin, which is encoded as **y**. :::
+count of values in each bin, which is encoded as **y**.
 
 More commonly, the rect mark is paired with the
 [bin transform](#plot-transforms--bin) to bin quantitative values automatically.
@@ -11789,13 +10829,11 @@ As an added bonus, this sets default
 [inset options](#plot-features--marks--mark-options) for a 1px gap separating
 adjacent rects, improving readability.
 
-:::plot https://observablehq.com/@observablehq/plot-rects-and-bins
+[Interactive example](https://observablehq.com/@observablehq/plot-rects-and-bins)
 
 ```js
 Plot.rectY(d3.range(1000).map(d3.randomNormal()), Plot.binX()).plot();
 ```
-
-:::
 
 Like the [bar mark](#plot-marks--bar), the rect mark has two convenience
 constructors for common orientations: [rectX](#plot-marks--rect--rectX) is for
@@ -11804,7 +10842,7 @@ horizontal→ rects with an implicit
 [rectY](#plot-marks--rect--rectY) is for vertical↑ rects with an implicit
 [stackY transform](#plot-transforms--stack--stackY).
 
-:::plot defer https://observablehq.com/@observablehq/plot-vertical-histogram
+[Interactive example](https://observablehq.com/@observablehq/plot-vertical-histogram)
 
 ```js
 Plot.plot({
@@ -11819,15 +10857,15 @@ Plot.plot({
 });
 ```
 
-:::
-
 For overlapping rects, you can opt-out of the implicit stack transform by
 specifying either **x1** or **x2** for rectX, and likewise either **y1** or
 **y2** for rectY.
 
-:::plot defer https://observablehq.com/@observablehq/plot-overlapping-histogram
+[Interactive example](https://observablehq.com/@observablehq/plot-overlapping-histogram)
 
-```js-vue
+Interactive example template (values in `{{…}}` come from the upstream website):
+
+```text
 Plot.plot({
   round: true,
   color: {legend: true},
@@ -11838,16 +10876,14 @@ Plot.plot({
 })
 ```
 
-:::
-
-:::warning CAUTION While the **mixBlendMode** option is useful for mitigating
+**Warning:** CAUTION While the **mixBlendMode** option is useful for mitigating
 occlusion, it can be slow to render if there are many elements. More than two
-overlapping histograms may also be hard to read. :::
+overlapping histograms may also be hard to read.
 
 The rect mark and bin transform naturally support
 [faceting](#plot-features--facets), too.
 
-:::plot defer https://observablehq.com/@observablehq/plot-overlapping-histogram
+[Interactive example](https://observablehq.com/@observablehq/plot-overlapping-histogram)
 
 ```js
 Plot.plot({
@@ -11861,16 +10897,15 @@ Plot.plot({
 });
 ```
 
-:::
-
 The [rect constructor](#plot-marks--rect--rect), again with the
 [bin transform](#plot-transforms--bin), can produce two-dimensional histograms
 (heatmaps) where density is represented by the **fill** color encoding.
 
-:::plot defer
 https://observablehq.com/@observablehq/plot-continuous-dimensions-heatmap
 
-```js-vue
+Interactive example template (values in `{{…}}` come from the upstream website):
+
+```text
 Plot.plot({
   height: 640,
   marginLeft: 60,
@@ -11884,10 +10919,8 @@ Plot.plot({
 })
 ```
 
-:::
-
-:::tip A similar plot can be made with the [dot mark](#plot-marks--dot), if
-you’d prefer a size encoding. :::
+**Tip:** A similar plot can be made with the [dot mark](#plot-marks--dot), if
+you’d prefer a size encoding.
 
 Below we recreate an uncommon
 [chart by Max Roser](https://ourworldindata.org/poverty-minimum-growth-needed)
@@ -11896,7 +10929,6 @@ country’s population, while _y_ encodes the proportion of that population livi
 in poverty; hence area represents the number of people living in poverty. Rects
 are [stacked](#plot-transforms--stack) along _x_ in order of descending _y_.
 
-:::plot defer
 https://observablehq.com/@observablehq/plot-cumulative-distribution-of-poverty
 
 ```js
@@ -11922,8 +10954,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 The
 [interval transform](https://github.com/observablehq/plot/tree/v0.6.17/docs/transforms/interval.md)
 may be used to convert a single value in **x** or **y** (or both) into an
@@ -11933,7 +10963,6 @@ shows the observed daily maximum temperature in Seattle for the year 2015. The
 day-in-month and month-in-year numbers are expanded to unit intervals by setting
 the **interval** option to 1.
 
-:::plot defer
 https://observablehq.com/@observablehq/plot-seattle-heatmap-quantitative
 
 ```js
@@ -11952,25 +10981,15 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip A similar chart could be made with the [cell mark](#plot-marks--cell)
+**Tip:** A similar chart could be made with the [cell mark](#plot-marks--cell)
 using ordinal _x_ and _y_ scales instead, or with the
-[dot mark](#plot-marks--dot) as a scatterplot. :::
+[dot mark](#plot-marks--dot) as a scatterplot.
 
 To round corners, use the **r** option. If the combined corner radii exceed the
 width or height of the rect, the radii are proportionally reduced to produce a
 pill shape with circular caps. Try increasing the radii below.
 
-<p>
-  <label class="label-input" style="display: flex;">
-    <span style="display: inline-block; width: 7em;">r:</span>
-    <input type="range" v-model.number="r" min="0" max="25" step="0.2">
-    <span style="font-variant-numeric: tabular-nums;">{{r}}</span>
-  </label>
-</p>
-
-:::plot hidden defer https://observablehq.com/@observablehq/plot-rounded-rects
+[Interactive example](https://observablehq.com/@observablehq/plot-rounded-rects)
 
 ```js
 Plot.plot({
@@ -11984,9 +11003,9 @@ Plot.plot({
 });
 ```
 
-:::
+Interactive example template (values in `{{…}}` come from the upstream website):
 
-```js-vue
+```text
 Plot.plot({
   marks: [
     Plot.rectY(olympians, Plot.binX({y: "count"}, {x: "weight", r: {{r}}, thresholds: 10})),
@@ -12001,7 +11020,7 @@ and a corresponding negative **ry1**; likewise for stacking rounded rects
 horizontally, use a positive **rx2** and a negative **rx1**. Use the **clip**
 option to hide the “wings” below zero.
 
-:::plot defer https://observablehq.com/@observablehq/plot-rounded-rects
+[Interactive example](https://observablehq.com/@observablehq/plot-rounded-rects)
 
 ```js
 Plot.plot({
@@ -12022,12 +11041,10 @@ Plot.plot({
 });
 ```
 
-:::
-
 You can even round specific corners using the **rx1y1**, **rx2y1**, **rx2y2**,
 and **rx1y2** options.
 
-:::plot defer https://observablehq.com/@observablehq/plot-rounded-rects
+[Interactive example](https://observablehq.com/@observablehq/plot-rounded-rects)
 
 ```js
 Plot.plot({
@@ -12047,8 +11064,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 <a id="plot-marks--rect--rect-options"></a>
 
@@ -12127,8 +11142,9 @@ If the **y** option is not specified, it defaults to the identity function.
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/rule.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import {shallowRef, onMounted} from "vue";
@@ -12142,16 +11158,15 @@ onMounted(() => {
   d3.csv("../data/seattle-weather.csv", d3.autoType).then((data) => (seattle.value = data));
   d3.csv("../data/simpsons.csv", d3.autoType).then((data) => (simpsons.value = data));
 });
-
-</script>
+```
 
 <a id="plot-marks--rule--rule-mark"></a>
 
 # Rule mark
 
-:::tip The rule mark is one of two marks in Plot for drawing horizontal or
+**Tip:** The rule mark is one of two marks in Plot for drawing horizontal or
 vertical lines; it should be used when the secondary position dimension, if any,
-is quantitative. When it is ordinal, use a [tick](#plot-marks--tick). :::
+is quantitative. When it is ordinal, use a [tick](#plot-marks--tick).
 
 The **rule mark** comes in two orientations: [ruleY](#plot-marks--rule--ruleY)
 draws a horizontal↔︎ line with a given _y_ value, while
@@ -12159,7 +11174,7 @@ draws a horizontal↔︎ line with a given _y_ value, while
 Rules are often used as annotations, say to mark the _y_ = 0 baseline (in red
 below for emphasis) in a line chart.
 
-:::plot https://observablehq.com/@observablehq/plot-rule-zero
+[Interactive example](https://observablehq.com/@observablehq/plot-rule-zero)
 
 ```js
 Plot.plot({
@@ -12173,8 +11188,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 As annotations, rules often have a hard-coded array of literal values as data.
 This
 [shorthand](https://github.com/observablehq/plot/tree/v0.6.17/docs/features/shorthand.md)
@@ -12182,7 +11195,7 @@ utilizes the default
 [identity](https://github.com/observablehq/plot/tree/v0.6.17/docs/features/transforms.md#identity)
 definition of the rule’s position (**y** for ruleY and **x** for ruleX).
 
-:::plot https://observablehq.com/@observablehq/plot-rule-one
+[Interactive example](https://observablehq.com/@observablehq/plot-rule-one)
 
 ```js
 Plot.plot({
@@ -12199,13 +11212,11 @@ Plot.plot({
 });
 ```
 
-:::
-
 Yet rules can also be used to visualize data. Below, a random normal
 distribution is plotted with rules, looking a bit like the
 [emission spectrum of Hydrogen](https://en.wikipedia.org/wiki/Hydrogen_spectral_series).
 
-:::plot https://observablehq.com/@observablehq/plot-rule-random
+[Interactive example](https://observablehq.com/@observablehq/plot-rule-random)
 
 ```js
 Plot.plot({
@@ -12216,10 +11227,7 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip Reducing opacity allows better perception of density when rules overlap.
-:::
+**Tip:** Reducing opacity allows better perception of density when rules overlap.
 
 Rules can also serve as an alternative to an [area mark](#plot-marks--area) as
 in a band chart, provided the data is sufficiently dense: you can limit the
@@ -12227,8 +11235,6 @@ extent of a rule along the secondary dimension (**y1** and **y2** channels for
 ruleX, and **x1** and **x2** channels for ruleY) rather than having it span the
 frame. And rules support a **stroke** color encoding. The rules below plot the
 daily minimum and maximum temperature for Seattle.
-
-:::plot defer
 
 ```js
 Plot.plot({
@@ -12246,19 +11252,16 @@ Plot.plot({
 });
 ```
 
-:::
-
 In the dense
 [candlestick chart](https://observablehq.com/@observablehq/observable-plot-candlestick)
 below, three rules are drawn for each trading day: a gray rule spans the chart,
 showing gaps for weekends and holidays; a
-<span style="border-bottom: solid 2px currentColor;">{{$dark ? "white" :
-"black"}}</span> rule spans the day’s low and high; and a
-<span style="border-bottom: solid 2px var(--vp-c-green);">green</span> or
-<span style="border-bottom: solid 2px var(--vp-c-red);">red</span> rule spans
+`$dark ? "white" : "black"` rule spans the day’s low and high; and a
+green or
+red rule spans
 the day’s open and close.
 
-:::plot defer https://observablehq.com/@observablehq/plot-candlestick-chart
+[Interactive example](https://observablehq.com/@observablehq/plot-candlestick-chart)
 
 ```js
 Plot.plot({
@@ -12279,15 +11282,13 @@ Plot.plot({
 });
 ```
 
-:::
-
 Rules can be used to connect graphical elements, such as in the
 [dot plot](#plot-marks--dot) below showing the decline of _The Simpsons_. The
 rules indicate the extent (minimum and maximum) for each season, computed via
 the [group transform](#plot-transforms--group), while a red line shows the
 median rating trend.
 
-:::plot defer https://observablehq.com/@observablehq/plot-simpsons-decline
+[Interactive example](https://observablehq.com/@observablehq/plot-simpsons-decline)
 
 ```js
 Plot.plot({
@@ -12314,14 +11315,10 @@ Plot.plot({
 });
 ```
 
-:::
-
 Rules can indicate uncertainty or error by setting the
 [**marker** option](https://github.com/observablehq/plot/tree/v0.6.17/docs/features/markers.md)
 to _tick_; this draws a small perpendicular line at the start and end of the
 rule. For example, to simulate ±10% error:
-
-:::plot
 
 ```js
 Plot.plot({
@@ -12340,13 +11337,11 @@ Plot.plot({
 });
 ```
 
-:::
-
 Rules can also be a stylistic choice, as in the lollipop 🍭 chart below, serving
 the role of a skinny [bar](#plot-marks--bar) topped with a
 [_dot_ marker](https://github.com/observablehq/plot/tree/v0.6.17/docs/features/markers.md).
 
-:::plot https://observablehq.com/@observablehq/plot-lollipop
+[Interactive example](https://observablehq.com/@observablehq/plot-lollipop)
 
 ```js
 Plot.plot({
@@ -12362,8 +11357,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 Rules are also used by the [grid mark](#plot-marks--grid) to draw grid lines.
 
@@ -12461,8 +11454,9 @@ are also supported; see [scale options](#plot-features--scales--scale-options).
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/text.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import {shallowRef, onMounted} from "vue";
@@ -12475,8 +11469,7 @@ const travelers = shallowRef([]);
 onMounted(() => {
   d3.csv("../data/travelers.csv", d3.autoType).then((data) => (travelers.value = data));
 });
-
-</script>
+```
 
 <a id="plot-marks--text--text-mark"></a>
 
@@ -12487,7 +11480,7 @@ often used to label other marks, such as to show the value of a
 [bar](#plot-marks--bar). When space is available, direct labeling can allow
 faster and more accurate reading of values than an axis alone (or a tooltip).
 
-:::plot https://observablehq.com/@observablehq/plot-labeled-bars
+[Interactive example](https://observablehq.com/@observablehq/plot-labeled-bars)
 
 ```js
 Plot.plot({
@@ -12511,13 +11504,11 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip For formatting numbers and dates, consider
+**Tip:** For formatting numbers and dates, consider
 [_number_.toLocaleString](https://observablehq.com/@mbostock/number-formatting),
 [_date_.toLocaleString](https://observablehq.com/@mbostock/date-formatting),
 [d3-format](https://d3js.org/d3-format), or
-[d3-time-format](https://d3js.org/d3-time-format). :::
+[d3-time-format](https://d3js.org/d3-time-format).
 
 If there are too many data points, labels may overlap, making them hard to read.
 Use the
@@ -12527,7 +11518,7 @@ Hannah Fairfield’s
 [“Driving Shifts Into Reverse”](http://www.nytimes.com/imagepages/2010/05/02/business/02metrics.html)
 from 2009, every fifth year is labeled.
 
-:::plot https://observablehq.com/@observablehq/plot-connected-scatterplot
+[Interactive example](https://observablehq.com/@observablehq/plot-connected-scatterplot)
 
 ```js
 Plot.plot({
@@ -12554,10 +11545,8 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip If you’d like automatic labeling, please upvote
-[#27](https://github.com/observablehq/plot/issues/27). :::
+**Tip:** If you’d like automatic labeling, please upvote
+[#27](https://github.com/observablehq/plot/issues/27).
 
 For line charts with multiple series, you may wish to label only the start or
 end of each series; this can be done using the
@@ -12566,7 +11555,7 @@ as shown in the chart below comparing the number of daily travelers at airports
 in the U.S. between 2019 and 2020. The impact of the COVID-19 pandemic is
 dramatic.
 
-:::plot defer https://observablehq.com/@observablehq/plot-labeled-line-chart
+[Interactive example](https://observablehq.com/@observablehq/plot-labeled-line-chart)
 
 ```js
 Plot.plot({
@@ -12604,23 +11593,21 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::warning CAUTION The select transform uses input order, not natural order by
+**Warning:** CAUTION The select transform uses input order, not natural order by
 value, to determine the meaning of _first_ and _last_. Since this dataset is in
-reverse chronological order, the first element is the most recent. :::
+reverse chronological order, the first element is the most recent.
 
 A text mark can also be used to visualize data directly, similar to a
 [dot mark](#plot-marks--dot) in a scatterplot. Below a “stem and leaf” plot of
 Caltrain’s Palo Alto station schedule uses [stacked](#plot-transforms--stack)
 text. The **fill** channel provides a color encoding to distinguish trains that
-make every stop (<span style="border-bottom: solid currentColor 3px;">N</span>),
+make every stop (N),
 limited trains that make fewer stops
-(<span style="border-bottom: solid peru 3px;">L</span>), and “baby bullet”
+(L), and “baby bullet”
 trains that make the fewest stops
-(<span style="border-bottom: solid brown 3px;">B</span>).
+(B).
 
-:::plot https://observablehq.com/@observablehq/plot-caltrain-schedule
+[Interactive example](https://observablehq.com/@observablehq/plot-caltrain-schedule)
 
 ```js
 Plot.plot({
@@ -12663,10 +11650,8 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::info Since the **textAnchor** option is a constant rather than a channel,
-separate text marks are used for the _Northbound_ and _Southbound_ labels. :::
+**Info:** Since the **textAnchor** option is a constant rather than a channel,
+separate text marks are used for the _Northbound_ and _Southbound_ labels.
 
 The **x** and **y** channels are optional; a one-dimensional text mark can be
 produced by specifying only one position dimension. If both **x** and **y** are
@@ -12676,7 +11661,7 @@ not defined, the text mark assumes that the data is an iterable of points
 Furthermore, the default **text** channel is the associated datum’s index. (This
 is rarely what you want, but at least it gets something on the screen.)
 
-:::plot https://observablehq.com/@observablehq/plot-text-spiral
+[Interactive example](https://observablehq.com/@observablehq/plot-text-spiral)
 
 ```js
 Plot.plot({
@@ -12694,12 +11679,10 @@ Plot.plot({
 });
 ```
 
-:::
-
 The text mark will generate multiple lines if the **text** contains newline
 characters (`\n`). This may be useful for longer annotations.
 
-:::plot https://observablehq.com/@observablehq/plot-this-is-just-to-say
+[Interactive example](https://observablehq.com/@observablehq/plot-this-is-just-to-say)
 
 ```js
 Plot.plot({
@@ -12727,8 +11710,6 @@ and so cold`], { frameAnchor: "middle" }),
 });
 ```
 
-:::
-
 Alternatively, the **lineWidth** option enables automatic line wrapping. This
 option must be specified as a number in
 [ems](https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Values_and_units).
@@ -12737,7 +11718,7 @@ When a word contains a [soft-hyphen](https://en.wikipedia.org/wiki/Soft_hyphen)
 option can also be used to truncate lines that exceed the specified line width,
 like in the incipit of Herman Melville’s _Moby-Dick_ (1851).
 
-:::plot https://observablehq.com/@observablehq/plot-moby-dick
+[Interactive example](https://observablehq.com/@observablehq/plot-moby-dick)
 
 ```js
 Plot.plot({
@@ -12761,13 +11742,10 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::warning CAUTION For performance and simplicity, Plot does not measure text
+**Warning:** CAUTION For performance and simplicity, Plot does not measure text
 exactly and instead uses an approximate heuristic. If Plot’s automatic wrapping
 is not doing what you want, consider hard wrapping with manual newlines (`\n`)
 instead. There is also a **monospace** option suitable for fixed-width fonts.
-:::
 
 <a id="plot-marks--text--text-options"></a>
 
@@ -12807,7 +11785,7 @@ The following text-specific constant options are also supported:
 - **lineHeight** - the line height in ems; defaults to 1
 - **lineWidth** - the line width in ems, for wrapping; defaults to Infinity
 - **textOverflow** - how to wrap or clip lines longer than the specified line
-  width <VersionBadge version="0.6.4" />
+  width (since v0.6.4)
 - **monospace** - if true, changes the default **fontFamily** and metrics to
   monospace
 - **fontFamily** - the font name; defaults to
@@ -12921,8 +11899,9 @@ are also supported; see [scale options](#plot-features--scales--scale-options).
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/tick.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import {shallowRef, onMounted} from "vue";
@@ -12937,16 +11916,15 @@ onMounted(() => {
     stateage.value = Object.assign(ages.flatMap((age) => data.map((d) => ({state: d.name, age, population: d[age]}))), {ages});
   });
 });
-
-</script>
+```
 
 <a id="plot-marks--tick--tick-mark"></a>
 
 # Tick mark
 
-:::tip The tick mark is one of two marks in Plot for drawing horizontal or
+**Tip:** The tick mark is one of two marks in Plot for drawing horizontal or
 vertical lines; it should be used when the secondary position dimension, if any,
-is ordinal. When it is quantitative, use a [rule](#plot-marks--rule). :::
+is ordinal. When it is quantitative, use a [rule](#plot-marks--rule).
 
 The **tick mark** comes in two orientations: [tickY](#plot-marks--tick--tickY)
 draws a horizontal↔︎ line with a given _y_ value, while
@@ -12960,7 +11938,7 @@ Ticks are often used to show one-dimensional distributions, as in the “barcode
 plot below showing the proportion of the population in each age bracket across
 U.S. states.
 
-:::plot defer https://observablehq.com/@observablehq/plot-barcode
+[Interactive example](https://observablehq.com/@observablehq/plot-barcode)
 
 ```js
 Plot.plot({
@@ -12985,14 +11963,12 @@ Plot.plot({
 });
 ```
 
-:::
-
 Both ticks and [bars](#plot-marks--bar) have an ordinal secondary position
 dimension; a tick is therefore convenient for stroking the upper bound of a bar
 for emphasis, as in the bar chart below. A separate [rule](#plot-marks--rule) is
 also used to denote _y_ = 0.
 
-:::plot https://observablehq.com/@observablehq/plot-bar-and-tick
+[Interactive example](https://observablehq.com/@observablehq/plot-bar-and-tick)
 
 ```js
 Plot.plot({
@@ -13006,15 +11982,13 @@ Plot.plot({
 });
 ```
 
-:::
-
 When there is no secondary position dimension, a tick behaves identically to a
 [rule](#plot-marks--rule). While a one-dimensional rule and tick are equivalent,
 a one-dimensional rule is generally preferred, if only because the name “rule”
 is more descriptive. But as an example below, a random normal distribution is
 plotted below with ticks.
 
-:::plot https://observablehq.com/@observablehq/plot-random-ticks
+[Interactive example](https://observablehq.com/@observablehq/plot-random-ticks)
 
 ```js
 Plot.plot({
@@ -13025,10 +11999,7 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip Reducing opacity allows better perception of density when ticks overlap.
-:::
+**Tip:** Reducing opacity allows better perception of density when ticks overlap.
 
 Ticks are also used by the [box mark](#plot-marks--box) to denote the median
 value for each group.
@@ -13093,8 +12064,9 @@ extent of the frame.
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/tree.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import {shallowRef, onMounted} from "vue";
@@ -13122,12 +12094,11 @@ function indent() {
     });
   };
 }
-
-</script>
+```
 
 <a id="plot-marks--tree--tree-mark"></a>
 
-# Tree mark <VersionBadge version="0.4.3" />
+# Tree mark (since v0.4.3)
 
 The **tree mark** produces tree diagrams using the
 [tree transform](https://github.com/observablehq/plot/tree/v0.6.17/docs/transforms/tree.md).
@@ -13141,7 +12112,7 @@ while the dot and text marks use the
 
 For example, here is a little family tree of Greek gods.
 
-:::plot https://observablehq.com/@observablehq/plot-tree-and-link
+[Interactive example](https://observablehq.com/@observablehq/plot-tree-and-link)
 
 ```js
 Plot.plot({
@@ -13156,19 +12127,19 @@ Plot.plot({
 });
 ```
 
-:::
-
 Here `gods` is an array of slash-separated paths, similar to paths in a file
 system. Each path represents the hierarchical position of a node in the tree.
 
-```js-vue
+Interactive example template (values in `{{…}}` come from the upstream website):
+
+```text
 gods = {{JSON.stringify(gods, null, 2)}}
 ```
 
 As a more complete example, here is a visualization of a software package
 hierarchy.
 
-:::plot defer https://observablehq.com/@observablehq/plot-tree-flare
+[Interactive example](https://observablehq.com/@observablehq/plot-tree-flare)
 
 ```js
 Plot.plot({
@@ -13188,15 +12159,13 @@ Plot.plot({
 });
 ```
 
-:::
-
 The **treeLayout** option specifies the layout algorithm. The tree mark uses the
 Reingold–Tilford “tidy” tree algorithm,
 [d3.tree](https://d3js.org/d3-hierarchy/tree), by default. The
 [cluster](#plot-marks--tree--cluster) convenience method sets **treeLayout** to
 [d3.cluster](https://d3js.org/d3-hierarchy/cluster), aligning the leaf nodes.
 
-:::plot https://observablehq.com/@observablehq/plot-cluster-flare
+[Interactive example](https://observablehq.com/@observablehq/plot-cluster-flare)
 
 ```js
 Plot.plot({
@@ -13217,8 +12186,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 Here is an example of a custom **treeLayout** implementation, assigning _node_.x
 and _node_.y.
 
@@ -13235,7 +12202,7 @@ function indent() {
 
 This produces an indented tree layout.
 
-:::plot defer https://observablehq.com/@observablehq/plot-custom-tree-layout
+[Interactive example](https://observablehq.com/@observablehq/plot-custom-tree-layout)
 
 ```js
 Plot.plot({
@@ -13255,8 +12222,6 @@ Plot.plot({
   }),
 });
 ```
-
-:::
 
 The tree mark currently does not inform the default layout; you may find it
 necessary to set the **height** and **margin**
@@ -13292,7 +12257,7 @@ The following options are supported:
 Any additional _options_ are passed through to the constituent link, dot, and
 text marks and their corresponding treeLink or treeNode transform.
 
-The **textLayout** option <VersionBadge version="0.6.9" /> controls how text
+The **textLayout** option (since v0.6.9) controls how text
 labels are anchored to the node. Two layouts are supported:
 
 - _mirrored_ - leaf-node labels are left-anchored, and non-leaf nodes
@@ -13332,8 +12297,9 @@ defaults the **textLayout** option to _mirrored_.
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/vector.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import * as topojson from "topojson-client";
@@ -13368,15 +12334,14 @@ onMounted(() => {
     us.value = _us;
   });
 });
-
-</script>
+```
 
 <a id="plot-marks--vector--vector-mark"></a>
 
-# Vector mark <VersionBadge version="0.4.0" />
+# Vector mark (since v0.4.0)
 
-:::tip See also the [arrow mark](#plot-marks--arrow), which draws arrows between
-two points. :::
+**Tip:** See also the [arrow mark](#plot-marks--arrow), which draws arrows between
+two points.
 
 The **vector mark** draws little arrows, typically positioned in **x** and **y**
 quantitative dimensions, with an optional magnitude (**length**) and direction
@@ -13384,7 +12349,7 @@ quantitative dimensions, with an optional magnitude (**length**) and direction
 [LitVis example](https://github.com/gicentre/litvis/blob/main/examples/windVectors.md),
 shows wind speed and direction for a section of western Europe.
 
-:::plot defer https://observablehq.com/@observablehq/plot-wind-map
+[Interactive example](https://observablehq.com/@observablehq/plot-wind-map)
 
 ```js
 Plot.plot({
@@ -13403,28 +12368,26 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::info Regarding this data,
+**Info:** Regarding this data,
 [Remote Sensing Systems](https://www.remss.com/measurements/ccmp/) says:
 _“Standard U and V coordinates apply, meaning the positive U is to the right and
 positive V is above the axis. U and V are relative to true north. CCMP winds are
 expressed using the oceanographic convention, meaning a wind blowing toward the
 Northeast has a positive U component and a positive V component… Longitude is
 given in degrees East from 0.125 to 359.875 and latitude is given in degrees
-North with negative values representing southern locations.”_ :::
+North with negative values representing southern locations.”_
 
 Vectors can be used with Plot’s
 [projection system](#plot-features--projections). The map below shows the margin
 by which the winner of the US presidential election of 2020 won the vote in each
 county. The arrow’s length encodes the difference in votes, and the orientation
 and color show who won
-(<svg width=12 height=12 viewBox="-11 -11 12 12" style="display: inline-block"><path d="M0,0l-10,-6m1,3.28l-1,-3.28l3.28,-1" stroke="var(--vp-c-blue)" stroke-width="1.5"></path></svg>
+(arrow
 for the Democratic candidate, and
-<svg width=12 height=12 viewBox="0 -11 12 12" style="display: inline-block"><path d="M0,0l10,-6m-1,3.28l1,-3.28l-3.28,-1" stroke="var(--vp-c-red)" stroke-width="1.5"></path></svg>
+arrow
 for the Republican candidate).
 
-:::plot defer https://observablehq.com/@observablehq/plot-election-wind-map
+[Interactive example](https://observablehq.com/@observablehq/plot-election-wind-map)
 
 ```js
 Plot.plot({
@@ -13446,9 +12409,7 @@ Plot.plot({
 });
 ```
 
-:::
-
-The **shape** option <VersionBadge version="0.6.2" /> controls the vector’s
+The **shape** option (since v0.6.2) controls the vector’s
 appearance, while the **anchor** option positions the vector relative to its
 anchor point specified in **x** and **y**. The
 [spike constructor](#plot-marks--vector--spike) sets the **shape** to _spike_
@@ -13456,7 +12417,7 @@ and the **anchor** to _start_. For example, this can be used to produce a
 [spike map](https://observablehq.com/@observablehq/plot-spike) of U.S. county
 population.
 
-:::plot defer https://observablehq.com/@observablehq/plot-spike-map-example
+[Interactive example](https://observablehq.com/@observablehq/plot-spike-map-example)
 
 ```js
 Plot.plot({
@@ -13477,8 +12438,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 You can even implement a custom **shape** by supplying an object with a **draw**
 method. This method takes a _context_ for drawing paths and the _length_ of the
 vector. See the
@@ -13488,7 +12447,7 @@ for an example.
 Lastly, here is an example showing a Perlin noise field, just because it’s
 pretty:
 
-:::plot defer https://observablehq.com/@observablehq/plot-perlin-noise
+[Interactive example](https://observablehq.com/@observablehq/plot-perlin-noise)
 
 ```js
 Plot.plot({
@@ -13504,8 +12463,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 This example uses a noise(_x_, _y_) function defined as:
 
@@ -13618,7 +12575,7 @@ _data_ = [_y₀_, _y₁_, _y₂_, …].
 
 <a id="plot-marks--vector--spike"></a>
 
-## spike(_data_, _options_) <VersionBadge version="0.6.2" />
+## spike(_data_, _options_) (since v0.6.2)
 
 ```js
 Plot.spike(
@@ -13640,8 +12597,9 @@ defaults to _spike_, the **stroke** defaults to _currentColor_, the
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/waffle.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import {ref, shallowRef, onMounted} from "vue";
@@ -13664,12 +12622,11 @@ const survey = [
 onMounted(() => {
   d3.csv("../data/athletes.csv", d3.autoType).then((data) => (olympians.value = data));
 });
-
-</script>
+```
 
 <a id="plot-marks--waffle--waffle-mark"></a>
 
-# Waffle mark <VersionBadge version="0.6.16" pr="2040" />
+# Waffle mark (since v0.6.16)
 
 The **waffle mark** is similar to the [bar mark](#plot-marks--bar) in that it
 displays a quantity (or quantitative extent) for a given category; but unlike a
@@ -13677,7 +12634,7 @@ bar, a waffle is subdivided into square cells that allow easier counting.
 Waffles are useful for reading exact quantities. How quickly can you count the
 pears 🍐 below? How many more apples 🍎 are there than bananas 🍌?
 
-:::plot https://observablehq.com/@observablehq/plot-simple-waffle
+[Interactive example](https://observablehq.com/@observablehq/plot-simple-waffle)
 
 ```js
 Plot.waffleY([212, 207, 315, 11], {
@@ -13685,13 +12642,11 @@ Plot.waffleY([212, 207, 315, 11], {
 }).plot({ height: 420 });
 ```
 
-:::
-
 The waffle mark is often used with the
 [group transform](#plot-transforms--group) to compute counts. The chart below
 compares the number of female and male athletes in the 2012 Olympics.
 
-:::plot https://observablehq.com/@observablehq/plot-waffle-group
+[Interactive example](https://observablehq.com/@observablehq/plot-waffle-group)
 
 ```js
 Plot.waffleY(olympians, Plot.groupX({ y: "count" }, { x: "sex" })).plot({
@@ -13699,31 +12654,16 @@ Plot.waffleY(olympians, Plot.groupX({ y: "count" }, { x: "sex" })).plot({
 });
 ```
 
-:::
-
-:::info Waffles are rendered using SVG patterns, making them more performant
+**Info:** Waffles are rendered using SVG patterns, making them more performant
 than alternatives such as the [dot mark](#plot-marks--dot) for rendering many
-points. :::
+points.
 
 The **unit** option determines the quantity each waffle cell represents; it
 defaults to one. The unit may be set to a value greater than one for large
 quantities, or less than one (but greater than zero) for small fractional
 quantities. Try changing the unit below to see its effect.
 
-<p>
-  <span class="label-input">
-    Unit:
-    <label style="margin-left: 0.5em;"><input type="radio" name="unit" value="1" v-model="unit" /> 1</label>
-    <label style="margin-left: 0.5em;"><input type="radio" name="unit" value="2" v-model="unit" /> 2</label>
-    <label style="margin-left: 0.5em;"><input type="radio" name="unit" value="5" v-model="unit" /> 5</label>
-    <label style="margin-left: 0.5em;"><input type="radio" name="unit" value="10" v-model="unit" /> 10</label>
-    <label style="margin-left: 0.5em;"><input type="radio" name="unit" value="25" v-model="unit" /> 25</label>
-    <label style="margin-left: 0.5em;"><input type="radio" name="unit" value="50" v-model="unit" /> 50</label>
-    <label style="margin-left: 0.5em;"><input type="radio" name="unit" value="100" v-model="unit" /> 100</label>
-  </span>
-</p>
-
-:::plot https://observablehq.com/@observablehq/plot-waffle-unit
+[Interactive example](https://observablehq.com/@observablehq/plot-waffle-unit)
 
 ```js
 Plot.waffleY(
@@ -13732,12 +12672,10 @@ Plot.waffleY(
 ).plot({ fx: { interval: "5 years", label: null } });
 ```
 
-:::
-
-:::tip Use [faceting](#plot-features--facets) as an alternative to supplying an
+**Tip:** Use [faceting](#plot-features--facets) as an alternative to supplying an
 ordinal channel (_i.e._, _fx_ instead of _x_ for a vertical waffleY). The facet
 scale’s **interval** option then allows grouping by a quantitative or temporal
-variable, such as the athlete’s year of birth in the chart below. :::
+variable, such as the athlete’s year of birth in the chart below.
 
 While waffles typically represent integer quantities, say to count people or
 days, they can also encode fractional values with a partial first or last cell.
@@ -13747,7 +12685,7 @@ Math.floor to round up or down.
 Like bars, waffles can be [stacked](#plot-transforms--stack), and implicitly
 apply the stack transform when only a single quantitative channel is supplied.
 
-:::plot https://observablehq.com/@observablehq/plot-stacked-waffles
+[Interactive example](https://observablehq.com/@observablehq/plot-stacked-waffles)
 
 ```js
 Plot.waffleY(
@@ -13761,8 +12699,6 @@ Plot.waffleY(
 ).plot({ fx: { interval: 10 }, color: { legend: true } });
 ```
 
-:::
-
 Waffles can also be used to highlight a proportion of the whole. The chart below
 recreates a graphic of survey responses from
 [“Teens in Syria”](https://www.economist.com/graphic-detail/2015/08/19/teens-in-syria)
@@ -13770,7 +12706,7 @@ by _The Economist_ (August 19, 2015); positive responses are in orange, while
 negative responses are in gray. The **rx** option is used to produce circles
 instead of squares.
 
-:::plot https://observablehq.com/@observablehq/plot-survey-waffle
+[Interactive example](https://observablehq.com/@observablehq/plot-survey-waffle)
 
 ```js
 Plot.plot({
@@ -13804,31 +12740,17 @@ Plot.plot({
 });
 ```
 
-:::
-
 The waffle mark comes in two orientations: waffleY extends vertically↑, while
 waffleX extends horizontally→. The waffle mark automatically determines the
 appropriate number of cells per row or per column (depending on orientation)
 such that the cells are square, don’t overlap, and are consistent with position
 scales.
 
-<p>
-  <label class="label-input">
-    <span>Apples:</span>
-    <input type="range" v-model.number="apples" min="10" max="1028" step="1" />
-    <span style="font-variant-numeric: tabular-nums;">{{apples}}</span>
-  </label>
-</p>
-
-:::plot
-
 ```js
 Plot.waffleX([apples], { y: ["apples"] }).plot({ height: 240 });
 ```
 
-:::
-
-:::info The number of rows in the waffle above is guaranteed to be an integer,
+**Info:** The number of rows in the waffle above is guaranteed to be an integer,
 but it might not be a multiple or factor of the _x_-axis tick interval. For
 example, the waffle might have 15 rows while the _x_-axis shows ticks every 100
 units. ::: :::tip To set the number of rows (or columns) directly, use the
@@ -13836,7 +12758,7 @@ units. ::: :::tip To set the number of rows (or columns) directly, use the
 in non-square cells if there isn’t enough room. Alternatively, you can bias the
 automatic multiple while preserving square cells by setting the **padding**
 option on the corresponding band scale: padding defaults to 0.1; a higher value
-may produce more rows, while a lower (or zero) value may produce fewer rows. :::
+may produce more rows, while a lower (or zero) value may produce fewer rows.
 
 <a id="plot-marks--waffle--waffle-options"></a>
 
@@ -13944,8 +12866,9 @@ are also supported; see [scale options](#plot-features--scales--scale-options).
 
 Source: https://github.com/observablehq/plot/tree/v0.6.17/docs/transforms/bin.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import {computed, ref, shallowRef, onMounted} from "vue";
@@ -13957,18 +12880,16 @@ const olympians = shallowRef([{weight: 31, height: 1.21, sex: "female"}, {weight
 onMounted(() => {
   d3.csv("../data/athletes.csv", d3.autoType).then((data) => (olympians.value = data));
 });
-
-</script>
+```
 
 <a id="plot-transforms--bin--bin-transform"></a>
 
 # Bin transform
 
-:::tip The bin transform is for aggregating quantitative or temporal data. For
+**Tip:** The bin transform is for aggregating quantitative or temporal data. For
 ordinal or nominal data, use the [group transform](#plot-transforms--group). See
 also the
 [hexbin transform](https://github.com/observablehq/plot/tree/v0.6.17/docs/transforms/hexbin.md).
-:::
 
 The **bin transform** groups quantitative or temporal data — continuous
 measurements such as heights, weights, or temperatures — into discrete bins. You
@@ -13979,7 +12900,7 @@ with the [rect mark](#plot-marks--rect).
 For example, here is a histogram showing the distribution of weights of Olympic
 athletes.
 
-:::plot defer https://observablehq.com/@observablehq/plot-a-simple-histogram
+[Interactive example](https://observablehq.com/@observablehq/plot-a-simple-histogram)
 
 ```js
 Plot.plot({
@@ -13990,8 +12911,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 The binX transform takes **x** as input and outputs **x1** and **x2**
 representing the extent of each bin in _x_. The _outputs_ argument (here
@@ -14004,22 +12923,22 @@ While the binX transform is often used to generate **y**, it can output any
 channel. Below, the **fill** channel represents count per bin, resulting in a
 one-dimensional heatmap.
 
-:::plot defer https://observablehq.com/@observablehq/plot-color-bins
+[Interactive example](https://observablehq.com/@observablehq/plot-color-bins)
 
-```js-vue
+Interactive example template (values in `{{…}}` come from the upstream website):
+
+```text
 Plot
   .rect(olympians, Plot.binX({fill: "count"}, {x: "weight"}))
   .plot({color: {scheme: "{{$dark ? "turbo" : "YlGnBu"}}"}})
 ```
-
-:::
 
 You can partition bins using **z**. If **z** is undefined, it defaults to
 **fill** or **stroke**, if any. In conjunction with the rectY mark’s implicit
 [stackY transform](#plot-transforms--stack), this will produce a stacked
 histogram.
 
-:::plot defer https://observablehq.com/@observablehq/plot-vertical-histogram
+[Interactive example](https://observablehq.com/@observablehq/plot-vertical-histogram)
 
 ```js
 Plot.plot({
@@ -14035,20 +12954,20 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip You can invoke the stack transform explicitly as
+**Tip:** You can invoke the stack transform explicitly as
 `Plot.stackY(Plot.binX({y: "count"}, {x: "weight", fill: "sex"}))` to produce an
-identical chart. :::
+identical chart.
 
 You can opt-out of the implicit stackY transform by having binX generate **y1**
 or **y2** instead of **y** (and similarly **x1** or **x2** for stackX and binY).
 When overlapping marks, use either opacity or blending to make the overlap
 visible.
 
-:::plot defer https://observablehq.com/@observablehq/plot-overlapping-histogram
+[Interactive example](https://observablehq.com/@observablehq/plot-overlapping-histogram)
 
-```js-vue
+Interactive example template (values in `{{…}}` come from the upstream website):
+
+```text
 Plot.plot({
   y: {grid: true},
   marks: [
@@ -14058,11 +12977,9 @@ Plot.plot({
 })
 ```
 
-:::
-
-:::warning CAUTION While the **mixBlendMode** option is useful for mitigating
+**Warning:** CAUTION While the **mixBlendMode** option is useful for mitigating
 occlusion, it can be slow to render if there are many elements. More than two
-overlapping histograms may also be hard to read. :::
+overlapping histograms may also be hard to read.
 
 The bin transform comes in three orientations:
 
@@ -14076,7 +12993,7 @@ The bin transform comes in three orientations:
 As you might guess, the binY transform with the rectX mark produces a histogram
 with horizontal→ rects.
 
-:::plot defer https://observablehq.com/@observablehq/plot-horizontal-histogram
+[Interactive example](https://observablehq.com/@observablehq/plot-horizontal-histogram)
 
 ```js
 Plot.plot({
@@ -14088,27 +13005,25 @@ Plot.plot({
 });
 ```
 
-:::
-
 You can produce a two-dimensional heatmap with bin transform and a rect mark by
 generating a **fill** output channel. Below, color encodes the number of
 athletes in each bin (of similar height and weight).
 
-:::plot defer https://observablehq.com/@observablehq/plot-olympians-heatmap
+[Interactive example](https://observablehq.com/@observablehq/plot-olympians-heatmap)
 
-```js-vue
+Interactive example template (values in `{{…}}` come from the upstream website):
+
+```text
 Plot
   .rect(olympians, Plot.bin({fill: "count"}, {x: "weight", y: "height"}))
   .plot({color: {scheme: "{{$dark ? "turbo" : "YlGnBu"}}"}})
 ```
 
-:::
-
 The bin transform also outputs **x** and **y** channels representing bin
 centers. These can be used to place a [dot mark](#plot-marks--dot) whose size
 again represents the number of athletes in each bin.
 
-:::plot defer https://observablehq.com/@observablehq/plot-dot-heatmap
+[Interactive example](https://observablehq.com/@observablehq/plot-dot-heatmap)
 
 ```js
 Plot.plot({
@@ -14119,11 +13034,9 @@ Plot.plot({
 });
 ```
 
-:::
-
 We can add the **stroke** channel to show overlapping distributions by sex.
 
-:::plot https://observablehq.com/@observablehq/plot-dot-heatmap
+[Interactive example](https://observablehq.com/@observablehq/plot-dot-heatmap)
 
 ```js
 Plot.plot({
@@ -14137,12 +13050,10 @@ Plot.plot({
 });
 ```
 
-:::
-
 Similarly the binX and binY transforms generate respective **x** and **y**
 channels for one-dimensional binning.
 
-:::plot https://observablehq.com/@observablehq/plot-dot-bins
+[Interactive example](https://observablehq.com/@observablehq/plot-dot-bins)
 
 ```js
 Plot.plot({
@@ -14153,15 +13064,13 @@ Plot.plot({
 });
 ```
 
-:::
-
 In addition to rect and dot, you can even use continuous marks such as
 [area](#plot-marks--area) and [line](#plot-marks--line). In this case you should
 set the bin transform’s **filter** option to null so that empty bins are
 included in the output; otherwise, the area or line would mislead by
 interpolating over missing bins.
 
-:::plot defer https://observablehq.com/@observablehq/plot-density-estimation
+[Interactive example](https://observablehq.com/@observablehq/plot-density-estimation)
 
 ```js
 Plot.plot({
@@ -14183,22 +13092,10 @@ Plot.plot({
 });
 ```
 
-:::
-
 The **cumulative** option produces a cumulative distribution. Below, each bin
 represents the number of athletes with the given weight _or less_. To have each
 bin represent the number of athletes with the given weight _or more_, set
 **cumulative** to −1.
-
-<p>
-  <span class="label-input">
-    Cumulative:
-    <label style="margin-left: 0.5em; font-variant: tabular-nums;"><input type="radio" name="cumulative" value="-1" v-model="cumulatives" /> -1 (reverse)</label>
-    <label style="margin-left: 0.5em; font-variant: tabular-nums;"><input type="radio" name="cumulative" value="+1" v-model="cumulatives" /> +1 (true)</label>
-  </span>
-</p>
-
-:::plot
 
 ```js
 Plot.plot({
@@ -14214,17 +13111,15 @@ Plot.plot({
 });
 ```
 
-:::
-
 The bin transform works with Plot’s [faceting system](#plot-features--facets),
 partitioning bins by facet. Below, we compare the weight distributions of
 athletes within each sport using the _proportion-facet_ reducer. Sports are
 sorted by median weight: gymnasts tend to be the lightest, and basketball
 players the heaviest.
 
-:::plot defer
+Interactive example template (values in `{{…}}` come from the upstream website):
 
-```js-vue
+```text
 Plot.plot({
   marginLeft: 100,
   padding: 0,
@@ -14235,14 +13130,10 @@ Plot.plot({
 })
 ```
 
-:::
-
 The bin transform sets default insets for a one-pixel gap between rects. You can
 set explicit insets if you prefer, say if you want the rects to touch. In this
 case we recommend rounding on the _x_ scale to avoid antialiasing artifacts
 between rects.
-
-:::plot defer
 
 ```js
 Plot.plot({
@@ -14254,8 +13145,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 <a id="plot-transforms--bin--bin-options"></a>
 
@@ -14329,7 +13218,7 @@ The following named reducers are supported:
 - _y_ - the middle of the bin’s _y_ extent (when binning on _y_)
 - _y1_ - the lower bound of the bin’s _y_ extent (when binning on _y_)
 - _y2_ - the upper bound of the bin’s _y_ extent (when binning on _y_)
-- _z_ <VersionBadge version="0.6.14" pr="1959" /> - the bin’s _z_ value (_z_,
+- _z_ (since v0.6.14) - the bin’s _z_ value (_z_,
   _fill_, or _stroke_)
 
 In addition, a reducer may be specified as:
@@ -14507,8 +13396,9 @@ Bins on **y**. Also groups on **x** and first channel of **z**, **fill**, or
 Source:
 https://github.com/observablehq/plot/tree/v0.6.17/docs/transforms/centroid.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import * as topojson from "topojson-client";
@@ -14523,12 +13413,11 @@ const nation = computed(() => us.value ? topojson.feature(us.value, us.value.obj
 onMounted(() => {
   d3.json("../data/us-counties-10m.json").then((data) => (us.value = data));
 });
-
-</script>
+```
 
 <a id="plot-transforms--centroid--centroid-transform"></a>
 
-# Centroid transform <VersionBadge version="0.6.2" />
+# Centroid transform (since v0.6.2)
 
 Plot offers two transforms that derive centroids from GeoJSON geometries:
 [centroid](#plot-transforms--centroid--centroid) and
@@ -14536,7 +13425,7 @@ Plot offers two transforms that derive centroids from GeoJSON geometries:
 used by any mark that accepts **x** and **y** channels. Below, a
 [text mark](#plot-marks--text) labels the U.S. states.
 
-:::plot defer https://observablehq.com/@observablehq/plot-state-labels
+[Interactive example](https://observablehq.com/@observablehq/plot-state-labels)
 
 ```js
 Plot.plot({
@@ -14555,18 +13444,14 @@ Plot.plot({
 });
 ```
 
-:::
-
 For fun, we can pass county centroids to the
 [voronoi mark](#plot-marks--delaunay).
 
-:::plot defer https://observablehq.com/@observablehq/plot-centroid-voronoi
+[Interactive example](https://observablehq.com/@observablehq/plot-centroid-voronoi)
 
 ```js
 Plot.voronoi(counties, Plot.centroid()).plot({ projection: "albers" });
 ```
-
-:::
 
 While the centroid transform computes the centroid of a geometry _after_
 projection, the geoCentroid transform computes it _before_ projection, then
@@ -14582,13 +13467,11 @@ made about the geometries: they can be in any coordinate system, and the
 returned value is in the frame — as long as the projected geometry returns at
 least one visible point.
 
-:::plot defer https://observablehq.com/@observablehq/plot-centroid-dot
+[Interactive example](https://observablehq.com/@observablehq/plot-centroid-dot)
 
 ```js
 Plot.dot(counties, Plot.centroid()).plot({ projection: "albers-usa" });
 ```
-
-:::
 
 The geoCentroid transform is more specialized as the **x** and **y** channels it
 derives represent the longitudes and latitudes of the centroids of the given
@@ -14600,20 +13483,18 @@ rotate argument. However, this also means that it might land outside the frame
 if only a part of the land mass is visible, and might be clipped by the
 projection. In practice, the difference is generally imperceptible.
 
-:::plot defer https://observablehq.com/@observablehq/plot-centroid-dot
+[Interactive example](https://observablehq.com/@observablehq/plot-centroid-dot)
 
 ```js
 Plot.dot(counties, Plot.geoCentroid()).plot({ projection: "albers-usa" });
 ```
-
-:::
 
 The geoCentroid transform is slightly faster than the centroid initializer
 — which might be useful if you have tens of thousands of features and want to
 show their density on a
 [hexbin map](https://github.com/observablehq/plot/tree/v0.6.17/docs/transforms/hexbin.md):
 
-:::plot defer https://observablehq.com/@observablehq/plot-centroid-hexbin
+[Interactive example](https://observablehq.com/@observablehq/plot-centroid-hexbin)
 
 ```js
 Plot.dot(counties, Plot.hexbin({ r: "count" }, Plot.geoCentroid())).plot({
@@ -14621,15 +13502,13 @@ Plot.dot(counties, Plot.hexbin({ r: "count" }, Plot.geoCentroid())).plot({
 });
 ```
 
-:::
-
 Combined with the
 [pointer transform](https://github.com/observablehq/plot/tree/v0.6.17/docs/interactions/pointer.md),
 the centroid transform can add
 [interactive tips](https://github.com/observablehq/plot/tree/v0.6.17/docs/marks/tip.md)
 on a map:
 
-:::plot defer https://observablehq.com/@observablehq/plot-state-centroids
+[Interactive example](https://observablehq.com/@observablehq/plot-state-centroids)
 
 ```js
 Plot.plot({
@@ -14648,8 +13527,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 <a id="plot-transforms--centroid--centroid"></a>
 
@@ -14684,8 +13561,9 @@ is not specified, the mark’s data is assumed to be GeoJSON objects.
 Source:
 https://github.com/observablehq/plot/tree/v0.6.17/docs/transforms/group.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import {shallowRef, onMounted} from "vue";
@@ -14697,16 +13575,14 @@ const scheme = Plot.scale({color: {type: "categorical"}}).range;
 onMounted(() => {
   d3.csv("../data/athletes.csv", d3.autoType).then((data) => (olympians.value = data));
 });
-
-</script>
+```
 
 <a id="plot-transforms--group--group-transform"></a>
 
 # Group transform
 
-:::tip The group transform is for aggregating ordinal or nominal data. For
+**Tip:** The group transform is for aggregating ordinal or nominal data. For
 quantitative or temporal data, use the [bin transform](#plot-transforms--bin).
-:::
 
 The **group transform** groups ordinal or nominal data — discrete values such as
 name, type, or category. You can then compute summary statistics for each group,
@@ -14716,7 +13592,6 @@ make bar charts with the [bar mark](#plot-marks--bar).
 For example, the bar chart below shows a distribution of Olympic athletes by
 sport.
 
-:::plot defer
 https://observablehq.com/@observablehq/plot-group-olympic-athletes-by-sport
 
 ```js
@@ -14731,40 +13606,22 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip Ordinal domains are sorted naturally (alphabetically) by default. Either
+**Tip:** Ordinal domains are sorted naturally (alphabetically) by default. Either
 set the [scale **domain**](#plot-features--scales) explicitly to change the
 order, or use the mark
 [**sort** option](#plot-features--scales--sort-mark-option) to derive the scale
-domain from a channel. :::
+domain from a channel.
 
 The groupX transform groups on **x**. The _outputs_ argument (here
 `{y: "count"}`) declares desired output channels (**y**) and the associated
 reducer (_count_). Hence the height of each bar above represents the number of
 Olympic athletes by sport.
 
-<!-- For example, to sort **x** by descending **y**: -->
-
-<!-- :::plot
-```js
-Plot.plot({
-  marginBottom: 100,
-  x: {label: null, tickRotate: 90},
-  y: {grid: true},
-  marks: [
-    Plot.barY(olympians, Plot.groupX({y: "count"}, {x: "sport", sort: {x: "-y"}})),
-    Plot.ruleY([0])
-  ]
-})
-```
-::: -->
-
 While the groupX transform is often used to generate **y**, it can output to any
 channel. For example, by declaring **r** in _outputs_, we can generate dots of
 size proportional to the number of athletes in each sport.
 
-:::plot https://observablehq.com/@observablehq/plot-groups-as-dots
+[Interactive example](https://observablehq.com/@observablehq/plot-groups-as-dots)
 
 ```js
 Plot.plot({
@@ -14777,15 +13634,15 @@ Plot.plot({
 });
 ```
 
-:::
-
 The **fill** channel meanwhile will produce a one-dimensional heatmap. Since
 there is no **y** channel below, we use a [cell](#plot-marks--cell) instead of a
 bar.
 
-:::plot defer https://observablehq.com/@observablehq/plot-groups-as-cells
+[Interactive example](https://observablehq.com/@observablehq/plot-groups-as-cells)
 
-```js-vue
+Interactive example template (values in `{{…}}` come from the upstream website):
+
+```text
 Plot.plot({
   marginBottom: 80,
   x: {tickRotate: 90},
@@ -14796,16 +13653,14 @@ Plot.plot({
 })
 ```
 
-:::
-
 We aren’t limited to the _count_ reducer. We can use the _mode_ reducer, for
 example, to show which sex is more prevalent in each sport:
-<span :style="{borderBottom: `solid 2px ${scheme[1]}`}">men</span> are
+men are
 represented more often than
-<span :style="{borderBottom: `solid 2px ${scheme[0]}`}">women</span> in every
+women in every
 sport except gymnastics and fencing.
 
-:::plot defer https://observablehq.com/@observablehq/plot-group-and-mode-reducer
+[Interactive example](https://observablehq.com/@observablehq/plot-group-and-mode-reducer)
 
 ```js
 Plot.plot({
@@ -14820,13 +13675,11 @@ Plot.plot({
 });
 ```
 
-:::
-
 You can partition groups using **z**. If **z** is undefined, it defaults to
 **fill** or **stroke**, if any. In conjunction with the barY mark’s implicit
 [stackY transform](#plot-transforms--stack), this will produce stacked bars.
 
-:::plot defer https://observablehq.com/@observablehq/plot-two-class-stacked-bars
+[Interactive example](https://observablehq.com/@observablehq/plot-two-class-stacked-bars)
 
 ```js
 Plot.plot({
@@ -14844,21 +13697,20 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip You can invoke the stack transform explicitly as
+**Tip:** You can invoke the stack transform explicitly as
 `Plot.stackY(Plot.groupX({y: "count"}, {x: "sport", fill: "sex"}))`, producing
-an identical chart. :::
+an identical chart.
 
 You can opt-out of the implicit stackY transform by having groupX generate
 **y1** or **y2** instead of **y** (and similarly **x1** or **x2** for stackX and
 groupY). When overlapping marks, use either opacity or blending to make the
 overlap visible.
 
-:::plot defer
 https://observablehq.com/@observablehq/plot-two-class-overlapping-bars
 
-```js-vue
+Interactive example template (values in `{{…}}` come from the upstream website):
+
+```text
 Plot.plot({
   marginBottom: 100,
   x: {label: null, tickRotate: 90},
@@ -14871,11 +13723,9 @@ Plot.plot({
 })
 ```
 
-:::
-
-:::warning CAUTION While the **mixBlendMode** option is useful for mitigating
+**Warning:** CAUTION While the **mixBlendMode** option is useful for mitigating
 occlusion, it can be slow to render if there are many elements. More than two
-overlapping histograms may also be hard to read. :::
+overlapping histograms may also be hard to read.
 
 Perhaps better would be to make a grouped bar chart using
 [faceting](#plot-features--facets). This is accomplished by setting the **fx**
@@ -14883,7 +13733,6 @@ channel to facet horizontally on _sport_, while the **x** channel is used within
 each facet to draw side-by-side bars for each _sex_. The group transform
 automatically partitions groups by facet.
 
-:::plot defer
 https://observablehq.com/@observablehq/plot-olympians-grouped-bar-chart
 
 ```js
@@ -14903,18 +13752,16 @@ Plot.plot({
 });
 ```
 
-:::
-
 Alternatively, below we use directional arrows (a [link mark](#plot-marks--link)
 with
 [markers](https://github.com/observablehq/plot/tree/v0.6.17/docs/features/markers.md))
 to indicate the difference in counts of
-<span :style="{borderBottom: `solid 2px ${scheme[1]}`}">male</span> and
-<span :style="{borderBottom: `solid 2px ${scheme[0]}`}">female</span> athletes
+male and
+female athletes
 by sport. The color of the arrow indicates which sex is more prevalent, while
 its length is proportional to the difference.
 
-:::plot defer https://observablehq.com/@observablehq/plot-difference-arrows
+[Interactive example](https://observablehq.com/@observablehq/plot-difference-arrows)
 
 ```js
 Plot.plot({
@@ -14953,8 +13800,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 The group transform comes in four orientations:
 
 - [groupX](#plot-transforms--group--groupX) groups on **x**, and often outputs
@@ -14970,7 +13815,7 @@ As you might guess, the groupY transform with the barX mark produces a
 horizontal→ bar chart. (We must increase the **marginLeft** to avoid the _y_
 axis labels from being cut off.)
 
-:::plot defer https://observablehq.com/@observablehq/plot-sorted-horizontal-bars
+[Interactive example](https://observablehq.com/@observablehq/plot-sorted-horizontal-bars)
 
 ```js
 Plot.plot({
@@ -14987,16 +13832,15 @@ Plot.plot({
 });
 ```
 
-:::
-
 You can produce a two-dimensional heatmap with group transform and a cell mark
 by generating a **fill** output channel. For example, we could show the median
 weight of athletes by sport (**x**) and sex (**y**).
 
-:::plot defer
 https://observablehq.com/@observablehq/plot-grouped-olympians-heatmap
 
-```js-vue
+Interactive example template (values in `{{…}}` come from the upstream website):
+
+```text
 Plot.plot({
   marginBottom: 80,
   x: {label: null, tickRotate: 90},
@@ -15008,18 +13852,17 @@ Plot.plot({
 })
 ```
 
-:::
-
 Or, we could group athletes by sport and the number of gold medals 🥇 won.
 ([Michael Phelps](https://en.wikipedia.org/wiki/Michael_Phelps), the most
 decorated Olympian of all time, won five gold medals in the 2016 Summer
 Olympics. [Simone Biles](https://en.wikipedia.org/wiki/Simone_Biles) and
 [Katie Ledecky](https://en.wikipedia.org/wiki/Katie_Ledecky) each won four.)
 
-:::plot defer
 https://observablehq.com/@observablehq/plot-olympians-by-gold-medals
 
-```js-vue
+Interactive example template (values in `{{…}}` come from the upstream website):
+
+```text
 Plot.plot({
   marginBottom: 100,
   x: {label: null, tickRotate: 90},
@@ -15031,15 +13874,14 @@ Plot.plot({
 })
 ```
 
-:::
-
 We could instead output **r** and use a [dot mark](#plot-marks--dot) whose size
 again represents the number of athletes in each group.
 
-:::plot defer
 https://observablehq.com/@observablehq/plot-olympians-by-gold-medals-proportional-dots
 
-```js-vue
+Interactive example template (values in `{{…}}` come from the upstream website):
+
+```text
 Plot.plot({
   marginBottom: 100,
   x: {label: null, tickRotate: 90},
@@ -15051,14 +13893,13 @@ Plot.plot({
 })
 ```
 
-:::
-
 We can add the **stroke** channel to show overlapping distributions by sex.
 
-:::plot defer
 https://observablehq.com/@observablehq/plot-olympians-by-gold-medals-overlapping-dots
 
-```js-vue
+Interactive example template (values in `{{…}}` come from the upstream website):
+
+```text
 Plot.plot({
   marginBottom: 100,
   x: {label: null, tickRotate: 90},
@@ -15070,15 +13911,13 @@ Plot.plot({
 })
 ```
 
-:::
-
 To group solely on **z** (or **fill** or **stroke**), use
 [groupZ](#plot-transforms--group--groupZ). The single stacked bar chart below
 (an alternative to a pie chart) shows the proportion of athletes by sport. The
 _proportion_ reducer converts counts into normalized proportions adding up to 1,
 while the _first_ reducer pulls out the name of the sport for labeling.
 
-:::plot defer https://observablehq.com/@observablehq/plot-single-stacked-bar
+[Interactive example](https://observablehq.com/@observablehq/plot-single-stacked-bar)
 
 ```js
 Plot.plot({
@@ -15113,15 +13952,13 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::info Although barX applies an implicit stackX transform,
+**Info:** Although barX applies an implicit stackX transform,
 [textX](#plot-marks--text) does not; this example uses an explicit stackX
 transform in both cases for clarity, and to pass the additional **order** and
 **reverse** options to place the largest sport on the left. The
 [filter transform](https://github.com/observablehq/plot/tree/v0.6.17/docs/transforms/filter.md)
 is applied after the stack transform to hide the labels on the smallest sports
-where the bars are too thin. :::
+where the bars are too thin.
 
 <a id="plot-transforms--group--group-options"></a>
 
@@ -15179,11 +14016,11 @@ The following named reducers are supported:
 - _variance_ - the variance per
   [Welford’s algorithm](https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Welford's_online_algorithm)
 - _identity_ - the array of values
-- _x_ <VersionBadge version="0.6.12" pr="1916" /> - the group’s _x_ value (when
+- _x_ (since v0.6.12) - the group’s _x_ value (when
   grouping on _x_)
-- _y_ <VersionBadge version="0.6.12" pr="1916" /> - the group’s _y_ value (when
+- _y_ (since v0.6.12) - the group’s _y_ value (when
   grouping on _y_)
-- _z_ <VersionBadge version="0.6.14" pr="1959" /> - the group’s _z_ value (_z_,
+- _z_ (since v0.6.14) - the group’s _z_ value (_z_,
   _fill_, or _stroke_)
 
 In addition, a reducer may be specified as:
@@ -15298,7 +14135,7 @@ facet) is placed into a single group.
 
 <a id="plot-transforms--group--find"></a>
 
-## find(_test_) <VersionBadge version="0.6.12" pr="1914" />
+## find(_test_) (since v0.6.12)
 
 ```js
 Plot.groupX(
@@ -15323,8 +14160,9 @@ female values.
 Source:
 https://github.com/observablehq/plot/tree/v0.6.17/docs/transforms/normalize.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import {shallowRef, onMounted} from "vue";
@@ -15347,8 +14185,7 @@ onMounted(() => {
     stateage.value = Object.assign(ages.flatMap((age) => data.map((d) => ({state: d.name, age, population: d[age]}))), {ages});
   });
 });
-
-</script>
+```
 
 <a id="plot-transforms--normalize--normalize-transform"></a>
 
@@ -15361,7 +14198,7 @@ values into relative values. For example, here is an index chart — a type of
 multi-series line chart — showing the return of several stocks relative to their
 closing price on a particular date.
 
-:::plot defer https://observablehq.com/@observablehq/plot-index-chart
+[Interactive example](https://observablehq.com/@observablehq/plot-index-chart)
 
 ```js
 Plot.plot({
@@ -15396,16 +14233,14 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip The
+**Tip:** The
 [select transform](https://github.com/observablehq/plot/tree/v0.6.17/docs/transforms/select.md)
-is used to label the endpoints of each line. :::
+is used to label the endpoints of each line.
 
-:::info This example uses an
+**Info:** This example uses an
 [immediately-invoked function expression (IIFE)](https://developer.mozilla.org/en-US/docs/Glossary/IIFE)
 for the **tickFormat** option so that the
-[d3.format](https://d3js.org/d3-format) only needs to be constructed once. :::
+[d3.format](https://d3js.org/d3-format) only needs to be constructed once.
 
 The normalize transform converts absolute values into relative ones. So, if
 **y** is [_y₀_, _y₁_, _y₂_, …] and the _first_ basis is used with
@@ -15419,7 +14254,7 @@ demographics from absolute populations. The plot below compares the demographics
 of U.S. states: color represents age group, **y** represents the state, and
 **x** represents the proportion of the state’s population in that age group.
 
-:::plot defer https://observablehq.com/@observablehq/plot-dot-plot
+[Interactive example](https://observablehq.com/@observablehq/plot-dot-plot)
 
 ```js
 Plot.plot({
@@ -15451,15 +14286,13 @@ Plot.plot({
 });
 ```
 
-:::
-
 ```js
 xy = Plot.normalizeX("sum", { z: "state", x: "population", y: "state" });
 ```
 
-:::tip To reduce code duplication, pull shared options out into an object (here
+**Tip:** To reduce code duplication, pull shared options out into an object (here
 `xy`) and then merge them into each mark’s options using the spread operator
-(`...`). :::
+(`...`).
 
 <a id="plot-transforms--normalize--normalize-options"></a>
 
@@ -15483,7 +14316,7 @@ The **basis** option specifies how to normalize the series values; it is one of:
 
 <a id="plot-transforms--normalize--normalize"></a>
 
-## normalize(_basis_) <VersionBadge version="0.2.3" />
+## normalize(_basis_) (since v0.2.3)
 
 ```js
 Plot.map({ y: Plot.normalize("first") }, {
@@ -15543,8 +14376,9 @@ If not specified, the _basis_ defaults to _first_.
 Source:
 https://github.com/observablehq/plot/tree/v0.6.17/docs/transforms/sort.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import * as topojson from "topojson-client";
@@ -15569,8 +14403,7 @@ onMounted(() => {
     us.value = _us;
   });
 });
-
-</script>
+```
 
 <a id="plot-transforms--sort--sort-transform"></a>
 
@@ -15583,14 +14416,7 @@ dramatic effect when these elements overlap. For example, see the bubble map of
 U.S. county population below; when the null sort order is used for input order,
 many small dots are hidden underneath larger ones.
 
-<p>
-  <label class="label-input">
-    Sort by descending radius (r):
-    <input type="checkbox" v-model="sorted">
-  </label>
-</p>
-
-:::plot defer https://observablehq.com/@observablehq/plot-dot-sort
+[Interactive example](https://observablehq.com/@observablehq/plot-dot-sort)
 
 ```js
 Plot.plot({
@@ -15611,10 +14437,8 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip Dots are sorted by descending **r** by default, so you may not need the
-**sort** option. :::
+**Tip:** Dots are sorted by descending **r** by default, so you may not need the
+**sort** option.
 
 The sort transform can be applied either via the **sort**
 [mark option](#plot-features--marks--mark-options), as above, or as an explicit
@@ -15630,10 +14454,10 @@ following the
 in part due to the
 [auto industry collapse](https://en.wikipedia.org/wiki/2008–2010_automotive_industry_crisis))
 are highlighted in
-<span style="border-bottom: solid 2px var(--vp-c-red);">red</span>, and the
+red, and the
 **sort** option is used to draw them on top of other series.
 
-:::plot https://observablehq.com/@observablehq/plot-multiple-line-highlight
+[Interactive example](https://observablehq.com/@observablehq/plot-multiple-line-highlight)
 
 ```js
 Plot.plot({
@@ -15658,24 +14482,14 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip You could say `sort: {channel: "stroke"}` here to avoid repeating the
-test function. :::
+**Tip:** You could say `sort: {channel: "stroke"}` here to avoid repeating the
+test function.
 
 The index order also affects the behavior of certain transforms such as
 [stack](#plot-transforms--stack) and
 [dodge](https://github.com/observablehq/plot/tree/v0.6.17/docs/transforms/dodge.md).
 
-<p>
-  <span class="label-input">
-    Sort x order:
-    <label style="margin-left: 0.5em;"><input type="radio" name="order" value="ascending" v-model="order" /> ascending</label>
-    <label style="margin-left: 0.5em;"><input type="radio" name="order" value="descending" v-model="order" /> descending</label>
-  </span>
-</p>
-
-:::plot https://observablehq.com/@observablehq/plot-dodge-cars-2
+[Interactive example](https://observablehq.com/@observablehq/plot-dodge-cars-2)
 
 ```js
 Plot.plot({
@@ -15693,8 +14507,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 The closely-related [reverse transform](#plot-transforms--sort--reverse)
 likewise reverses the mark index, while the
@@ -15719,8 +14531,8 @@ Sorts the data by the specified _order_, which is one of:
 
 In the object case, the **channel** option specifies the name of the channel,
 while the **order** option specifies _ascending_ (the default) or _descending_
-order. You can also use the shorthand <span style="white-space: nowrap;">_-name_
-<VersionBadge version="0.6.7" /></span> to sort by descending order of the
+order. You can also use the shorthand _-name_
+(since v0.6.7) to sort by descending order of the
 channel with the given _name_. For example, `sort: {channel: "-r"}` will sort by
 descending radius (**r**).
 
@@ -15759,8 +14571,9 @@ Reverses the order of the data.
 Source:
 https://github.com/observablehq/plot/tree/v0.6.17/docs/transforms/stack.md
 
-<script setup>
+**Upstream example setup.** This code may use Vue and sample data from the linked source page.
 
+```js
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
 import alphabet from "../data/alphabet.ts";
@@ -15808,8 +14621,7 @@ const likert = Likert([
   ["Agree", 1],
   ["Strongly Agree", 1]
 ]);
-
-</script>
+```
 
 <a id="plot-transforms--stack--stack-transform"></a>
 
@@ -15827,10 +14639,10 @@ easier to perceive a total while still showing its parts.
 For example, below is a stacked area chart of
 [deaths in the Crimean War](https://en.wikipedia.org/wiki/Florence_Nightingale#Crimean_War)
 — predominantly from
-<span :style="{borderBottom: `solid ${scheme[0]} 3px`}">disease</span> — using
+disease — using
 Florence Nightingale’s data.
 
-:::plot https://observablehq.com/@observablehq/plot-crimean-war-casualties
+[Interactive example](https://observablehq.com/@observablehq/plot-crimean-war-casualties)
 
 ```js
 Plot.plot({
@@ -15843,19 +14655,17 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip The [areaY mark](#plot-marks--area) applies the stackY transform
+**Tip:** The [areaY mark](#plot-marks--area) applies the stackY transform
 implicitly if you do not specify either **y1** or **y2**. The same applies to
 [barY](#plot-marks--bar) and [rectY](#plot-marks--rect). You can invoke the
 stack transform explicitly as
 `Plot.stackY({x: "date", y: "deaths", fill: "cause"})` to produce an identical
-chart. :::
+chart.
 
 The stack transform works with any mark that consumes **y1** & **y2** or **x1**
 & **x2**, so you can stack rects, too.
 
-:::plot https://observablehq.com/@observablehq/plot-crimean-war-recty
+[Interactive example](https://observablehq.com/@observablehq/plot-crimean-war-recty)
 
 ```js
 Plot.plot({
@@ -15872,16 +14682,14 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::info The
+**Info:** The
 [**interval** mark option](https://github.com/observablehq/plot/tree/v0.6.17/docs/transforms/interval.md)
 specifies the periodicity of the data; without it, Plot wouldn’t know how wide
-to make the rects. :::
+to make the rects.
 
 And you can stack bars if you’d prefer to treat _x_ as ordinal.
 
-:::plot https://observablehq.com/@observablehq/plot-crimean-war-bary
+[Interactive example](https://observablehq.com/@observablehq/plot-crimean-war-bary)
 
 ```js
 Plot.plot({
@@ -15898,12 +14706,10 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::info The
+**Info:** The
 [**interval** scale option](#plot-features--scales--scale-transforms) specifies
 the periodicity of the data; without it, any gaps in the data would not be
-visible since barY implies that _x_ is ordinal. :::
+visible since barY implies that _x_ is ordinal.
 
 The stackY transform also outputs **y** representing the midpoint of **y1** and
 **y2**, and likewise stackX outputs **x** representing the midpoint of **x1**
@@ -15912,7 +14718,7 @@ and **x2**. This is useful for point-based marks such as
 horizontal [bar](#plot-marks--bar) shows the relative frequency of English
 letters; this form is a compact alternative to a pie 🥧 or donut 🍩 chart.
 
-:::plot https://observablehq.com/@observablehq/plot-stacked-percentages
+[Interactive example](https://observablehq.com/@observablehq/plot-stacked-percentages)
 
 ```js
 Plot.plot({
@@ -15931,35 +14737,19 @@ Plot.plot({
 });
 ```
 
-:::
-
 The **order** option controls the order in which the layers are stacked. It
 defaults to null, meaning to respect the input order of the data. The
 _appearance_ order excels when each series has a prominent peak, as in the chart
 below of
 [recording industry](https://en.wikipedia.org/wiki/Recording_Industry_Association_of_America)
-revenue. <span :style="{borderBottom: `solid 2px ${scheme[0]}`}">Compact
-disc</span> sales started declining well before the rise of
-<span :style="{borderBottom: `solid 2px ${scheme[1]}`}">downloads</span> and
-<span :style="{borderBottom: `solid 2px ${scheme[3]}`}">streaming</span>,
+revenue. Compact
+disc sales started declining well before the rise of
+downloads and
+streaming,
 suggesting that the industry was slow to provide a convenient digital product
 and hence lost revenue to piracy.
 
-<p>
-  <label class="label-input">
-    Order:
-    <select v-model="orders">
-      <option>null</option>
-      <option>appearance</option>
-      <option>inside-out</option>
-      <option>sum</option>
-      <option>group</option>
-      <option>z</option>
-    </select>
-  </label>
-</p>
-
-:::plot defer https://observablehq.com/@observablehq/plot-stacking-order
+[Interactive example](https://observablehq.com/@observablehq/plot-stacking-order)
 
 ```js
 Plot.plot({
@@ -15982,24 +14772,14 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::info In this data, the _group_ field is a supercategory of the _format_
+**Info:** In this data, the _group_ field is a supercategory of the _format_
 field, which is useful to avoid overwhelming the color encoding with too many
 categories. For example, the _Vinyl_ group includes both the _LP/EP_ and _Vinyl
-Single_ formats. :::
+Single_ formats.
 
 The **reverse** option reverses the order of layers. In conjunction with the
 _appearance_ order, now layers enter from the bottom rather than the top.
 
-<p>
-  <label class="label-input">
-    Reverse:
-    <input type="checkbox" v-model="reverse">
-  </label>
-</p>
-
-:::plot defer
 https://observablehq.com/@observablehq/plot-stacking-order-and-reverse
 
 ```js
@@ -16025,12 +14805,9 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::tip The **reverse** option is also used by the
+**Tip:** The **reverse** option is also used by the
 [sort transform](#plot-transforms--sort). To disambiguate, pass the _stack_
 options separately using the two-argument form of the stack transform as above.
-:::
 
 The _value_ **order** is worth special mention: it sorts each stack by value
 independently such that the order of layers can change, emphasizing the changing
@@ -16038,7 +14815,7 @@ ranks of layers. This is sometimes called a “ribbon” chart. (In fact, the
 default null **order** supports changing order of layers, too! But most often
 data comes already sorted by series.)
 
-:::plot defer https://observablehq.com/@observablehq/plot-ribbon-chart
+[Interactive example](https://observablehq.com/@observablehq/plot-ribbon-chart)
 
 ```js
 Plot.plot({
@@ -16060,8 +14837,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 The **offset** option controls the baseline of stacked layers. It defaults to
 null for a _y_ = 0 baseline (for stackY, or _x_ = 0 for stackX). The _center_
 **offset** centers each stack independently per
@@ -16072,18 +14847,7 @@ these two offsets produce “streamgraphs”, so called for their fluid appeara
 The _wiggle_ **offset** changes the default **order** to _inside-out_ to further
 minimize movement.
 
-<p>
-  <label class="label-input">
-    Offset:
-    <select v-model="offsets">
-      <option>null</option>
-      <option>center</option>
-      <option>wiggle</option>
-    </select>
-  </label>
-</p>
-
-:::plot defer https://observablehq.com/@observablehq/plot-stack-offset
+[Interactive example](https://observablehq.com/@observablehq/plot-stack-offset)
 
 ```js
 Plot.plot({
@@ -16104,20 +14868,18 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::warning CAUTION When **offset** is not null, the _y_ axis is harder to use
+**Warning:** CAUTION When **offset** is not null, the _y_ axis is harder to use
 because there is no longer a shared baseline at _y_ = 0, though it is still
-useful for eyeballing length. :::
+useful for eyeballing length.
 
 The _normalize_ **offset** is again worth special mention: it scales stacks to
 fill the interval [0, 1], thereby showing the relative proportion of each layer.
-Sales of <span :style="{borderBottom: `solid 2px ${scheme[0]}`}">compact
-discs</span> accounted for over 90% of revenue in the early 2000’s, but now most
+Sales of compact
+discs accounted for over 90% of revenue in the early 2000’s, but now most
 revenue comes from
-<span :style="{borderBottom: `solid 2px ${scheme[3]}`}">streaming</span>.
+streaming.
 
-:::plot defer https://observablehq.com/@observablehq/plot-normalized-stack
+[Interactive example](https://observablehq.com/@observablehq/plot-normalized-stack)
 
 ```js
 Plot.plot({
@@ -16140,8 +14902,6 @@ Plot.plot({
 });
 ```
 
-:::
-
 When the provided length (typically **y**) is negative, in conjunction with the
 null **offset** the stack transform will produce diverging stacks on opposites
 sides of the zero baseline. The diverging stacked dot plot below shows the age
@@ -16149,7 +14909,7 @@ and gender distribution of the U.S. Congress in 2023. This form is also often
 _popular_ for
 [population pyramids](https://observablehq.com/@observablehq/plot-population-pyramid).
 
-:::plot defer https://observablehq.com/@observablehq/plot-stacked-dots
+[Interactive example](https://observablehq.com/@observablehq/plot-stacked-dots)
 
 ```js
 Plot.plot({
@@ -16176,24 +14936,22 @@ Plot.plot({
 });
 ```
 
-:::
-
-:::info The stackY2 transform places each dot at the upper bound of the
+**Info:** The stackY2 transform places each dot at the upper bound of the
 associated stacked interval, rather than the middle of the interval as when
 using stackY. Hence, the first male dot is placed at _y_ = 1, and the first
-female dot is placed at _y_ = -1. :::
+female dot is placed at _y_ = -1.
 
 When visualizing [Likert scale](https://en.wikipedia.org/wiki/Likert_scale)
 survey results we may wish to place
-<span :style="{borderWidth: 2, borderBottomStyle: 'solid', borderImage: `linear-gradient(to right, ${d3.schemeRdBu[5][0]}, ${d3.schemeRdBu[5][1]}) 2`}">negative</span>
+negative
 (disagreeing) responses on the left and
-<span :style="{borderWidth: 2, borderBottomStyle: 'solid', borderImage: `linear-gradient(to right, ${d3.schemeRdBu[5][3]}, ${d3.schemeRdBu[5][4]}) 2`}">positive</span>
+positive
 (agreeing) responses on the right, leaving
-<span :style="{borderBottom: `solid 2px ${d3.schemeRdBu[5][2]}`}">neutral</span>
+neutral
 responses in the middle. This is achieved below using a custom **offset**
 function.
 
-:::plot defer https://observablehq.com/@observablehq/plot-diverging-stacked-bar
+[Interactive example](https://observablehq.com/@observablehq/plot-diverging-stacked-bar)
 
 ```js
 Plot.plot({
@@ -16212,8 +14970,6 @@ Plot.plot({
   ],
 });
 ```
-
-:::
 
 Here `likert` declares which response values are negative (`-1`), which are
 positive (`1`), and which are neutral (`0`).

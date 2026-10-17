@@ -1,7 +1,7 @@
 import { expect, test } from "vite-plus/test";
 import { readFileSync } from "node:fs";
 import { posix } from "node:path";
-import { combinePlotDocs } from "../src/helpers/combinePlotDocs.ts";
+import { combinePlotDocs, proseLines } from "../src/helpers/combinePlotDocs.ts";
 import { splitPlotDocs } from "../src/helpers/splitPlotDocs.ts";
 import { PLOT_DOC_PAGES } from "../src/helpers/plotDocPages.ts";
 
@@ -40,7 +40,7 @@ Inline \`[Code](#plot-features--scales)\`.
     "[Reference]: ../features/scales.md#plot-features--scales",
     '<a href="../features/scales.md#plot-features--scales--options">Options</a>',
     code,
-    script,
+    '```js\nconst link = "#plot-features--scales";\n```',
     "Inline `[Code](#plot-features--scales)`.",
   ])
     expect(bar).toContain(fragment);
@@ -63,6 +63,12 @@ test("the existing cached reference splits into pages with valid local Markdown 
   const files = splitPlotDocs(reference, "0.6.17");
   expect(files.get("LICENSE")).toContain("Copyright 2020-2025 Observable, Inc.");
   for (const [page, content] of files) {
+    proseLines(content, (line) => {
+      expect(line, page).not.toMatch(
+        /^[ \t]*:::|<(?:script|VersionBadge|PlotRender|input|select|label|span)\b/,
+      );
+      return line;
+    });
     for (const match of content.matchAll(/\]\(([^\s)]+)\)/g)) {
       if (/^[a-z]+:/i.test(match[1])) continue;
       const [path, fragment] = match[1].split("#");

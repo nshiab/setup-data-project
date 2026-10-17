@@ -1,3 +1,4 @@
+import { cleanPlotMarkdown } from "./cleanPlotMarkdown.ts";
 import { posix } from "node:path";
 
 // The Plot source uses ATX headings, explicit VitePress IDs, and Markdown fences.
@@ -122,7 +123,9 @@ export function combinePlotDocs(version: string, documents: Map<string, string>)
       return `<a id="${pageId(page)}"></a>\n\n# ${page}\n\nSource: ${source}/${page}\n\n${body}`;
     })
     .join("\n\n---\n\n");
-  return `# Observable Plot ${version}\n\nPackage: \`@observablehq/plot@${version}\`. Source: [v${version}](${source}).\n\nThis reference combines selected upstream documentation for static charts and maps. Introductory and site pages, interaction helpers, and the Auto and Tip marks are omitted. Vue components and plot fences are retained as source examples. Use the table of contents to find API signatures and examples; links to omitted pages lead to the tagged upstream documentation.\n\n## Table of contents\n\n${contents}\n\n---\n\n${combined}\n\n<!-- setup-data-project:observable-plot:${version}:complete -->\n`;
+  return cleanPlotMarkdown(
+    `# Observable Plot ${version}\n\nPackage: \`@observablehq/plot@${version}\`. Source: [v${version}](${source}).\n\nThis reference combines selected upstream documentation for static charts and maps. Introductory and site pages, interaction helpers, and the Auto and Tip marks are omitted. Website controls are omitted; upstream setup and interactive templates are labeled as reference code. Use the table of contents to find API signatures and examples; links to omitted pages lead to the tagged upstream documentation.\n\n## Table of contents\n\n${contents}\n\n---\n\n${combined}\n\n<!-- setup-data-project:observable-plot:${version}:complete -->\n`,
+  );
 }
 
 export function proseLines(
