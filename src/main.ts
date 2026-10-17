@@ -122,7 +122,9 @@ async function main() {
 
   projectManifest.reload();
   projectManifest.updateTasks(getProjectTasks());
-  execFileSync("node", ["node_modules/vite-plus/bin/vp", "fmt", "package.json"], { stdio: "pipe" });
+  execFileSync(process.execPath, ["node_modules/vite-plus/bin/vp", "fmt", "package.json"], {
+    stdio: "pipe",
+  });
 
   const finalInstalledPackages = getInstalledPackageConfigs(
     projectManifest.getInstalledPackages(),

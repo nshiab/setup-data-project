@@ -1,7 +1,7 @@
 # setup-data-project
 
 Set up a TypeScript data analysis project with Node.js or Bun.
-Node.js 24.21.0+ is required for the development tools with either runtime.
+Use Node.js 24.21.0+ or Bun. Generated development commands use the selected runtime.
 
 ```sh
 # Node
