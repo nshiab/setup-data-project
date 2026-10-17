@@ -1,5 +1,7 @@
 import { expect, test } from "vite-plus/test";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import { ProjectManifest } from "../src/helpers/projectManifest.ts";
 import { getProjectTasks } from "../src/helpers/getProjectTasks.ts";
 import { getRuntime } from "../src/helpers/getRuntime.ts";
@@ -13,6 +15,14 @@ import { ensureReadme } from "../src/helpers/ensureReadme.ts";
 import { ensureVscode } from "../src/helpers/ensureVscode.ts";
 import { temporaryProject } from "./helpers/utils.ts";
 temporaryProject();
+test("new VS Code files pass the default formatter without fixes", () => {
+  writeFileSync("package.json", '{"name":"editor-config-check","type":"module"}');
+  ensureVscode();
+  const vp = fileURLToPath(new URL("../node_modules/vite-plus/bin/vp", import.meta.url));
+  expect(() =>
+    execFileSync(process.execPath, [vp, "fmt", "--check", ".vscode"], { stdio: "pipe" }),
+  ).not.toThrow();
+});
 test("VS Code setup preserves existing JSONC settings while adding missing recommendations", () => {
   mkdirSync(".vscode");
   const settings = '{\n  // My editor preferences\n  "editor.wordWrap": "off",\n}\n';
