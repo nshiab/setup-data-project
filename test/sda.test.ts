@@ -1,9 +1,12 @@
-import { expect, test, vi } from "vite-plus/test";
+import { afterAll, beforeAll, expect, test, vi } from "vite-plus/test";
 import { execFileSync, spawn, spawnSync } from "node:child_process";
 import { once } from "node:events";
 import {
   existsSync,
   mkdirSync,
+  mkdtempSync,
+  rmSync,
+  statSync,
   readFileSync,
   renameSync,
   symlinkSync,
@@ -13,22 +16,75 @@ import {
 import { fileURLToPath } from "node:url";
 import { setTimeout as delay } from "node:timers/promises";
 import { getProjectTasks } from "../src/helpers/getProjectTasks.ts";
-import { ensureSdaRunner } from "../src/helpers/ensureSdaRunner.ts";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { extract } from "tar";
+import metadata from "../package.json" with { type: "json" };
 import { temporaryProject } from "./helpers/utils.ts";
 
 temporaryProject();
 const modules = fileURLToPath(new URL("../node_modules", import.meta.url));
 const hasBun = spawnSync("bun", ["--version"]).status === 0;
 
-test("the generated runner passes formatting checks", () => {
-  writeFileSync("package.json", '{"type":"module"}');
-  ensureSdaRunner();
-  execFileSync(process.execPath, [
-    `${modules}/vite-plus/bin/vp`,
-    "fmt",
-    "--check",
-    "scripts/sda.mjs",
-  ]);
+const repository = fileURLToPath(new URL("..", import.meta.url));
+const windows = process.platform === "win32";
+const npm = windows ? "npm.cmd" : "npm";
+let fixture: string;
+let installedModules: string;
+let runner: string;
+beforeAll(async () => {
+  fixture = mkdtempSync(join(tmpdir(), "sda-package-test-"));
+  execFileSync(process.execPath, [join(modules, "vite-plus/bin/vp"), "pack"], { cwd: repository });
+  execFileSync(npm, ["pack", "--ignore-scripts", "--pack-destination", fixture], {
+    cwd: repository,
+    stdio: "pipe",
+    shell: windows,
+  });
+  const archive = join(
+    fixture,
+    metadata.name.replace("@", "").replace("/", "-") + "-" + metadata.version + ".tgz",
+  );
+  await extract({ file: archive, cwd: fixture });
+  symlinkSync(modules, join(fixture, "package/node_modules"), windows ? "junction" : "dir");
+  const project = join(fixture, "project");
+  mkdirSync(project);
+  writeFileSync(join(project, "package.json"), '{"private":true}');
+  // Install the unpacked release locally so tests need no registry access or cached dependencies.
+  execFileSync(
+    npm,
+    ["install", "--offline", "--ignore-scripts", "--no-audit", "--no-fund", "../package"],
+    { cwd: project, stdio: "pipe", shell: windows },
+  );
+  installedModules = join(project, "node_modules");
+  runner = join(installedModules, "@nshiab/setup-data-project/dist/sda.mjs");
+  if (!windows) {
+    symlinkSync(join(modules, "vite-plus"), join(installedModules, "vite-plus"), "dir");
+    symlinkSync(join(modules, "vite-plus/bin/vp"), join(installedModules, ".bin/vp"));
+    symlinkSync(join(modules, "@types"), join(installedModules, "@types"), "dir");
+  }
+}, 30000);
+afterAll(() => {
+  if (fixture) rmSync(fixture, { recursive: true, force: true });
+});
+
+test("the published package provides an executable watcher", () => {
+  expect(readFileSync(runner, "utf8")).toMatch(/^#!\/usr\/bin\/env node/);
+  expect(existsSync(join(installedModules, ".bin/sda-watch"))).toBe(true);
+  if (process.platform !== "win32") expect(statSync(runner).mode & 0o111).not.toBe(0);
+  symlinkSync(installedModules, "node_modules", windows ? "junction" : "dir");
+  // Adding a second binary must preserve package-name resolution for the setup command.
+  expect(
+    execFileSync(npm, ["exec", "--offline", "--", metadata.name, "--help"], {
+      encoding: "utf8",
+      shell: windows,
+    }),
+  ).toContain("--docs");
+  if (hasBun)
+    expect(
+      execFileSync("bunx", ["--bun", "--no-install", metadata.name, "--help"], {
+        encoding: "utf8",
+      }),
+    ).toContain("--docs");
 });
 
 for (const runtime of ["node", "bun"] as const) {
@@ -36,57 +92,58 @@ for (const runtime of ["node", "bun"] as const) {
     `${runtime}: PID file identifies the runner, prevents duplicates, and is removed on shutdown`,
     async () => {
       mkdirSync("sda");
-      ensureSdaRunner();
       writeFileSync(".env", "");
       writeFileSync("sda/main.ts", "");
       writeFileSync("fix.cjs", "");
       writeFileSync("package.json", JSON.stringify({ scripts: { fix: "node fix.cjs" } }));
       const command = runtime === "bun" ? "bun" : process.execPath;
-      const args = ["scripts/sda.mjs", "sda/main.ts"];
+      const args = [runner, "sda/main.ts"];
       const child = spawn(command, args, { stdio: "ignore" });
       const closed = once(child, "close");
       try {
-        await vi.waitFor(() => expect(readFileSync(".sda.pid", "utf8")).toBe(`${child.pid}\n`));
+        await vi.waitFor(() => expect(readFileSync("sda/.sda.pid", "utf8")).toBe(`${child.pid}\n`));
         const duplicate = spawnSync(command, args, { encoding: "utf8" });
         expect(duplicate.status).toBe(1);
         expect(duplicate.stderr).toContain(
           `${runtime === "bun" ? "bun" : "npm"} run sda appears to be already running and watching this project's files`,
         );
-        expect(duplicate.stderr).toContain(`PID ${child.pid} from .sda.pid`);
+        expect(duplicate.stderr).toContain(`PID ${child.pid} from sda/.sda.pid`);
         expect(duplicate.stderr).toContain("Stop the existing watcher with Ctrl+C");
-        expect(readFileSync(".sda.pid", "utf8")).toBe(`${child.pid}\n`);
+        expect(readFileSync("sda/.sda.pid", "utf8")).toBe(`${child.pid}\n`);
       } finally {
         child.kill("SIGTERM");
         await closed;
       }
-      expect(existsSync(".sda.pid")).toBe(false);
+      expect(existsSync("sda/.sda.pid")).toBe(false);
 
       // Recreate the file left by a crash using a process known to have exited.
-      writeFileSync(".sda.pid", `${child.pid}\n`);
+      writeFileSync("sda/.sda.pid", `${child.pid}\n`);
       const restarted = spawn(command, args, { stdio: "ignore" });
       const restartedClosed = once(restarted, "close");
       try {
-        await vi.waitFor(() => expect(readFileSync(".sda.pid", "utf8")).toBe(`${restarted.pid}\n`));
+        await vi.waitFor(() =>
+          expect(readFileSync("sda/.sda.pid", "utf8")).toBe(`${restarted.pid}\n`),
+        );
         expect(spawnSync(command, args).status).toBe(1);
-        expect(readFileSync(".sda.pid", "utf8")).toBe(`${restarted.pid}\n`);
+        expect(readFileSync("sda/.sda.pid", "utf8")).toBe(`${restarted.pid}\n`);
       } finally {
         restarted.kill("SIGTERM");
         await restartedClosed;
       }
-      expect(existsSync(".sda.pid")).toBe(false);
+      expect(existsSync("sda/.sda.pid")).toBe(false);
 
       // Live unrelated processes and malformed files must not be mistaken for dead runners.
       for (const value of [`${process.pid}\n`, "", "0", "-1", "invalid", "2147483648"]) {
-        writeFileSync(".sda.pid", value);
+        writeFileSync("sda/.sda.pid", value);
         const blocked = spawnSync(command, args, { encoding: "utf8" });
         expect(blocked.status).toBe(1);
-        expect(blocked.stderr).toContain(".sda.pid");
+        expect(blocked.stderr).toContain("sda/.sda.pid");
         if (value !== `${process.pid}\n`) {
           expect(blocked.stderr).toContain("does not contain a valid process ID");
           expect(blocked.stderr).toContain("Check that no SDA watcher is running");
-          expect(blocked.stderr).toContain("delete .sda.pid, then try again");
+          expect(blocked.stderr).toContain("delete sda/.sda.pid, then try again");
         }
-        expect(readFileSync(".sda.pid", "utf8")).toBe(value);
+        expect(readFileSync("sda/.sda.pid", "utf8")).toBe(value);
       }
     },
     10000,
@@ -98,9 +155,8 @@ for (const runtime of ["node", "bun"] as const) {
       mkdirSync("sda/helpers", { recursive: true });
       mkdirSync("sda/data");
       mkdirSync("sda/output");
-      ensureSdaRunner();
-      symlinkSync(modules, "node_modules", "dir");
-      writeFileSync(".gitignore", "node_modules/\nsda/output/\n");
+      symlinkSync(installedModules, "node_modules", "dir");
+      writeFileSync(".gitignore", "node_modules/\nsda/output/\nsda/.sda.pid\n");
       writeFileSync(
         "package.json",
         JSON.stringify({ type: "module", scripts: getProjectTasks(runtime) }),
@@ -170,7 +226,10 @@ for (const runtime of ["node", "bun"] as const) {
         writeFileSync(helper, "export const value:number=1\n");
         await waitForRun();
         expect(readFileSync(helper, "utf8")).toBe("export const value: number = 1;\n");
+        expect(existsSync("scripts")).toBe(false);
+        expect(existsSync(".sda.pid")).toBe(false);
         output = "";
+        writeFileSync("sda/.sda.pid", readFileSync("sda/.sda.pid", "utf8"));
         await expectNoRun();
         writeFileSync(helper, 'export const value: number = "invalid again";\n');
         await waitForError();
@@ -244,7 +303,6 @@ test.skipIf(process.platform === "win32").each(["fixing", "analysis"])(
   "runner discards stale check results and cleans up during %s",
   async (phase) => {
     mkdirSync("sda");
-    ensureSdaRunner();
     writeFileSync(".env", "");
     writeFileSync("package.json", JSON.stringify({ scripts: { fix: "node fix.cjs" } }));
     // Control fix completion to make an edit during checking deterministic.
@@ -265,18 +323,18 @@ writeFileSync("analysis.pid", String(process.pid));
 setInterval(() => {}, 1000);
 `,
     );
-    const child = spawn(process.execPath, ["scripts/sda.mjs", "sda/main.ts", ".env"], {
+    const child = spawn(process.execPath, [runner, "sda/main.ts", ".env"], {
       stdio: "ignore",
     });
     const closed = once(child, "close");
     try {
       await vi.waitFor(() => expect(readFileSync("checks.txt", "utf8")).toBe("check\n"));
-      expect(readFileSync(".sda.pid", "utf8")).toBe(`${child.pid}\n`);
+      expect(readFileSync("sda/.sda.pid", "utf8")).toBe(`${child.pid}\n`);
       if (phase === "fixing") {
         const fixerPid = Number(readFileSync("fixer.pid", "utf8"));
         child.kill("SIGINT");
         await closed;
-        expect(existsSync(".sda.pid")).toBe(false);
+        expect(existsSync("sda/.sda.pid")).toBe(false);
         expect(() => process.kill(fixerPid, 0)).toThrow();
         return;
       }
@@ -288,7 +346,7 @@ setInterval(() => {}, 1000);
       const analysisPid = Number(readFileSync("analysis.pid", "utf8"));
       child.kill("SIGINT");
       await closed;
-      expect(existsSync(".sda.pid")).toBe(false);
+      expect(existsSync("sda/.sda.pid")).toBe(false);
       expect(() => process.kill(analysisPid, 0)).toThrow();
     } finally {
       child.kill("SIGTERM");
@@ -302,7 +360,6 @@ test.skipIf(process.platform === "win32").each(["shutdown", "restart"])(
   "runner terminates descendants that ignore SIGTERM before %s completes",
   async (action) => {
     mkdirSync("sda");
-    ensureSdaRunner();
     writeFileSync(".env", "");
     writeFileSync("package.json", JSON.stringify({ scripts: { fix: "node fix.cjs" } }));
     writeFileSync("fix.cjs", "");
@@ -327,7 +384,7 @@ spawn(process.execPath, ["worker.cjs"], { stdio: "ignore" });
 setInterval(() => {}, 1000);
 `,
     );
-    const child = spawn(process.execPath, ["scripts/sda.mjs", "sda/main.ts", ".env"], {
+    const child = spawn(process.execPath, [runner, "sda/main.ts", ".env"], {
       stdio: "ignore",
     });
     const closed = once(child, "close");

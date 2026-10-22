@@ -59,6 +59,7 @@ formatting, linting, type checking, and Vitest tests. Use `npm run sda`,
 `npm run all-tests`, and `npm run fix` (or `bun run` for Bun projects).
 The `sda` command watches `sda/` and `.env`, excluding `sda/output/`.
 On changes, it runs `fix`, then runs `sda/main.ts` if checks pass.
+The watcher comes from the installed setup-data-project package; no runner script is added to your project.
 The generated `all-tests` command also succeeds when no tests exist.
 New development tools are installed at their latest versions; existing dependencies
 are preserved.

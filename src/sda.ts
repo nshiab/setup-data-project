@@ -1,20 +1,16 @@
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
-
-export function ensureSdaRunner() {
-  mkdirSync("scripts", { recursive: true });
-  if (!existsSync("scripts/sda.mjs")) writeFileSync("scripts/sda.mjs", runner);
-}
-
-const runner = String.raw`import {
+#!/usr/bin/env node
+import {
   existsSync,
   lstatSync,
+  mkdirSync,
+  type FSWatcher,
   readdirSync,
   readFileSync,
   unlinkSync,
   watch,
   writeFileSync,
 } from "node:fs";
-import { spawn, spawnSync } from "node:child_process";
+import { spawn, spawnSync, type ChildProcess } from "node:child_process";
 import { dirname, join, resolve, sep } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import { parseArgs } from "node:util";
@@ -27,34 +23,36 @@ const {
   options: { ignore: { type: "string", multiple: true, default: [] } },
 });
 if (!entry) {
-  console.error("Usage: scripts/sda.mjs <entry-file> [watch-paths...] [--ignore path]");
+  console.error("Usage: sda-watch <entry-file> [watch-paths...] [--ignore path]");
   process.exit(1);
 }
+const pidFile = resolve("sda/.sda.pid");
 const selected = [entry, ...paths].map((path) => resolve(path));
-const ignored = values.ignore.map((path) => resolve(path));
-const within = (path, root) => path === root || path.startsWith(root + sep);
-const excluded = (path) => ignored.some((root) => within(path, root));
+const ignored = [pidFile, ...values.ignore.map((path) => resolve(path))];
+const within = (path: string, root: string) => path === root || path.startsWith(root + sep);
+const excluded = (path: string) => ignored.some((root) => within(path, root));
 const bun = Boolean(process.versions.bun);
 const runCommand = bun ? "bun run sda" : "npm run sda";
 const windows = process.platform === "win32";
-let fixer;
-let analysis;
-let timer;
+type Job = { child: ChildProcess; done: Promise<number | null> };
+let fixer: Job | undefined;
+let analysis: Job | undefined;
+let timer: ReturnType<typeof setTimeout> | undefined;
 let checking = false;
 let closing = false;
 let needsCheck = true;
-let contents = new Map();
-const watchers = new Map();
+let contents = new Map<string, string | null>();
+const watchers = new Map<string, { watcher: FSWatcher; recursive: boolean }>();
 
-function launch(args, command = process.execPath) {
+function launch(args: string[], command = process.execPath) {
   const child = spawn(command, args, {
     stdio: "inherit",
     detached: !windows,
     shell: windows && command === "npm.cmd",
   });
-  const done = new Promise((resolve) => {
+  const done = new Promise<number | null>((resolve) => {
     child.once("error", (error) => {
-      console.error(error.message);
+      console.error(errorMessage(error));
       resolve(1);
     });
     child.once("close", resolve);
@@ -63,8 +61,8 @@ function launch(args, command = process.execPath) {
 }
 
 function snapshot() {
-  const files = new Map();
-  function collect(path) {
+  const files = new Map<string, string | null>();
+  function collect(path: string) {
     if (excluded(path) || files.has(path)) return;
     try {
       const stat = lstatSync(path, { bigint: true });
@@ -76,7 +74,7 @@ function snapshot() {
         files.set(path, [stat.dev, stat.ino, stat.size, stat.mtimeNs, stat.ctimeNs].join(":"));
       }
     } catch (error) {
-      if (error.code !== "ENOENT" && error.code !== "ENOTDIR") throw error;
+      if (errorCode(error) !== "ENOENT" && errorCode(error) !== "ENOTDIR") throw error;
       files.set(path, null);
     }
   }
@@ -84,13 +82,13 @@ function snapshot() {
   return files;
 }
 
-function equal(left, right) {
+function equal(left: Map<string, string | null>, right: Map<string, string | null>) {
   return left.size === right.size && [...left].every(([path, value]) => right.get(path) === value);
 }
 
 function refreshWatchers() {
-  const directories = new Map();
-  const add = (directory, recursive) => {
+  const directories = new Map<string, boolean>();
+  const add = (directory: string, recursive: boolean) => {
     directories.set(directory, recursive || directories.get(directory) || false);
   };
   for (const path of selected) {
@@ -124,8 +122,9 @@ function refreshWatchers() {
   }
 }
 
-async function stop(job) {
+async function stop(job: Job | undefined) {
   if (!job?.child.pid) return;
+  const pid = job.child.pid;
   if (windows) {
     if (job.child.exitCode === null && job.child.signalCode === null) {
       spawnSync("taskkill", ["/pid", String(job.child.pid), "/T", "/F"], { stdio: "ignore" });
@@ -133,12 +132,12 @@ async function stop(job) {
     await job.done;
     return;
   }
-  const signal = (name) => {
+  const signal = (name: NodeJS.Signals | 0) => {
     try {
-      process.kill(-job.child.pid, name);
+      process.kill(-pid, name);
       return true;
     } catch (error) {
-      if (error.code !== "ESRCH") throw error;
+      if (errorCode(error) !== "ESRCH") throw error;
       return false;
     }
   };
@@ -192,7 +191,7 @@ function schedule() {
   timer = setTimeout(() => check().catch(fail), 0);
 }
 
-async function shutdown(code) {
+async function shutdown(code: number) {
   if (closing) return;
   closing = true;
   clearTimeout(timer);
@@ -201,8 +200,16 @@ async function shutdown(code) {
   process.exit(code);
 }
 
-function fail(error) {
-  console.error(error.message);
+function errorCode(error: unknown) {
+  return error instanceof Error && "code" in error ? error.code : undefined;
+}
+
+function errorMessage(error: unknown) {
+  return error instanceof Error ? error.message : String(error);
+}
+
+function fail(error: unknown) {
+  console.error(errorMessage(error));
   void shutdown(1);
 }
 
@@ -210,28 +217,28 @@ process.on("SIGINT", () => void shutdown(0));
 process.on("SIGTERM", () => void shutdown(0));
 
 try {
-  const pidFile = resolve(".sda.pid");
+  mkdirSync(dirname(pidFile), { recursive: true });
   const pid = String(process.pid) + "\n";
   try {
     writeFileSync(pidFile, pid, { flag: "wx" });
   } catch (error) {
-    if (error.code !== "EEXIST") throw error;
+    if (errorCode(error) !== "EEXIST") throw error;
     const previous = readFileSync(pidFile, "utf8");
     const previousPid = Number(previous.trim());
     if (!Number.isInteger(previousPid) || previousPid <= 0 || previousPid > 2147483647)
       throw new Error(
-        ".sda.pid does not contain a valid process ID. Check that no SDA watcher is running, delete .sda.pid, then try again.",
+        "sda/.sda.pid does not contain a valid process ID. Check that no SDA watcher is running, delete sda/.sda.pid, then try again.",
       );
     let stopped = false;
     try {
       process.kill(previousPid, 0);
     } catch (error) {
-      if (error.code !== "ESRCH")
+      if (errorCode(error) !== "ESRCH")
         throw new Error(
-          "Could not check whether the SDA watcher recorded in .sda.pid is still running (PID " +
+          "Could not check whether the SDA watcher recorded in sda/.sda.pid is still running (PID " +
             previousPid +
             "). Check your permissions to inspect that process, then try again. " +
-            error.message,
+            errorMessage(error),
         );
       stopped = true;
     }
@@ -240,11 +247,11 @@ try {
         runCommand +
           " appears to be already running and watching this project's files (PID " +
           previousPid +
-          " from .sda.pid). Stop the existing watcher with Ctrl+C in its terminal, then try again.",
+          " from sda/.sda.pid). Stop the existing watcher with Ctrl+C in its terminal, then try again.",
       );
     if (readFileSync(pidFile, "utf8") !== previous)
       throw new Error(
-        ".sda.pid changed during startup. Another SDA watcher may be starting. Wait for it to finish starting, then try again.",
+        "sda/.sda.pid changed during startup. Another SDA watcher may be starting. Wait for it to finish starting, then try again.",
       );
     unlinkSync(pidFile);
     writeFileSync(pidFile, pid, { flag: "wx" });
@@ -253,12 +260,11 @@ try {
     try {
       if (readFileSync(pidFile, "utf8") === pid) unlinkSync(pidFile);
     } catch (error) {
-      if (error.code !== "ENOENT") console.error(error.message);
+      if (errorCode(error) !== "ENOENT") console.error(errorMessage(error));
     }
   });
   refreshWatchers();
   void check().catch(fail);
 } catch (error) {
-  fail(new Error("Cannot start " + runCommand + ": " + error.message));
+  fail(new Error("Cannot start " + runCommand + ": " + errorMessage(error)));
 }
-`;

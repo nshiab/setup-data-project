@@ -8,7 +8,6 @@ import { PACKAGE_OPTIONS } from "./helpers/packageOptions.ts";
 import { ensureGitignore } from "./helpers/ensureGitignore.ts";
 import { ensureReadme } from "./helpers/ensureReadme.ts";
 import { ensureTooling } from "./helpers/ensureTooling.ts";
-import { ensureSdaRunner } from "./helpers/ensureSdaRunner.ts";
 import { ensureVscode } from "./helpers/ensureVscode.ts";
 import { runPackageManager, installPackages } from "./helpers/installPackages.ts";
 import { getProjectTasks } from "./helpers/getProjectTasks.ts";
@@ -136,7 +135,6 @@ async function main() {
     });
 
     createFolderStructure(finalInstalledPackages);
-    ensureSdaRunner();
     ensureGitignore();
     ensureEnvFile();
     ensureVscode();
