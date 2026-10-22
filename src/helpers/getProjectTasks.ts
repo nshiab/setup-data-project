@@ -5,8 +5,8 @@ export function getProjectTasks(runtime: Runtime = getRuntime()) {
   return {
     sda:
       runtime === "bun"
-        ? "bun run --watch sda/main.ts"
-        : "node --env-file-if-exists=.env --watch sda/main.ts",
+        ? "bun --no-env-file scripts/sda.mjs sda/main.ts sda .env --ignore sda/output"
+        : "node scripts/sda.mjs sda/main.ts sda .env --ignore sda/output",
     "all-tests": `${vp} check && ${vp} test --passWithNoTests`,
     clean: "rm -rf .sda-cache .journalism-cache .tmp",
     fix: `${vp} check --fix`,

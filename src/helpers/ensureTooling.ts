@@ -2,7 +2,7 @@ import { existsSync, writeFileSync } from "node:fs";
 import { ProjectManifest } from "./projectManifest.ts";
 import { getRuntime } from "./getRuntime.ts";
 import { installPackages } from "./installPackages.ts";
-const tools = ["vite-plus", "typescript", "@types/node"];
+const tools = ["vite-plus", "@types/node"];
 export async function ensureTooling(manifest: ProjectManifest): Promise<void> {
   const runtime = getRuntime();
   const runtimeTools = runtime === "bun" ? [...tools, "@types/bun"] : tools;

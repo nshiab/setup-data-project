@@ -14,7 +14,7 @@ export function ensureReadme(runtime: Runtime, installedPackages: string[] = [])
       `# Data project\n\nCreated with [setup-data-project](https://github.com/nshiab/setup-data-project).\n\n${section}`,
     content: `${libraries ? `Installed libraries: ${libraries}.\n\n` : ""}Use sda/main.ts to process source data from sda/data/ and write results to sda/output/. Both data folders are ignored by Git. Put reusable helpers in sda/helpers/ and tests in sda/tests/. Import test utilities from \`vite-plus/test\`.
 
-- \`${run} sda\`: run the analysis and watch for changes.
+- \`${run} sda\`: watch sda/ and .env, excluding sda/output/, then run \`${run} fix\` before each analysis run.
 - \`${run} all-tests\`: check types, lint, formatting, and tests; succeeds when no tests exist.
 - \`${run} fix\`: apply formatting and automatic fixes.
 - \`${run} docs\`: refresh documentation for the installed library versions.

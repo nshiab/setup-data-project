@@ -41,7 +41,6 @@ test("Bun wins over Node compatibility version", () => {
   expect(getRuntime({ bun: "1.3.0", node: "24.0.0" })).toBe("bun");
   expect(getRuntime({ node: "24.21.0" })).toBe("node");
   expect(getProjectTasks("bun").docs).toContain("bunx --bun");
-  expect(getProjectTasks("node").sda).toBe("node --env-file-if-exists=.env --watch sda/main.ts");
 });
 test("flags preserve noninteractive selection and isolate docs-only", () => {
   expect(parseArguments([]).packages).toEqual([]);

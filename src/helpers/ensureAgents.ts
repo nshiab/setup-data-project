@@ -8,8 +8,7 @@ export function ensureAgents(
   installedPackages: string[] = Object.keys(docsMapping),
 ) {
   const run = runtime === "bun" ? "bun run" : "npm run";
-  const command =
-    runtime === "bun" ? "bun run sda/main.ts" : "node --env-file-if-exists=.env sda/main.ts";
+  const command = runtime === "bun" ? "bun run sda/main.ts" : "node --env-file=.env sda/main.ts";
   const links = getInstalledPackageConfigs(installedPackages).map((pkg) => {
     if (pkg.value === "@observablehq/plot")
       return `- Observable Plot charts and maps: start at \`docs/observable-plot/llms.txt\`, then read the relevant pages for use with writeChart and writeMap.`;
