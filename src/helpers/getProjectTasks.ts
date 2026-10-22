@@ -5,6 +5,10 @@ export function getProjectTasks(runtime: Runtime = getRuntime()) {
   return {
     sda:
       runtime === "bun"
+        ? "bun run fix && bun run sda/main.ts"
+        : "npm run fix && node --env-file=.env sda/main.ts",
+    "sda:watch":
+      runtime === "bun"
         ? "bun run --bun --no-env-file sda-watch sda/main.ts sda .env --ignore sda/output"
         : "sda-watch sda/main.ts sda .env --ignore sda/output",
     "all-tests": `${vp} check && ${vp} test --passWithNoTests`,

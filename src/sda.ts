@@ -32,7 +32,7 @@ const ignored = [pidFile, ...values.ignore.map((path) => resolve(path))];
 const within = (path: string, root: string) => path === root || path.startsWith(root + sep);
 const excluded = (path: string) => ignored.some((root) => within(path, root));
 const bun = Boolean(process.versions.bun);
-const runCommand = bun ? "bun run sda" : "npm run sda";
+const runCommand = bun ? "bun run sda:watch" : "npm run sda:watch";
 const windows = process.platform === "win32";
 type Job = { child: ChildProcess; done: Promise<number | null> };
 let fixer: Job | undefined;

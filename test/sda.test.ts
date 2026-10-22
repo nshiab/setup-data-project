@@ -88,6 +88,61 @@ test("the published package provides an executable watcher", () => {
 });
 
 for (const runtime of ["node", "bun"] as const) {
+  test.skipIf(windows || (runtime === "bun" && !hasBun))(
+    `${runtime}: sda fixes before one execution, reloads the environment, and returns failures`,
+    () => {
+      mkdirSync("sda");
+      writeFileSync(".env", "SDA_ONCE_TEST=first\n");
+      writeFileSync(
+        "package.json",
+        JSON.stringify({
+          type: "module",
+          scripts: { ...getProjectTasks(runtime), fix: "node fix.cjs" },
+        }),
+      );
+      writeFileSync(
+        "fix.cjs",
+        `const fs = require("node:fs");
+fs.appendFileSync("runs.txt", "fix\\n");
+if (fs.existsSync("fail-fix")) process.exit(2);
+`,
+      );
+      writeFileSync(
+        "sda/main.ts",
+        `import { appendFileSync, existsSync } from "node:fs";
+if (existsSync("sda/.sda.pid")) throw new Error("Single execution created a watcher PID");
+appendFileSync("runs.txt", (process.versions.bun ? "bun" : "node") + ":" + process.env.SDA_ONCE_TEST + "\\n");
+if (existsSync("fail-analysis")) process.exit(3);
+`,
+      );
+      const run = () => {
+        const result = spawnSync(runtime === "bun" ? "bun" : npm, ["run", "sda"], {
+          encoding: "utf8",
+          timeout: 5000,
+        });
+        expect(result.error, result.stdout + result.stderr).toBeUndefined();
+        expect(existsSync("sda/.sda.pid")).toBe(false);
+        return result;
+      };
+      expect(run().status).toBe(0);
+      let expected = `fix\n${runtime}:first\n`;
+      expect(readFileSync("runs.txt", "utf8")).toBe(expected);
+      writeFileSync(".env", "SDA_ONCE_TEST=second\n");
+      expect(run().status).toBe(0);
+      expected += `fix\n${runtime}:second\n`;
+      expect(readFileSync("runs.txt", "utf8")).toBe(expected);
+      writeFileSync("fail-fix", "");
+      expect(run().status).toBe(2);
+      expected += "fix\n";
+      expect(readFileSync("runs.txt", "utf8")).toBe(expected);
+      rmSync("fail-fix");
+      writeFileSync("fail-analysis", "");
+      expect(run().status).toBe(3);
+      expect(readFileSync("runs.txt", "utf8")).toBe(expected + `fix\n${runtime}:second\n`);
+    },
+    15000,
+  );
+
   test.skipIf(process.platform === "win32" || (runtime === "bun" && !hasBun))(
     `${runtime}: PID file identifies the runner, prevents duplicates, and is removed on shutdown`,
     async () => {
@@ -105,7 +160,7 @@ for (const runtime of ["node", "bun"] as const) {
         const duplicate = spawnSync(command, args, { encoding: "utf8" });
         expect(duplicate.status).toBe(1);
         expect(duplicate.stderr).toContain(
-          `${runtime === "bun" ? "bun" : "npm"} run sda appears to be already running and watching this project's files`,
+          `${runtime === "bun" ? "bun" : "npm"} run sda:watch appears to be already running and watching this project's files`,
         );
         expect(duplicate.stderr).toContain(`PID ${child.pid} from sda/.sda.pid`);
         expect(duplicate.stderr).toContain("Stop the existing watcher with Ctrl+C");
@@ -191,7 +246,7 @@ for (const runtime of ["node", "bun"] as const) {
       writeFileSync(helper, 'export const value: number = "invalid";\n');
       const child = spawn(
         runtime === "bun" ? "bun" : "npm",
-        ["run", "sda", "--", "shared", "extra.txt"],
+        ["run", "sda:watch", "--", "shared", "extra.txt"],
         {
           detached: true,
           stdio: ["ignore", "pipe", "pipe"],
