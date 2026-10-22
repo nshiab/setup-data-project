@@ -60,7 +60,7 @@ formatting, linting, type checking, and Vitest tests. Use `npm run sda`,
 The `sda` command runs `fix`, then runs `sda/main.ts` once if checks pass.
 Use `sda:watch` to repeat on changes to `sda/` and `.env`, excluding `sda/output/`.
 The watcher comes from the installed setup-data-project package; no runner script is added to your project.
-Only one SDA command runs per project at a time; stale locks recover automatically.
+SDA blocks simultaneous runs. Recovery after a forced termination is best effort.
 The generated `all-tests` command also succeeds when no tests exist.
 New development tools are installed at their latest versions; existing dependencies
 are preserved.
