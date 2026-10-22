@@ -8,8 +8,6 @@ export function ensureAgents(
   installedPackages: string[] = Object.keys(docsMapping),
 ) {
   const run = runtime === "bun" ? "bun run" : "npm run";
-  const command =
-    runtime === "bun" ? "bun run sda/main.ts" : "node --env-file-if-exists=.env sda/main.ts";
   const links = getInstalledPackageConfigs(installedPackages).map((pkg) => {
     if (pkg.value === "@observablehq/plot")
       return `- Observable Plot charts and maps: start at \`docs/observable-plot/llms.txt\`, then read the relevant pages for use with writeChart and writeMap.`;
@@ -23,7 +21,9 @@ export function ensureAgents(
 
 Use sda/main.ts as the entry point and sda/helpers/ for reusable helpers. Put tests in sda/tests/, source data in sda/data/, and results in sda/output/. Import test utilities from \`vite-plus/test\`.
 
-For a single execution, run \`${command}\`. The sda script watches for changes. Before handing off code changes, run \`${run} all-tests\` and resolve failures.
+Run \`${run} sda\` to fix and check code, then execute the analysis once. Use \`${run} sda:watch\` to watch for changes. Before handing off code changes, run \`${run} all-tests\` and resolve failures.
+
+Before editing, check sda/.sda.pid. Verify that its PID belongs to this project's sda-run process from @nshiab/setup-data-project (dist/sda.mjs) using the process command and working directory. For a single run, wait for it to finish. For a watcher (--watch), stop it with SIGTERM and wait for it to exit; tell the user you stopped it and they can restart with \`${run} sda:watch\` afterward. Stale locks recover automatically on the next run. Leave active runs alone for read-only work.
 
 The clean script removes cached results and temporary files. Run it only when those cached results can be discarded.
 

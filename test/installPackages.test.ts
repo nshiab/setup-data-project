@@ -2,6 +2,9 @@ import { expect, test, vi } from "vite-plus/test";
 import { chmodSync, readFileSync, writeFileSync } from "node:fs";
 import { installPackages } from "../src/helpers/installPackages.ts";
 import { getRuntime } from "../src/helpers/getRuntime.ts";
+import { ensureTooling } from "../src/helpers/ensureTooling.ts";
+import { ProjectManifest } from "../src/helpers/projectManifest.ts";
+import metadata from "../package.json" with { type: "json" };
 import { temporaryProject } from "./helpers/utils.ts";
 vi.mock("../src/helpers/getRuntime.ts", () => ({ getRuntime: vi.fn(() => "node") }));
 temporaryProject();
@@ -37,6 +40,17 @@ test.skipIf(process.platform === "win32")(
             ? ["add", "--dev", "vite-plus@latest"]
             : ["install", "--save-dev", "vite-plus@latest"],
         );
+        writeFileSync("package.json", '{"private":true}');
+        await ensureTooling(ProjectManifest.open());
+        const tooling: unknown = JSON.parse(readFileSync("arguments.json", "utf8"));
+        expect(tooling).toEqual([
+          bun ? "add" : "install",
+          bun ? "--dev" : "--save-dev",
+          "vite-plus@latest",
+          "@types/node@latest",
+          ...(bun ? ["@types/bun@latest"] : []),
+          `${metadata.name}@${metadata.version}`,
+        ]);
       } finally {
         vi.unstubAllEnvs();
       }

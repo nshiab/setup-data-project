@@ -5,6 +5,7 @@
   "license": "MIT",
   "repository": "https://github.com/nshiab/setup-data-project",
   "bin": {
+    "sda-run": "./dist/sda.mjs",
     "setup-data-project": "./dist/main.mjs"
   },
   "files": [
@@ -32,7 +33,6 @@
   },
   "devDependencies": {
     "@types/node": "24.19.2",
-    "typescript": "6.0.3",
     "vite-plus": "1.2.0"
   },
   "engines": {

@@ -14,5 +14,5 @@ export default defineConfig({
   },
   fmt: { ignorePatterns: ["docs-cache/**", "research/**", "dist/**"] },
   test: { pool: "forks", fileParallelism: false },
-  pack: { entry: ["src/main.ts"], sourcemap: true },
+  pack: { entry: ["src/main.ts", "src/sda.ts"], sourcemap: true },
 });
