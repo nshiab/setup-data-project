@@ -57,12 +57,28 @@ for (const runtime of ["node", "bun"] as const) {
       }
       expect(existsSync(".sda.pid")).toBe(false);
 
-      // A crash can leave a stale file; preserve it for verification instead of guessing ownership.
-      writeFileSync(".sda.pid", "999999999\n");
-      const stale = spawnSync(command, args, { encoding: "utf8" });
-      expect(stale.status).toBe(1);
-      expect(stale.stderr).toContain("remove the file if stale");
-      expect(readFileSync(".sda.pid", "utf8")).toBe("999999999\n");
+      // Recreate the file left by a crash using a process known to have exited.
+      writeFileSync(".sda.pid", `${child.pid}\n`);
+      const restarted = spawn(command, args, { stdio: "ignore" });
+      const restartedClosed = once(restarted, "close");
+      try {
+        await vi.waitFor(() => expect(readFileSync(".sda.pid", "utf8")).toBe(`${restarted.pid}\n`));
+        expect(spawnSync(command, args).status).toBe(1);
+        expect(readFileSync(".sda.pid", "utf8")).toBe(`${restarted.pid}\n`);
+      } finally {
+        restarted.kill("SIGTERM");
+        await restartedClosed;
+      }
+      expect(existsSync(".sda.pid")).toBe(false);
+
+      // Live unrelated processes and malformed files must not be mistaken for dead runners.
+      for (const value of [`${process.pid}\n`, "", "0", "-1", "invalid", "2147483648"]) {
+        writeFileSync(".sda.pid", value);
+        const blocked = spawnSync(command, args, { encoding: "utf8" });
+        expect(blocked.status).toBe(1);
+        expect(blocked.stderr).toContain(".sda.pid");
+        expect(readFileSync(".sda.pid", "utf8")).toBe(value);
+      }
     },
     10000,
   );

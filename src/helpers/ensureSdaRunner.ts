@@ -214,9 +214,23 @@ try {
   try {
     writeFileSync(pidFile, pid, { flag: "wx" });
   } catch (error) {
-    if (error.code === "EEXIST")
-      throw new Error(".sda.pid already exists. Check its process and remove the file if stale.");
-    throw error;
+    if (error.code !== "EEXIST") throw error;
+    const previous = readFileSync(pidFile, "utf8");
+    const previousPid = Number(previous.trim());
+    if (!Number.isInteger(previousPid) || previousPid <= 0 || previousPid > 2147483647)
+      throw new Error(".sda.pid contains an invalid PID. Check the file before removing it.");
+    let stopped = false;
+    try {
+      process.kill(previousPid, 0);
+    } catch (error) {
+      if (error.code !== "ESRCH") throw error;
+      stopped = true;
+    }
+    if (!stopped) throw new Error(".sda.pid already exists and its process is still running.");
+    if (readFileSync(pidFile, "utf8") !== previous)
+      throw new Error(".sda.pid changed during startup. Try again.");
+    unlinkSync(pidFile);
+    writeFileSync(pidFile, pid, { flag: "wx" });
   }
   process.once("exit", () => {
     try {
