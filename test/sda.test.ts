@@ -69,7 +69,7 @@ afterAll(() => {
 
 test("the published package provides an executable watcher", () => {
   expect(readFileSync(runner, "utf8")).toMatch(/^#!\/usr\/bin\/env node/);
-  expect(existsSync(join(installedModules, ".bin/sda-watch"))).toBe(true);
+  expect(existsSync(join(installedModules, ".bin/sda-run"))).toBe(true);
   if (process.platform !== "win32") expect(statSync(runner).mode & 0o111).not.toBe(0);
   symlinkSync(installedModules, "node_modules", windows ? "junction" : "dir");
   // Adding a second binary must preserve package-name resolution for the setup command.
@@ -88,10 +88,63 @@ test("the published package provides an executable watcher", () => {
 });
 
 for (const runtime of ["node", "bun"] as const) {
+  test.skipIf(windows || (runtime === "bun" && !hasBun)).each([
+    ["once", "fixing"],
+    ["once", "analysis"],
+    ["watch", "fixing"],
+    ["watch", "analysis"],
+  ])(`${runtime}: %s mode excludes both commands during %s`, async (mode, phase) => {
+    mkdirSync("sda");
+    writeFileSync(".env", "");
+    writeFileSync("package.json", JSON.stringify({ scripts: { fix: "node fix.cjs" } }));
+    writeFileSync(
+      "fix.cjs",
+      `const fs = require("node:fs");
+fs.appendFileSync("fix-runs.txt", "fix\\n");
+${phase === "fixing" ? 'fs.writeFileSync("ready", ""); setInterval(() => {}, 1000);' : ""}
+`,
+    );
+    writeFileSync(
+      "sda/main.ts",
+      'import { writeFileSync } from "node:fs";\nwriteFileSync("ready", "");\nsetInterval(() => {}, 1000);\n',
+    );
+    const command = runtime === "bun" ? "bun" : process.execPath;
+    const child = spawn(
+      command,
+      [runner, ...(mode === "watch" ? ["--watch"] : []), "sda/main.ts"],
+      {
+        stdio: "ignore",
+      },
+    );
+    const closed = once(child, "close");
+    try {
+      await vi.waitFor(() => expect(existsSync("ready")).toBe(true));
+      const competingRuntime = runtime === "node" && hasBun ? "bun" : process.execPath;
+      for (const flags of [[], ["--watch"]]) {
+        const competing = spawnSync(competingRuntime, [runner, ...flags, "sda/main.ts"], {
+          encoding: "utf8",
+          timeout: 5000,
+        });
+        expect(competing.status, competing.stderr).toBe(1);
+        expect(competing.stderr).toContain(
+          `${runtime === "bun" ? "bun" : "npm"} run sda${mode === "watch" ? ":watch" : ""} is already running`,
+        );
+        expect(competing.stderr).toContain(`PID ${child.pid}`);
+        expect(readFileSync("sda/.sda.pid", "utf8")).toBe(`${child.pid}\n`);
+      }
+      expect(readFileSync("fix-runs.txt", "utf8")).toBe("fix\n");
+    } finally {
+      child.kill("SIGTERM");
+      await closed;
+    }
+    expect(existsSync("sda/.sda.pid")).toBe(false);
+  });
+
   test.skipIf(windows || (runtime === "bun" && !hasBun))(
     `${runtime}: sda fixes before one execution, reloads the environment, and returns failures`,
     () => {
       mkdirSync("sda");
+      symlinkSync(installedModules, "node_modules", "dir");
       writeFileSync(".env", "SDA_ONCE_TEST=first\n");
       writeFileSync(
         "package.json",
@@ -110,7 +163,7 @@ if (fs.existsSync("fail-fix")) process.exit(2);
       writeFileSync(
         "sda/main.ts",
         `import { appendFileSync, existsSync } from "node:fs";
-if (existsSync("sda/.sda.pid")) throw new Error("Single execution created a watcher PID");
+if (!existsSync("sda/.sda.pid")) throw new Error("Single execution must hold the lock");
 appendFileSync("runs.txt", (process.versions.bun ? "bun" : "node") + ":" + process.env.SDA_ONCE_TEST + "\\n");
 if (existsSync("fail-analysis")) process.exit(3);
 `,
@@ -152,7 +205,7 @@ if (existsSync("fail-analysis")) process.exit(3);
       writeFileSync("fix.cjs", "");
       writeFileSync("package.json", JSON.stringify({ scripts: { fix: "node fix.cjs" } }));
       const command = runtime === "bun" ? "bun" : process.execPath;
-      const args = [runner, "sda/main.ts"];
+      const args = [runner, "--watch", "sda/main.ts"];
       const child = spawn(command, args, { stdio: "ignore" });
       const closed = once(child, "close");
       try {
@@ -160,10 +213,10 @@ if (existsSync("fail-analysis")) process.exit(3);
         const duplicate = spawnSync(command, args, { encoding: "utf8" });
         expect(duplicate.status).toBe(1);
         expect(duplicate.stderr).toContain(
-          `${runtime === "bun" ? "bun" : "npm"} run sda:watch appears to be already running and watching this project's files`,
+          `${runtime === "bun" ? "bun" : "npm"} run sda:watch is already running and watching this project's files`,
         );
-        expect(duplicate.stderr).toContain(`PID ${child.pid} from sda/.sda.pid`);
-        expect(duplicate.stderr).toContain("Stop the existing watcher with Ctrl+C");
+        expect(duplicate.stderr).toContain(`PID ${child.pid}`);
+        expect(duplicate.stderr).toContain("stop it with Ctrl+C");
         expect(readFileSync("sda/.sda.pid", "utf8")).toBe(`${child.pid}\n`);
       } finally {
         child.kill("SIGTERM");
@@ -187,18 +240,15 @@ if (existsSync("fail-analysis")) process.exit(3);
       }
       expect(existsSync("sda/.sda.pid")).toBe(false);
 
-      // Live unrelated processes and malformed files must not be mistaken for dead runners.
-      for (const value of [`${process.pid}\n`, "", "0", "-1", "invalid", "2147483648"]) {
+      // The PID is informational; abandoned or interrupted writes recover under the lock.
+      for (const value of ["", "invalid"]) {
         writeFileSync("sda/.sda.pid", value);
-        const blocked = spawnSync(command, args, { encoding: "utf8" });
-        expect(blocked.status).toBe(1);
-        expect(blocked.stderr).toContain("sda/.sda.pid");
-        if (value !== `${process.pid}\n`) {
-          expect(blocked.stderr).toContain("does not contain a valid process ID");
-          expect(blocked.stderr).toContain("Check that no SDA watcher is running");
-          expect(blocked.stderr).toContain("delete sda/.sda.pid, then try again");
-        }
-        expect(readFileSync("sda/.sda.pid", "utf8")).toBe(value);
+        const recovered = spawnSync(command, [runner, "sda/main.ts"], {
+          encoding: "utf8",
+          timeout: 5000,
+        });
+        expect(recovered.status, recovered.stderr).toBe(0);
+        expect(existsSync("sda/.sda.pid")).toBe(false);
       }
     },
     10000,
@@ -211,7 +261,7 @@ if (existsSync("fail-analysis")) process.exit(3);
       mkdirSync("sda/data");
       mkdirSync("sda/output");
       symlinkSync(installedModules, "node_modules", "dir");
-      writeFileSync(".gitignore", "node_modules/\nsda/output/\nsda/.sda.pid\n");
+      writeFileSync(".gitignore", "node_modules/\nsda/output/\nsda/.sda.pid\nsda/.sda-lock/\n");
       writeFileSync(
         "package.json",
         JSON.stringify({ type: "module", scripts: getProjectTasks(runtime) }),
@@ -378,7 +428,7 @@ writeFileSync("analysis.pid", String(process.pid));
 setInterval(() => {}, 1000);
 `,
     );
-    const child = spawn(process.execPath, [runner, "sda/main.ts", ".env"], {
+    const child = spawn(process.execPath, [runner, "--watch", "sda/main.ts", ".env"], {
       stdio: "ignore",
     });
     const closed = once(child, "close");
@@ -439,7 +489,7 @@ spawn(process.execPath, ["worker.cjs"], { stdio: "ignore" });
 setInterval(() => {}, 1000);
 `,
     );
-    const child = spawn(process.execPath, [runner, "sda/main.ts", ".env"], {
+    const child = spawn(process.execPath, [runner, "--watch", "sda/main.ts", ".env"], {
       stdio: "ignore",
     });
     const closed = once(child, "close");

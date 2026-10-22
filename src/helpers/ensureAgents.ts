@@ -23,7 +23,7 @@ Use sda/main.ts as the entry point and sda/helpers/ for reusable helpers. Put te
 
 Run \`${run} sda\` to fix and check code, then execute the analysis once. Use \`${run} sda:watch\` to watch for changes. Before handing off code changes, run \`${run} all-tests\` and resolve failures.
 
-Before editing, check sda/.sda.pid. If present, verify that its PID belongs to this project's sda-watch runner from @nshiab/setup-data-project (dist/sda.mjs) using the process command and working directory. Stop that runner with SIGTERM and wait for it to exit before editing. Tell the user you stopped the watcher and that they can restart it with \`${run} sda:watch\` after the work is done. Remove a stale PID file only after verifying it no longer identifies this project's runner. Leave the watcher running for read-only work.
+Before editing, check sda/.sda.pid. Verify that its PID belongs to this project's sda-run process from @nshiab/setup-data-project (dist/sda.mjs) using the process command and working directory. For a single run, wait for it to finish. For a watcher (--watch), stop it with SIGTERM and wait for it to exit; tell the user you stopped it and they can restart with \`${run} sda:watch\` afterward. Stale locks recover automatically on the next run. Leave active runs alone for read-only work.
 
 The clean script removes cached results and temporary files. Run it only when those cached results can be discarded.
 

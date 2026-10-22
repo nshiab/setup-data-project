@@ -1,40 +1,35 @@
 #!/usr/bin/env node
-import {
-  existsSync,
-  lstatSync,
-  mkdirSync,
-  type FSWatcher,
-  readdirSync,
-  readFileSync,
-  unlinkSync,
-  watch,
-  writeFileSync,
-} from "node:fs";
+import { existsSync, lstatSync, type FSWatcher, readdirSync, watch } from "node:fs";
 import { spawn, spawnSync, type ChildProcess } from "node:child_process";
 import { dirname, join, resolve, sep } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import { parseArgs } from "node:util";
+import { acquireSdaLock, SDA_PID_FILE, SDA_LOCK_DIRECTORY } from "./helpers/sdaLock.ts";
 
 const {
   positionals: [entry, ...paths],
   values,
 } = parseArgs({
   allowPositionals: true,
-  options: { ignore: { type: "string", multiple: true, default: [] } },
+  options: {
+    watch: { type: "boolean", default: false },
+    ignore: { type: "string", multiple: true, default: [] },
+  },
 });
 if (!entry) {
-  console.error("Usage: sda-watch <entry-file> [watch-paths...] [--ignore path]");
+  console.error("Usage: sda-run [--watch] <entry-file> [watch-paths...] [--ignore path]");
   process.exit(1);
 }
-const pidFile = resolve("sda/.sda.pid");
+const watching = values.watch;
 const selected = [entry, ...paths].map((path) => resolve(path));
-const ignored = [pidFile, ...values.ignore.map((path) => resolve(path))];
+const ignored = [SDA_PID_FILE, SDA_LOCK_DIRECTORY, ...values.ignore].map((path) => resolve(path));
 const within = (path: string, root: string) => path === root || path.startsWith(root + sep);
 const excluded = (path: string) => ignored.some((root) => within(path, root));
 const bun = Boolean(process.versions.bun);
-const runCommand = bun ? "bun run sda:watch" : "npm run sda:watch";
+const runCommand = (bun ? "bun run " : "npm run ") + (watching ? "sda:watch" : "sda");
 const windows = process.platform === "win32";
 type Job = { child: ChildProcess; done: Promise<number | null> };
+let releaseLock: (() => void) | undefined;
 let fixer: Job | undefined;
 let analysis: Job | undefined;
 let timer: ReturnType<typeof setTimeout> | undefined;
@@ -197,6 +192,7 @@ async function shutdown(code: number) {
   clearTimeout(timer);
   for (const { watcher } of watchers.values()) watcher.close();
   await Promise.all([stop(fixer), stop(analysis)]);
+  releaseLock?.();
   process.exit(code);
 }
 
@@ -216,55 +212,33 @@ function fail(error: unknown) {
 process.on("SIGINT", () => void shutdown(0));
 process.on("SIGTERM", () => void shutdown(0));
 
-try {
-  mkdirSync(dirname(pidFile), { recursive: true });
-  const pid = String(process.pid) + "\n";
-  try {
-    writeFileSync(pidFile, pid, { flag: "wx" });
-  } catch (error) {
-    if (errorCode(error) !== "EEXIST") throw error;
-    const previous = readFileSync(pidFile, "utf8");
-    const previousPid = Number(previous.trim());
-    if (!Number.isInteger(previousPid) || previousPid <= 0 || previousPid > 2147483647)
-      throw new Error(
-        "sda/.sda.pid does not contain a valid process ID. Check that no SDA watcher is running, delete sda/.sda.pid, then try again.",
-      );
-    let stopped = false;
-    try {
-      process.kill(previousPid, 0);
-    } catch (error) {
-      if (errorCode(error) !== "ESRCH")
-        throw new Error(
-          "Could not check whether the SDA watcher recorded in sda/.sda.pid is still running (PID " +
-            previousPid +
-            "). Check your permissions to inspect that process, then try again. " +
-            errorMessage(error),
-        );
-      stopped = true;
-    }
-    if (!stopped)
-      throw new Error(
-        runCommand +
-          " appears to be already running and watching this project's files (PID " +
-          previousPid +
-          " from sda/.sda.pid). Stop the existing watcher with Ctrl+C in its terminal, then try again.",
-      );
-    if (readFileSync(pidFile, "utf8") !== previous)
-      throw new Error(
-        "sda/.sda.pid changed during startup. Another SDA watcher may be starting. Wait for it to finish starting, then try again.",
-      );
-    unlinkSync(pidFile);
-    writeFileSync(pidFile, pid, { flag: "wx" });
+async function runOnce() {
+  console.log("Fixing and checking...");
+  fixer = launch(["run", "fix"], bun ? process.execPath : windows ? "npm.cmd" : "npm");
+  const fixed = await fixer.done;
+  if (closing) return;
+  if (fixed !== 0) {
+    await shutdown(fixed ?? 1);
+    return;
   }
-  process.once("exit", () => {
-    try {
-      if (readFileSync(pidFile, "utf8") === pid) unlinkSync(pidFile);
-    } catch (error) {
-      if (errorCode(error) !== "ENOENT") console.error(errorMessage(error));
-    }
-  });
-  refreshWatchers();
-  void check().catch(fail);
+  await stop(fixer);
+  fixer = undefined;
+  if (closing) return;
+  console.log("Running analysis...");
+  analysis = launch(bun ? ["run", entry] : ["--env-file=.env", entry]);
+  const result = await analysis.done;
+  await shutdown(result ?? 1);
+}
+
+try {
+  releaseLock = await acquireSdaLock(runCommand);
+  if (closing) releaseLock();
+  else if (watching) {
+    refreshWatchers();
+    void check().catch(fail);
+  } else {
+    void runOnce().catch(fail);
+  }
 } catch (error) {
   fail(new Error("Cannot start " + runCommand + ": " + errorMessage(error)));
 }
