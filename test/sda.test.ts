@@ -234,3 +234,69 @@ setInterval(() => {}, 1000);
   },
   15000,
 );
+
+test.skipIf(process.platform === "win32").each(["shutdown", "restart"])(
+  "runner terminates descendants that ignore SIGTERM before %s completes",
+  async (action) => {
+    mkdirSync("sda");
+    ensureSdaRunner();
+    writeFileSync(".env", "");
+    writeFileSync("package.json", JSON.stringify({ scripts: { fix: "node fix.cjs" } }));
+    writeFileSync("fix.cjs", "");
+    writeFileSync(
+      "worker.cjs",
+      `const fs = require("node:fs");
+process.on("SIGTERM", () => {});
+fs.appendFileSync("workers.txt", process.pid + "\\n");
+setInterval(() => fs.appendFileSync("heartbeat-" + process.pid, "."), 20);
+`,
+    );
+    writeFileSync(
+      "sda/main.ts",
+      `import { spawn } from "node:child_process";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+if (existsSync("workers.txt")) {
+  for (const pid of readFileSync("workers.txt", "utf8").trim().split("\\n").map(Number)) {
+    try { process.kill(pid, 0); writeFileSync("overlap", "yes"); } catch {}
+  }
+}
+spawn(process.execPath, ["worker.cjs"], { stdio: "ignore" });
+setInterval(() => {}, 1000);
+`,
+    );
+    const child = spawn(process.execPath, ["scripts/sda.mjs", "sda/main.ts", ".env"], {
+      stdio: "ignore",
+    });
+    const closed = once(child, "close");
+    const workers = () =>
+      existsSync("workers.txt")
+        ? readFileSync("workers.txt", "utf8").trim().split("\n").map(Number)
+        : [];
+    const expectStopped = (pid: number) =>
+      vi.waitFor(() => expect(() => process.kill(pid, 0)).toThrow(), { timeout: 3000 });
+    try {
+      await vi.waitFor(() => expect(workers()).toHaveLength(1), { timeout: 5000 });
+      if (action === "restart") {
+        writeFileSync("sda/main.ts", readFileSync("sda/main.ts", "utf8") + "\n// changed\n");
+        await vi.waitFor(() => expect(workers()).toHaveLength(2), { timeout: 5000 });
+        expect(existsSync("overlap")).toBe(false);
+        await expectStopped(workers()[0]);
+      }
+      child.kill("SIGTERM");
+      await closed;
+      for (const pid of workers()) await expectStopped(pid);
+    } finally {
+      child.kill("SIGTERM");
+      await closed;
+      // Clean up leaked workers even when the regression assertion fails.
+      for (const pid of workers()) {
+        try {
+          process.kill(pid, "SIGKILL");
+        } catch (error) {
+          expect(error).toHaveProperty("code", "ESRCH");
+        }
+      }
+    }
+  },
+  15000,
+);

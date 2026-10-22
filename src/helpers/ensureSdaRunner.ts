@@ -8,6 +8,7 @@ export function ensureSdaRunner() {
 const runner = String.raw`import { existsSync, lstatSync, readdirSync, watch } from "node:fs";
 import { spawn, spawnSync } from "node:child_process";
 import { dirname, join, resolve, sep } from "node:path";
+import { setTimeout as delay } from "node:timers/promises";
 import { parseArgs } from "node:util";
 
 const {
@@ -116,23 +117,33 @@ function refreshWatchers() {
 
 async function stop(job) {
   if (!job?.child.pid) return;
+  if (windows) {
+    if (job.child.exitCode === null && job.child.signalCode === null) {
+      spawnSync("taskkill", ["/pid", String(job.child.pid), "/T", "/F"], { stdio: "ignore" });
+    }
+    await job.done;
+    return;
+  }
   const signal = (name) => {
-    if (windows) {
-      if (job.child.exitCode === null && job.child.signalCode === null) {
-        spawnSync("taskkill", ["/pid", String(job.child.pid), "/T", "/F"], { stdio: "ignore" });
-      }
-    } else {
-      try {
-        process.kill(-job.child.pid, name);
-      } catch (error) {
-        if (error.code !== "ESRCH") throw error;
-      }
+    try {
+      process.kill(-job.child.pid, name);
+      return true;
+    } catch (error) {
+      if (error.code !== "ESRCH") throw error;
+      return false;
     }
   };
   signal("SIGTERM");
-  const force = setTimeout(() => signal("SIGKILL"), 1000);
+  // The direct child can exit first; retain the grace period for its entire process group.
+  const deadline = performance.now() + 1000;
+  while (signal(0)) {
+    if (performance.now() >= deadline) {
+      signal("SIGKILL");
+      break;
+    }
+    await delay(25);
+  }
   await job.done;
-  clearTimeout(force);
 }
 
 async function check() {
