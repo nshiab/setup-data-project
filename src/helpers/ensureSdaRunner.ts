@@ -35,6 +35,7 @@ const ignored = values.ignore.map((path) => resolve(path));
 const within = (path, root) => path === root || path.startsWith(root + sep);
 const excluded = (path) => ignored.some((root) => within(path, root));
 const bun = Boolean(process.versions.bun);
+const runCommand = bun ? "bun run sda" : "npm run sda";
 const windows = process.platform === "win32";
 let fixer;
 let analysis;
@@ -218,17 +219,33 @@ try {
     const previous = readFileSync(pidFile, "utf8");
     const previousPid = Number(previous.trim());
     if (!Number.isInteger(previousPid) || previousPid <= 0 || previousPid > 2147483647)
-      throw new Error(".sda.pid contains an invalid PID. Check the file before removing it.");
+      throw new Error(
+        ".sda.pid does not contain a valid process ID. Check that no SDA watcher is running, delete .sda.pid, then try again.",
+      );
     let stopped = false;
     try {
       process.kill(previousPid, 0);
     } catch (error) {
-      if (error.code !== "ESRCH") throw error;
+      if (error.code !== "ESRCH")
+        throw new Error(
+          "Could not check whether the SDA watcher recorded in .sda.pid is still running (PID " +
+            previousPid +
+            "). Check your permissions to inspect that process, then try again. " +
+            error.message,
+        );
       stopped = true;
     }
-    if (!stopped) throw new Error(".sda.pid already exists and its process is still running.");
+    if (!stopped)
+      throw new Error(
+        runCommand +
+          " appears to be already running and watching this project's files (PID " +
+          previousPid +
+          " from .sda.pid). Stop the existing watcher with Ctrl+C in its terminal, then try again.",
+      );
     if (readFileSync(pidFile, "utf8") !== previous)
-      throw new Error(".sda.pid changed during startup. Try again.");
+      throw new Error(
+        ".sda.pid changed during startup. Another SDA watcher may be starting. Wait for it to finish starting, then try again.",
+      );
     unlinkSync(pidFile);
     writeFileSync(pidFile, pid, { flag: "wx" });
   }
@@ -242,6 +259,6 @@ try {
   refreshWatchers();
   void check().catch(fail);
 } catch (error) {
-  fail(error);
+  fail(new Error("Cannot start " + runCommand + ": " + error.message));
 }
 `;

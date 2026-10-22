@@ -49,7 +49,11 @@ for (const runtime of ["node", "bun"] as const) {
         await vi.waitFor(() => expect(readFileSync(".sda.pid", "utf8")).toBe(`${child.pid}\n`));
         const duplicate = spawnSync(command, args, { encoding: "utf8" });
         expect(duplicate.status).toBe(1);
-        expect(duplicate.stderr).toContain(".sda.pid already exists");
+        expect(duplicate.stderr).toContain(
+          `${runtime === "bun" ? "bun" : "npm"} run sda appears to be already running and watching this project's files`,
+        );
+        expect(duplicate.stderr).toContain(`PID ${child.pid} from .sda.pid`);
+        expect(duplicate.stderr).toContain("Stop the existing watcher with Ctrl+C");
         expect(readFileSync(".sda.pid", "utf8")).toBe(`${child.pid}\n`);
       } finally {
         child.kill("SIGTERM");
@@ -77,6 +81,11 @@ for (const runtime of ["node", "bun"] as const) {
         const blocked = spawnSync(command, args, { encoding: "utf8" });
         expect(blocked.status).toBe(1);
         expect(blocked.stderr).toContain(".sda.pid");
+        if (value !== `${process.pid}\n`) {
+          expect(blocked.stderr).toContain("does not contain a valid process ID");
+          expect(blocked.stderr).toContain("Check that no SDA watcher is running");
+          expect(blocked.stderr).toContain("delete .sda.pid, then try again");
+        }
         expect(readFileSync(".sda.pid", "utf8")).toBe(value);
       }
     },
