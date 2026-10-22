@@ -5,7 +5,15 @@ export function ensureSdaRunner() {
   if (!existsSync("scripts/sda.mjs")) writeFileSync("scripts/sda.mjs", runner);
 }
 
-const runner = String.raw`import { existsSync, lstatSync, readdirSync, watch } from "node:fs";
+const runner = String.raw`import {
+  existsSync,
+  lstatSync,
+  readdirSync,
+  readFileSync,
+  unlinkSync,
+  watch,
+  writeFileSync,
+} from "node:fs";
 import { spawn, spawnSync } from "node:child_process";
 import { dirname, join, resolve, sep } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
@@ -201,6 +209,22 @@ process.on("SIGINT", () => void shutdown(0));
 process.on("SIGTERM", () => void shutdown(0));
 
 try {
+  const pidFile = resolve(".sda.pid");
+  const pid = String(process.pid) + "\n";
+  try {
+    writeFileSync(pidFile, pid, { flag: "wx" });
+  } catch (error) {
+    if (error.code === "EEXIST")
+      throw new Error(".sda.pid already exists. Check its process and remove the file if stale.");
+    throw error;
+  }
+  process.once("exit", () => {
+    try {
+      if (readFileSync(pidFile, "utf8") === pid) unlinkSync(pidFile);
+    } catch (error) {
+      if (error.code !== "ENOENT") console.error(error.message);
+    }
+  });
   refreshWatchers();
   void check().catch(fail);
 } catch (error) {

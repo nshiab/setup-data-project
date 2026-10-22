@@ -33,6 +33,41 @@ test("the generated runner passes formatting checks", () => {
 
 for (const runtime of ["node", "bun"] as const) {
   test.skipIf(process.platform === "win32" || (runtime === "bun" && !hasBun))(
+    `${runtime}: PID file identifies the runner, prevents duplicates, and is removed on shutdown`,
+    async () => {
+      mkdirSync("sda");
+      ensureSdaRunner();
+      writeFileSync(".env", "");
+      writeFileSync("sda/main.ts", "");
+      writeFileSync("fix.cjs", "");
+      writeFileSync("package.json", JSON.stringify({ scripts: { fix: "node fix.cjs" } }));
+      const command = runtime === "bun" ? "bun" : process.execPath;
+      const args = ["scripts/sda.mjs", "sda/main.ts"];
+      const child = spawn(command, args, { stdio: "ignore" });
+      const closed = once(child, "close");
+      try {
+        await vi.waitFor(() => expect(readFileSync(".sda.pid", "utf8")).toBe(`${child.pid}\n`));
+        const duplicate = spawnSync(command, args, { encoding: "utf8" });
+        expect(duplicate.status).toBe(1);
+        expect(duplicate.stderr).toContain(".sda.pid already exists");
+        expect(readFileSync(".sda.pid", "utf8")).toBe(`${child.pid}\n`);
+      } finally {
+        child.kill("SIGTERM");
+        await closed;
+      }
+      expect(existsSync(".sda.pid")).toBe(false);
+
+      // A crash can leave a stale file; preserve it for verification instead of guessing ownership.
+      writeFileSync(".sda.pid", "999999999\n");
+      const stale = spawnSync(command, args, { encoding: "utf8" });
+      expect(stale.status).toBe(1);
+      expect(stale.stderr).toContain("remove the file if stale");
+      expect(readFileSync(".sda.pid", "utf8")).toBe("999999999\n");
+    },
+    10000,
+  );
+
+  test.skipIf(process.platform === "win32" || (runtime === "bun" && !hasBun))(
     `${runtime}: folders and explicit files trigger fixed runs without a resolver`,
     async () => {
       mkdirSync("sda/helpers", { recursive: true });
@@ -211,10 +246,12 @@ setInterval(() => {}, 1000);
     const closed = once(child, "close");
     try {
       await vi.waitFor(() => expect(readFileSync("checks.txt", "utf8")).toBe("check\n"));
+      expect(readFileSync(".sda.pid", "utf8")).toBe(`${child.pid}\n`);
       if (phase === "fixing") {
         const fixerPid = Number(readFileSync("fixer.pid", "utf8"));
         child.kill("SIGINT");
         await closed;
+        expect(existsSync(".sda.pid")).toBe(false);
         expect(() => process.kill(fixerPid, 0)).toThrow();
         return;
       }
@@ -226,6 +263,7 @@ setInterval(() => {}, 1000);
       const analysisPid = Number(readFileSync("analysis.pid", "utf8"));
       child.kill("SIGINT");
       await closed;
+      expect(existsSync(".sda.pid")).toBe(false);
       expect(() => process.kill(analysisPid, 0)).toThrow();
     } finally {
       child.kill("SIGTERM");

@@ -24,6 +24,8 @@ Use sda/main.ts as the entry point and sda/helpers/ for reusable helpers. Put te
 
 For a single execution, run \`${command}\`. The sda script watches for changes. Before handing off code changes, run \`${run} all-tests\` and resolve failures.
 
+Before editing, check .sda.pid. If present, verify that its PID belongs to this project's scripts/sda.mjs runner using the process command and working directory. Stop that runner with SIGTERM and wait for it to exit before editing. Tell the user you stopped the watcher and that they can restart it with \`${run} sda\` after the work is done. Remove a stale PID file only after verifying it no longer identifies this project's runner. Leave the watcher running for read-only work.
+
 The clean script removes cached results and temporary files. Run it only when those cached results can be discarded.
 
 Library documentation in docs/ is generated and ignored by Git. Run \`${run} docs\` when documentation is missing or after dependency changes; resolve refresh failures before using possibly stale references. Edit project source files rather than downloaded documentation.
