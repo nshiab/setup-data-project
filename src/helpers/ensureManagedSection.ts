@@ -1,4 +1,3 @@
-import { log } from "@clack/prompts";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 
 interface ManagedSectionOptions {
@@ -11,8 +10,8 @@ interface ManagedSectionOptions {
 export function ensureManagedSection(
   options: ManagedSectionOptions,
 ): "created" | "updated" | "unchanged" | "missing-markers" {
-  const startMarker = `<!-- Do not remove / setup-data-project:${options.name}:start -->`;
-  const endMarker = `<!-- Do not remove / setup-data-project:${options.name}:end -->`;
+  const startMarker = `<!-- setup-data-project:${options.name}:start / Safe to remove if you don't want this section. -->`;
+  const endMarker = `<!-- setup-data-project:${options.name}:end / End of generated section. -->`;
   const trimmedContent = options.content.trim();
   const section =
     trimmedContent === ""
@@ -29,11 +28,6 @@ export function ensureManagedSection(
   const end = currentContent.indexOf(endMarker);
 
   if (start === -1 || end === -1 || end < start) {
-    log.warn(
-      `${options.path} was not updated because its setup-data-project markers ` +
-        `were not found. Add ${startMarker} and ${endMarker}, then rerun the ` +
-        "script.",
-    );
     return "missing-markers";
   }
 

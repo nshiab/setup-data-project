@@ -5,6 +5,7 @@ import { dirname, join, resolve, sep } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import { parseArgs } from "node:util";
 import { acquireSdaLock, SDA_PID_FILE, SDA_LOCK_DIRECTORY } from "./helpers/sdaLock.ts";
+import { printSdaStatus } from "./helpers/sdaStatus.ts";
 
 const {
   positionals: [entry, ...paths],
@@ -12,12 +13,16 @@ const {
 } = parseArgs({
   allowPositionals: true,
   options: {
+    status: { type: "boolean", default: false },
     watch: { type: "boolean", default: false },
     ignore: { type: "string", multiple: true, default: [] },
   },
 });
+if (values.status) process.exit(printSdaStatus());
 if (!entry) {
-  console.error("Usage: sda-run [--watch] <entry-file> [watch-paths...] [--ignore path]");
+  console.error(
+    "Usage: sda-run --status | [--watch] <entry-file> [watch-paths...] [--ignore path]",
+  );
   process.exit(1);
 }
 const watching = values.watch;

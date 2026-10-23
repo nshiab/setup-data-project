@@ -96,7 +96,11 @@ for (const runtime of ["node", "bun"] as const) {
   ])(`${runtime}: %s mode excludes both commands during %s`, async (mode, phase) => {
     mkdirSync("sda");
     writeFileSync(".env", "");
-    writeFileSync("package.json", JSON.stringify({ scripts: { fix: "node fix.cjs" } }));
+    symlinkSync(installedModules, "node_modules", "dir");
+    writeFileSync(
+      "package.json",
+      JSON.stringify({ scripts: { ...getProjectTasks(runtime), fix: "node fix.cjs" } }),
+    );
     writeFileSync(
       "fix.cjs",
       `const fs = require("node:fs");
@@ -120,6 +124,15 @@ ${phase === "fixing" ? 'fs.writeFileSync("ready", ""); setInterval(() => {}, 100
     try {
       await vi.waitFor(() => expect(existsSync("ready")).toBe(true));
       const competingRuntime = runtime === "node" && hasBun ? "bun" : process.execPath;
+      const status = spawnSync(runtime === "bun" ? "bun" : npm, ["run", "sda:status"], {
+        encoding: "utf8",
+      });
+      expect(status.status, status.stderr).toBe(1);
+      expect(status.stdout).toContain(
+        mode === "watch" ? "SDA watcher is running" : "SDA analysis is running",
+      );
+      expect(status.stdout).toContain(`PID ${child.pid}`);
+      expect(readFileSync("sda/.sda.pid", "utf8")).toBe(`${child.pid}\n`);
       for (const flags of [[], ["--watch"]]) {
         const competing = spawnSync(competingRuntime, [runner, ...flags, "sda/main.ts"], {
           encoding: "utf8",

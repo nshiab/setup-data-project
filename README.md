@@ -53,15 +53,22 @@ The project includes `sda/main.ts`, helpers, tests, data and output folders,
 `.env`, `.gitignore`, and managed sections in README.md and AGENTS.md.
 Existing source files, environment values, scripts, tooling configuration,
 and unmanaged documentation are preserved.
+Remove the generated section or its markers from README.md or AGENTS.md to stop updates to that file.
 
 Generated projects run TypeScript directly with Node or Bun. Vite+ provides
-formatting, linting, type checking, and Vitest tests. Use `npm run sda`,
-`npm run all-tests`, and `npm run fix` (or `bun run` for Bun projects).
-The `sda` command runs `fix`, then runs `sda/main.ts` once if checks pass.
-Use `sda:watch` to repeat on changes to `sda/` and `.env`, excluding `sda/output/`.
+formatting, linting, type checking, and Vitest tests. Use these commands
+(replace `npm run` with `bun run` for Bun projects):
+
+- `npm run sda`: run `fix`, then execute `sda/main.ts` once if checks pass.
+- `npm run sda:watch`: do the same on changes to `sda/` and `.env`, excluding `sda/output/`.
+- `npm run sda:status`: check whether an SDA run or watcher is active.
+- `npm run all-tests`: check formatting, lint, types, and tests; succeeds when no tests exist.
+- `npm run fix`: format files, apply automatic lint fixes, and check types.
+- `npm run docs`: refresh documentation for the installed library versions.
+- `npm run clean`: delete cached results and temporary files in `.sda-cache/`, `.journalism-cache/`, and `.tmp/`.
+
 The watcher comes from the installed setup-data-project package; no runner script is added to your project.
 SDA blocks simultaneous runs. Recovery after a forced termination is best effort.
-The generated `all-tests` command also succeeds when no tests exist.
 New development tools are installed at their latest versions; existing dependencies
 are preserved.
 
@@ -81,10 +88,11 @@ and `.vscode/settings.json` files are left unchanged.
 Documentation is downloaded automatically for the exact installed library
 versions. Each library's release archive preserves its README, license,
 `llms.txt` index, granular API pages, and media under `docs/<library>/`.
-Observable Plot downloads one version-matched cached reference (or falls back to
-upstream sources), then splits it into feature, mark, and transform pages with
-an index at `docs/observable-plot/llms.txt`. Website controls are removed; examples
-that depend on upstream setup or interactive templates are labeled.
+Observable Plot uses a cached reference for the installed version, falling back
+to that version's upstream Git tag. Selected documentation for static charts and
+maps is split into feature, mark, and transform pages, indexed at
+`docs/observable-plot/llms.txt`. Website controls are removed; examples that depend
+on upstream setup or interactive templates are labeled.
 The generated `docs/` folder is ignored by Git.
 
 After cloning or changing dependencies, run `npm run docs` or `bun run docs`.
@@ -102,8 +110,8 @@ exit unsuccessfully. Generated docs scripts pin the setup CLI version that
 created them. Use `--help` for usage.
 
 For development, use `npm ci` and `npm run all-tests`.
-`npx vp pack` produces the npm executable. Releases use `npm run patch`,
-`npm run minor`, or `npm run major` from main; GitHub Actions publishes to npm.
+Releases use `npm run patch`, `npm run minor`, or `npm run major` from main;
+GitHub Actions publishes to npm.
 
 To cache documentation for the latest Observable Plot version, run:
 

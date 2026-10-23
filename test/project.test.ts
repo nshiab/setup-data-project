@@ -1,4 +1,5 @@
-import { expect, test } from "vite-plus/test";
+import { expect, test, vi } from "vite-plus/test";
+import { log } from "@clack/prompts";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
@@ -126,7 +127,38 @@ test("reruns preserve source, .env and unmanaged documentation while updating ma
   writeFileSync("README.md", "Entirely custom README");
   ensureReadme("node");
   expect(readFileSync("README.md", "utf8")).toBe("Entirely custom README");
+  writeFileSync("AGENTS.md", "Entirely custom agent instructions");
+  ensureAgents({}, "node");
+  expect(readFileSync("AGENTS.md", "utf8")).toBe("Entirely custom agent instructions");
 });
+
+for (const file of ["README.md", "AGENTS.md"]) {
+  test.each(["start", "end", "both"])(
+    `${file} updates silently opt out when %s markers are removed`,
+    (missing) => {
+      const name = file === "README.md" ? "libraries" : "agents";
+      const generate = (runtime: "node" | "bun") =>
+        file === "README.md" ? ensureReadme(runtime) : ensureAgents({}, runtime);
+      generate("node");
+      const generated = readFileSync(file, "utf8");
+      expect(generated).toContain("Safe to remove if you don't want this section.");
+      expect(generated).not.toContain("Do not remove");
+      const custom =
+        generated
+          .split("\n")
+          .filter((line) => {
+            if (missing === "both") return !line.includes(`setup-data-project:${name}:`);
+            return !line.includes(`setup-data-project:${name}:${missing}`);
+          })
+          .join("\n") + "\nMy own instructions.\n";
+      writeFileSync(file, custom);
+      const warn = vi.spyOn(log, "warn").mockImplementation(() => {});
+      generate("bun");
+      expect(readFileSync(file, "utf8")).toBe(custom);
+      expect(warn).not.toHaveBeenCalled();
+    },
+  );
+}
 
 test("malformed manifests fail before writing", () => {
   writeFileSync("package.json", "{broken");
