@@ -17,18 +17,22 @@ export function ensureAgents(
     path: "AGENTS.md",
     name: "agents",
     createContent: (section) => section,
-    content: `Read package.json for the installed libraries and scripts. Prefer the installed data libraries when they cover the task.
-
-Use sda/main.ts as the entry point and sda/helpers/ for reusable helpers. Put source data in sda/data/ and results in sda/output/. Put tests in sda/test/ and prefer the runtime's built-in test runner. When adding tests, extend the \`all-tests\` script to run them after the existing checks.
-
-Run \`${run} sda\` to fix and check code, then execute the analysis once. Use \`${run} sda:watch\` to watch for changes. Before handing off code changes, run \`${run} all-tests\` and resolve failures.
+    content: `Read README.md for project guidance and package.json for the installed libraries and scripts. Prefer the installed data libraries when they cover the task.
 
 Before starting work, run \`${run} sda:status\` and follow its instructions.
 
-The clean script removes cached results and temporary files. Run it only when those cached results can be discarded.
+Use sda/main.ts as the entry point and sda/helpers/ for reusable helpers. Put source data in sda/data/ and results in sda/output/.
+
+Put tests in sda/test/ and prefer the runtime's built-in test runner. When adding tests, extend the \`all-tests\` script to run them after the existing checks.
 
 Library documentation in docs/ is generated and ignored by Git. Run \`${run} docs\` when documentation is missing or after dependency changes; resolve refresh failures before using possibly stale references. Edit project source files rather than downloaded documentation.
 
-${links.join("\n")}`,
+${links.join("\n")}
+
+Run \`${run} sda\` to fix and check code, then execute the analysis once. Use \`${run} sda:watch\` to watch for changes.
+
+The clean script removes cached results and temporary files. Run it only when those cached results can be discarded.
+
+Before handing off code changes, run \`${run} all-tests\` and resolve failures.`,
   });
 }
