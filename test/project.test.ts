@@ -119,9 +119,7 @@ test("reruns preserve source, .env and unmanaged documentation while updating ma
   expect(readFileSync("README.md", "utf8")).toContain("bun run all-tests");
   expect(readFileSync("README.md", "utf8")).not.toContain("npm run docs");
   expect(readFileSync("AGENTS.md", "utf8")).toContain("Custom policy");
-  expect(readFileSync("AGENTS.md", "utf8")).toContain(
-    "Put tests in sda/test/ and prefer the runtime's built-in test runner.",
-  );
+  expect(readFileSync("AGENTS.md", "utf8")).toContain("Prefer the runtime's built-in test runner.");
   expect(readFileSync("AGENTS.md", "utf8")).not.toContain("vite-plus/test");
   expect(readFileSync("AGENTS.md", "utf8")).toContain("docs/simple-data-analysis-core/llms.txt");
   expect(readFileSync(".gitignore", "utf8")).toContain("docs/");
