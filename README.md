@@ -49,20 +49,21 @@ Available library flags:
 Run `--help` for usage.
 Library flags keep existing dependency versions and cannot be combined with `--docs`.
 
-The project includes `sda/main.ts`, helpers, tests, data and output folders,
+The project includes `sda/main.ts`, helpers, data and output folders,
 `.env`, `.gitignore`, and managed sections in README.md and AGENTS.md.
 Existing source files, environment values, scripts, tooling configuration,
 and unmanaged documentation are preserved.
 Remove the generated section or its markers from README.md or AGENTS.md to stop updates to that file.
 
-Generated projects run TypeScript directly with Node or Bun. Vite+ provides
-formatting, linting, type checking, and Vitest tests. Use these commands
+Generated projects run TypeScript directly with Node or Bun. Oxfmt and Oxlint
+provide formatting, linting, and TypeScript checking through oxlint-tsgolint.
+No test runner is installed by default. Use these commands
 (replace `npm run` with `bun run` for Bun projects):
 
 - `npm run sda`: run `fix`, then execute `sda/main.ts` once if checks pass.
 - `npm run sda:watch`: do the same on changes to `sda/` and `.env`, excluding `sda/output/`.
 - `npm run sda:status`: check whether an SDA run or watcher is active.
-- `npm run all-tests`: check formatting, lint, types, and tests; succeeds when no tests exist.
+- `npm run all-tests`: check formatting, lint, and TypeScript types.
 - `npm run fix`: format files, apply automatic lint fixes, and check types.
 - `npm run docs`: refresh documentation for the installed library versions.
 - `npm run clean`: delete cached results and temporary files in `.sda-cache/`, `.journalism-cache/`, and `.tmp/`.
@@ -72,16 +73,7 @@ SDA blocks simultaneous runs. Recovery after a forced termination is best effort
 New development tools are installed at their latest versions; existing dependencies
 are preserved.
 
-For test-driven development, run one test file and watch for changes (replace the
-example path with your test file):
-
-```sh
-npx vp test sda/tests/example.test.ts --watch
-# Bun
-bun run --bun vp test sda/tests/example.test.ts --watch
-```
-
-VS Code configuration recommends the Vite+ extension pack and enables formatting,
+VS Code configuration recommends the Oxc extension and enables formatting,
 lint fixes on save, and visual line wrapping. Existing `.vscode/extensions.json`
 and `.vscode/settings.json` files are left unchanged.
 

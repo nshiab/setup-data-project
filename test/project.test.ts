@@ -19,9 +19,9 @@ temporaryProject();
 test("new VS Code files pass the default formatter without fixes", () => {
   writeFileSync("package.json", '{"name":"editor-config-check","type":"module"}');
   ensureVscode();
-  const vp = fileURLToPath(new URL("../node_modules/vite-plus/bin/vp", import.meta.url));
+  const fmt = fileURLToPath(new URL("../node_modules/oxfmt/bin/oxfmt", import.meta.url));
   expect(() =>
-    execFileSync(process.execPath, [vp, "fmt", "--check", ".vscode"], { stdio: "pipe" }),
+    execFileSync(process.execPath, [fmt, "--check", ".vscode"], { stdio: "pipe" }),
   ).not.toThrow();
 });
 test("VS Code setup preserves existing JSONC settings while adding missing recommendations", () => {
@@ -30,9 +30,9 @@ test("VS Code setup preserves existing JSONC settings while adding missing recom
   writeFileSync(".vscode/settings.json", settings);
   ensureVscode();
   expect(readFileSync(".vscode/settings.json", "utf8")).toBe(settings);
-  expect(readFileSync(".vscode/extensions.json", "utf8")).toContain(
-    "VoidZero.vite-plus-extension-pack",
-  );
+  expect(JSON.parse(readFileSync(".vscode/extensions.json", "utf8"))).toEqual({
+    recommendations: ["oxc.oxc-vscode"],
+  });
   const extensions = '{"recommendations":["my.extension"]}';
   writeFileSync(".vscode/extensions.json", extensions);
   ensureVscode();
@@ -74,7 +74,7 @@ test("opening manifests is read-only and setup preserves scripts and versions", 
   const text = readFileSync("package.json", "utf8");
   expect(text).toContain("custom-test");
   expect(text).toContain("custom-run");
-  expect(text).toContain("vp check && vp test --passWithNoTests");
+  expect(text).toContain("oxfmt --check && oxlint");
   expect(manifest.getInstalledPackageSpecifiers()["@nshiab/journalism-format"]).toBe("~1.1.0");
   manifest.reload();
   expect(manifest.getInstalledPackages()).toEqual(["@nshiab/journalism-format"]);
@@ -96,8 +96,8 @@ test("documentation versions come from installed packages, not requested ranges 
 test("reruns preserve source, .env and unmanaged documentation while updating managed commands", () => {
   createFolderStructure(["@nshiab/simple-data-analysis-core"]);
   expect(readFileSync("sda/main.ts", "utf8")).toContain("await sdb.close()");
-  for (const path of ["sda/helpers", "sda/tests", "sda/data", "sda/output"])
-    expect(existsSync(path)).toBe(true);
+  for (const path of ["sda/helpers", "sda/data", "sda/output"]) expect(existsSync(path)).toBe(true);
+  expect(existsSync("sda/tests")).toBe(false);
   writeFileSync("sda/main.ts", "// custom analysis");
   writeFileSync(".env", "SECRET=preserved");
   ensureEnvFile();
@@ -107,7 +107,8 @@ test("reruns preserve source, .env and unmanaged documentation while updating ma
   ensureAgents({}, "node", ["@nshiab/simple-data-analysis-core"]);
   const readme = readFileSync("README.md", "utf8");
   const agents = readFileSync("AGENTS.md", "utf8");
-  expect(readme).toContain("npx vp test sda/tests/example.test.ts --watch");
+  expect(readme).toContain("check formatting, lint, and TypeScript types");
+  expect(readme).toContain("No test runner is installed by default");
   expect(readme).not.toContain("npm run test");
   writeFileSync("README.md", `Custom intro\n${readme}\nCustom footer`);
   writeFileSync("AGENTS.md", `Custom policy\n${agents}`);
@@ -115,11 +116,11 @@ test("reruns preserve source, .env and unmanaged documentation while updating ma
   ensureAgents({}, "bun", ["@nshiab/simple-data-analysis-core"]);
   expect(readFileSync("README.md", "utf8")).toContain("Custom footer");
   expect(readFileSync("README.md", "utf8")).toContain("bun run docs");
-  expect(readFileSync("README.md", "utf8")).toContain(
-    "bun run --bun vp test sda/tests/example.test.ts --watch",
-  );
+  expect(readFileSync("README.md", "utf8")).toContain("bun run all-tests");
   expect(readFileSync("README.md", "utf8")).not.toContain("npm run docs");
   expect(readFileSync("AGENTS.md", "utf8")).toContain("Custom policy");
+  expect(readFileSync("AGENTS.md", "utf8")).toContain("No test runner is installed by default");
+  expect(readFileSync("AGENTS.md", "utf8")).not.toContain("vite-plus/test");
   expect(readFileSync("AGENTS.md", "utf8")).toContain("docs/simple-data-analysis-core/llms.txt");
   expect(readFileSync(".gitignore", "utf8")).toContain("docs/");
   expect(readFileSync(".env", "utf8")).toBe("SECRET=preserved");

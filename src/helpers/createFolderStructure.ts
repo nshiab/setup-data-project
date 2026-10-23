@@ -3,7 +3,7 @@ import { join } from "node:path";
 
 export function createFolderStructure(selectedPackages: string[]) {
   const sdaFolder = "sda";
-  const folders = ["data", "helpers", "output", "tests"];
+  const folders = ["data", "helpers", "output"];
 
   if (!existsSync(sdaFolder)) {
     mkdirSync(sdaFolder, { recursive: true });
