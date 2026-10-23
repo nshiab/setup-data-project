@@ -63,7 +63,7 @@ Put tests in `sda/test/`. Use these commands
 - `npm run sda`: run `fix`, then execute `sda/main.ts` once if checks pass.
 - `npm run sda:watch`: do the same on changes to `sda/` and `.env`, excluding `sda/output/`.
 - `npm run sda:status`: check whether an SDA run or watcher is active.
-- `npm run all-tests`: check formatting, lint, and TypeScript types.
+- `npm run all-tests`: check formatting, lint, and TypeScript types. When adding tests, extend this script to run them after the existing checks.
 - `npm run fix`: format files, apply automatic lint fixes, and check types.
 - `npm run docs`: refresh documentation for the installed library versions.
 - `npm run clean`: delete cached results and temporary files in `.sda-cache/`, `.journalism-cache/`, and `.tmp/`.

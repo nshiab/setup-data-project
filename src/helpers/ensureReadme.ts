@@ -16,7 +16,7 @@ export function ensureReadme(runtime: Runtime, installedPackages: string[] = [])
 - \`${run} sda\`: run \`${run} fix\`, then run the analysis once if checks pass.
 - \`${run} sda:watch\`: do the same on changes to sda/ and .env, excluding sda/output/.
 - \`${run} sda:status\`: check whether an SDA run or watcher is active.
-- \`${run} all-tests\`: check formatting, lint, and TypeScript types.
+- \`${run} all-tests\`: check formatting, lint, and TypeScript types. When adding tests, extend this script to run them after the existing checks.
 - \`${run} fix\`: format files, apply automatic lint fixes, and check types.
 - \`${run} docs\`: refresh documentation for the installed library versions.
 - \`${run} clean\`: delete cached results and temporary files in .sda-cache/, .journalism-cache/, and .tmp/.
