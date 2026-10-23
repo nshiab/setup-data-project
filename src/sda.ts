@@ -46,6 +46,8 @@ const watchers = new Map<string, { watcher: FSWatcher; recursive: boolean }>();
 
 function launch(args: string[], command = process.execPath) {
   const child = spawn(command, args, {
+    // Bun's Windows --bun shim is named node.exe; keep Bun CLI argument parsing.
+    argv0: windows && bun && command === process.execPath ? "bun" : undefined,
     stdio: "inherit",
     detached: !windows,
     shell: windows && command === "npm.cmd",
