@@ -16,14 +16,15 @@ export function ensureReadme(runtime: Runtime, installedPackages: string[] = [])
 
 - \`${run} sda\`: run \`${run} fix\`, then run the analysis once if checks pass.
 - \`${run} sda:watch\`: do the same on changes to sda/ and .env, excluding sda/output/.
+- \`${run} sda:status\`: check whether an SDA run or watcher is active.
 - \`${run} all-tests\`: check types, lint, formatting, and tests; succeeds when no tests exist.
-- \`${run} fix\`: apply formatting and automatic fixes.
+- \`${run} fix\`: format files, apply automatic lint fixes, and check types.
 - \`${run} docs\`: refresh documentation for the installed library versions.
 - \`${run} clean\`: delete cached results and temporary files in .sda-cache/, .journalism-cache/, and .tmp/.
 
 SDA blocks simultaneous runs. Recovery after a forced termination is best effort.
 
-For test-driven development, run one test file and watch for changes with \`${vp} test sda/tests/example.test.ts --watch\`. Replace the path with your test file.
+Run one test file with \`${vp} test sda/tests/example.test.ts\`. For test-driven development, watch for changes with \`${vp} test sda/tests/example.test.ts --watch\`. Replace the path with your test file.
 
 In VS Code, install the recommended Vite+ extension pack for Oxc formatting and linting and the Vitest test runner. Generated .vscode/settings.json enables formatting and lint fixes on save, plus visual line wrapping. Existing VS Code configuration files are preserved.
 

@@ -6,6 +6,7 @@ export function getProjectTasks(runtime: Runtime = getRuntime()) {
   return {
     sda: `${runner} sda/main.ts`,
     "sda:watch": `${runner} --watch sda/main.ts sda .env --ignore sda/output`,
+    "sda:status": `${runner} --status`,
     "all-tests": `${vp} check && ${vp} test --passWithNoTests`,
     clean: "rm -rf .sda-cache .journalism-cache .tmp",
     fix: `${vp} check --fix`,
