@@ -134,6 +134,29 @@ test("reruns preserve source, .env and unmanaged documentation while updating ma
 });
 
 for (const file of ["README.md", "AGENTS.md"]) {
+  test.each(["changed", "removed"])(
+    `${file} updates when marker explanations are %s`,
+    (explanation) => {
+      const name = file === "README.md" ? "libraries" : "agents";
+      const start =
+        explanation === "changed" ? " / Safe to remove if you don't want this section." : "";
+      const end = explanation === "changed" ? " / Custom end explanation." : "";
+      writeFileSync(
+        file,
+        `Custom intro\n<!-- setup-data-project:${name}:start${start} -->\nOld content\n<!-- setup-data-project:${name}:end${end} -->\nCustom footer\n`,
+      );
+      if (file === "README.md") ensureReadme("bun");
+      else ensureAgents({}, "bun");
+      const updated = readFileSync(file, "utf8");
+      expect(updated).toMatch(/^Custom intro\n/);
+      expect(updated).toMatch(/\nCustom footer\n$/);
+      expect(updated).toContain("bun run all-tests");
+      expect(updated).toContain("Safe to remove if you don't want this generated section.");
+      expect(updated).not.toContain("Old content");
+      expect(updated).not.toContain("Custom end explanation.");
+    },
+  );
+
   test.each(["start", "end", "both"])(
     `${file} updates silently opt out when %s markers are removed`,
     (missing) => {
