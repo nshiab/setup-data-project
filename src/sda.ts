@@ -53,7 +53,15 @@ function launch(args: string[], command = process.execPath, summarize = false) {
     detached: !windows,
     shell: windows && command === "npm.cmd",
   });
-  if (summarize && child.stdout) pipeFixOutput(child.stdout);
+  if (summarize && child.stdout) {
+    const output = child.stdout;
+    pipeFixOutput(output);
+    child.once("exit", () => {
+      // Background descendants can inherit stdout; don't wait forever for their pipe to close.
+      const timeout = setTimeout(() => output.destroy(), 1000);
+      child.once("close", () => clearTimeout(timeout));
+    });
+  }
   const done = new Promise<number | null>((resolve) => {
     child.once("error", (error) => {
       console.error(errorMessage(error));

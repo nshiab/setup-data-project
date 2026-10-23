@@ -191,6 +191,49 @@ test.skipIf(!windows).each([
 
 for (const runtime of ["node", "bun"] as const) {
   test.skipIf(runtime === "bun" && !hasBun)(
+    `${runtime}: standalone tooling handles custom fixers with inherited background output`,
+    async () => {
+      mkdirSync("sda");
+      writeFileSync(".env", "");
+      writeFileSync("package.json", JSON.stringify({ scripts: { fix: "node fix.cjs" } }));
+      writeFileSync(
+        "fix.cjs",
+        'require("node:child_process").spawn(process.execPath, ["worker.cjs"], { stdio: "inherit" }).unref();',
+      );
+      writeFileSync(
+        "worker.cjs",
+        'require("node:fs").writeFileSync("worker.pid", String(process.pid)); setInterval(() => {}, 1000);',
+      );
+      writeFileSync("sda/main.ts", 'console.log("analysis completed");');
+      const child = spawn(runtime === "bun" ? "bun" : process.execPath, [runner, "sda/main.ts"], {
+        stdio: "pipe",
+      });
+      const closed = once(child, "close");
+      let output = "";
+      child.stdout.on("data", (data: Buffer) => {
+        output += data.toString();
+      });
+      child.stderr.on("data", (data: Buffer) => {
+        output += data.toString();
+      });
+      try {
+        await vi.waitFor(() => expect(output).toContain("analysis completed"), { timeout: 5000 });
+        expect((await closed)[0], output).toBe(0);
+      } finally {
+        if (existsSync("worker.pid")) {
+          const pid = Number(readFileSync("worker.pid", "utf8"));
+          try {
+            process.kill(pid, "SIGKILL");
+          } catch {}
+        }
+        child.kill("SIGTERM");
+        await closed;
+      }
+    },
+    15000,
+  );
+
+  test.skipIf(runtime === "bun" && !hasBun)(
     `${runtime}: standalone tooling fixes code, checks types, and runs analysis without a test runner`,
     async () => {
       symlinkSync(installedModules, "node_modules", windows ? "junction" : "dir");
