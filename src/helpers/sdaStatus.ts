@@ -72,7 +72,8 @@ export function printSdaStatus(): number {
             ],
             {
               encoding: "utf8",
-              timeout: 5000,
+              // A cold PowerShell/CIM startup can exceed five seconds on Windows.
+              timeout: 10000,
               maxBuffer: 64 * 1024,
               windowsHide: true,
               stdio: ["ignore", "pipe", "pipe"],

@@ -6,6 +6,7 @@ import { setTimeout as delay } from "node:timers/promises";
 import { parseArgs } from "node:util";
 import { acquireSdaLock, SDA_PID_FILE, SDA_LOCK_DIRECTORY } from "./helpers/sdaLock.ts";
 import { printSdaStatus } from "./helpers/sdaStatus.ts";
+import { pipeFixOutput } from "./helpers/pipeFixOutput.ts";
 
 const {
   positionals: [entry, ...paths],
@@ -44,14 +45,23 @@ let needsCheck = true;
 let contents = new Map<string, string | null>();
 const watchers = new Map<string, { watcher: FSWatcher; recursive: boolean }>();
 
-function launch(args: string[], command = process.execPath) {
+function launch(args: string[], command = process.execPath, summarize = false) {
   const child = spawn(command, args, {
     // Bun's Windows --bun shim is named node.exe; keep Bun CLI argument parsing.
     argv0: windows && bun && command === process.execPath ? "bun" : undefined,
-    stdio: "inherit",
+    stdio: ["inherit", summarize ? "pipe" : "inherit", "inherit"],
     detached: !windows,
     shell: windows && command === "npm.cmd",
   });
+  if (summarize && child.stdout) {
+    const output = child.stdout;
+    pipeFixOutput(output);
+    child.once("exit", () => {
+      // Background descendants can inherit stdout; don't wait forever for their pipe to close.
+      const timeout = setTimeout(() => output.destroy(), 1000);
+      child.once("close", () => clearTimeout(timeout));
+    });
+  }
   const done = new Promise<number | null>((resolve) => {
     child.once("error", (error) => {
       console.error(errorMessage(error));
@@ -167,8 +177,11 @@ async function check() {
   refreshWatchers();
   contents = snapshot();
   process.stdout.write("\u001b[2J\u001b[3J\u001b[H");
-  console.log("Fixing and checking...");
-  fixer = launch(["run", "fix"], bun ? process.execPath : windows ? "npm.cmd" : "npm");
+  fixer = launch(
+    ["run", "--silent", "fix"],
+    bun ? process.execPath : windows ? "npm.cmd" : "npm",
+    true,
+  );
   const fixed = await fixer.done;
   if (closing) return;
   const current = snapshot();
@@ -181,7 +194,7 @@ async function check() {
   if (needsCheck) {
     schedule();
   } else if (fixed === 0) {
-    console.log("Running analysis...");
+    console.log();
     analysis = launch(bun ? ["run", entry] : ["--env-file=.env", entry]);
   } else {
     console.log("Fix failed. Watching for changes...");
@@ -220,8 +233,11 @@ process.on("SIGINT", () => void shutdown(0));
 process.on("SIGTERM", () => void shutdown(0));
 
 async function runOnce() {
-  console.log("Fixing and checking...");
-  fixer = launch(["run", "fix"], bun ? process.execPath : windows ? "npm.cmd" : "npm");
+  fixer = launch(
+    ["run", "--silent", "fix"],
+    bun ? process.execPath : windows ? "npm.cmd" : "npm",
+    true,
+  );
   const fixed = await fixer.done;
   if (closing) return;
   if (fixed !== 0) {
@@ -231,7 +247,7 @@ async function runOnce() {
   await stop(fixer);
   fixer = undefined;
   if (closing) return;
-  console.log("Running analysis...");
+  console.log();
   analysis = launch(bun ? ["run", entry] : ["--env-file=.env", entry]);
   const result = await analysis.done;
   await shutdown(result ?? 1);

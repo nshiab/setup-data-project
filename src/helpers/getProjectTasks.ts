@@ -10,7 +10,7 @@ export function getProjectTasks(runtime: Runtime = getRuntime()) {
     "sda:status": `${runner} --status`,
     "all-tests": `${fmt} --check && ${lint}`,
     clean: "rm -rf .sda-cache .journalism-cache .tmp",
-    fix: `${fmt} --write && ${lint} --fix`,
+    fix: `${fmt} --write && ${lint} --fix --format default`,
     docs: `${runtime === "bun" ? "bunx --bun" : "npx"} @nshiab/setup-data-project@${metadata.version} --docs`,
   };
 }

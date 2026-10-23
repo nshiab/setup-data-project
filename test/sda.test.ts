@@ -191,6 +191,50 @@ test.skipIf(!windows).each([
 
 for (const runtime of ["node", "bun"] as const) {
   test.skipIf(runtime === "bun" && !hasBun)(
+    `${runtime}: standalone tooling handles custom fixers with inherited background output`,
+    async () => {
+      mkdirSync("sda");
+      writeFileSync(".env", "");
+      writeFileSync("package.json", JSON.stringify({ scripts: { fix: "node fix.cjs" } }));
+      writeFileSync(
+        "fix.cjs",
+        'require("node:child_process").spawn(process.execPath, ["worker.cjs"], { stdio: "inherit" }).unref();',
+      );
+      writeFileSync(
+        "worker.cjs",
+        'require("node:fs").writeFileSync("worker.pid", String(process.pid)); setInterval(() => {}, 1000);',
+      );
+      writeFileSync("sda/main.ts", 'console.log("analysis completed");');
+      const child = spawn(runtime === "bun" ? "bun" : process.execPath, [runner, "sda/main.ts"], {
+        stdio: "pipe",
+      });
+      const exited = once(child, "exit");
+      const closed = once(child, "close");
+      let output = "";
+      child.stdout.on("data", (data: Buffer) => {
+        output += data.toString();
+      });
+      child.stderr.on("data", (data: Buffer) => {
+        output += data.toString();
+      });
+      try {
+        await vi.waitFor(() => expect(output).toContain("analysis completed"), { timeout: 5000 });
+        expect((await exited)[0], output).toBe(0);
+      } finally {
+        if (existsSync("worker.pid")) {
+          const pid = Number(readFileSync("worker.pid", "utf8"));
+          try {
+            process.kill(pid, "SIGKILL");
+          } catch {}
+        }
+        child.kill("SIGTERM");
+        await closed;
+      }
+    },
+    15000,
+  );
+
+  test.skipIf(runtime === "bun" && !hasBun)(
     `${runtime}: standalone tooling fixes code, checks types, and runs analysis without a test runner`,
     async () => {
       symlinkSync(installedModules, "node_modules", windows ? "junction" : "dir");
@@ -227,12 +271,12 @@ for (const runtime of ["node", "bun"] as const) {
       execFileSync(executable, ["node_modules/oxfmt/bin/oxfmt", "--write"], {
         env: standaloneEnv,
       });
-      const run = (script: string) => {
+      const run = (script: string, env: NodeJS.ProcessEnv = {}) => {
         const result = spawnSync(runtime === "bun" ? "bun" : npm, ["run", script], {
           encoding: "utf8",
           shell: windows,
           timeout: 15000,
-          env: standaloneEnv,
+          env: { ...standaloneEnv, NO_COLOR: "1", FORCE_COLOR: undefined, ...env },
         });
         expect(result.error, result.stdout + result.stderr).toBeUndefined();
         return result;
@@ -246,6 +290,12 @@ for (const runtime of ["node", "bun"] as const) {
       expect(unformatted.stdout + unformatted.stderr).toContain("sda/main.ts");
       const analysis = run("sda");
       expect(analysis.status, analysis.stdout + analysis.stderr).toBe(0);
+      expect(analysis.stdout).toMatch(/Formatting: [\d.]+ (?:ms|s)\n/);
+      expect(analysis.stdout).toMatch(/Linting and type checking: [\d.]+ (?:ms|s)\n\n$/);
+      expect(analysis.stdout).not.toContain("\u001b[");
+      expect(analysis.stdout + analysis.stderr).not.toMatch(
+        /Finished in|Found 0 warnings|Fixing and checking|Running analysis|> fix|\$ oxfmt/,
+      );
       expect(readFileSync("sda/output/run.txt", "utf8")).toBe("loaded");
       const fixed = readFileSync("sda/main.ts", "utf8");
       expect(fixed).toContain('import { writeFileSync } from "node:fs";');
@@ -260,7 +310,16 @@ for (const runtime of ["node", "bun"] as const) {
       rmSync("sda/output/run.txt");
       const blocked = run("sda");
       expect(blocked.status, blocked.stdout + blocked.stderr).not.toBe(0);
+      expect(blocked.stdout + blocked.stderr).toContain("2322");
       expect(existsSync("sda/output/run.txt")).toBe(false);
+
+      writeFileSync(".oxlintrc.json", '{"rules":{"no-debugger":"warn"}}');
+      writeFileSync("sda/main.ts", fixed + "\ndebugger;\n");
+      const warning = run("sda", { NO_COLOR: undefined, FORCE_COLOR: "1" });
+      expect(warning.status, warning.stdout + warning.stderr).toBe(0);
+      expect(warning.stdout + warning.stderr).toContain("no-debugger");
+      expect(warning.stdout).toContain("\u001b[34mFormatting:");
+      expect(warning.stdout).toContain("\u001b[34mLinting and type checking:");
 
       writeFileSync("sda/main.ts", fixed);
       writeFileSync(
