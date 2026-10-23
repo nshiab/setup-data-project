@@ -38,7 +38,7 @@ test.each([
   expect(query).toHaveBeenCalledWith(
     "powershell.exe",
     expect.arrayContaining(["-NoProfile", "-NonInteractive"]),
-    expect.objectContaining({ timeout: 5000, windowsHide: true, maxBuffer: 64 * 1024 }),
+    expect.objectContaining({ timeout: 10000, windowsHide: true, maxBuffer: 64 * 1024 }),
   );
   expect(readFileSync(`${claim}/owner.json`, "utf8")).toBe(before);
 });
