@@ -57,7 +57,7 @@ Remove the generated section or its markers from README.md or AGENTS.md to stop 
 
 Generated projects run TypeScript directly with Node or Bun. Oxfmt and Oxlint
 provide formatting, linting, and TypeScript checking through oxlint-tsgolint.
-No test runner is installed by default. Use these commands
+Put tests in `sda/test/`. Use these commands
 (replace `npm run` with `bun run` for Bun projects):
 
 - `npm run sda`: run `fix`, then execute `sda/main.ts` once if checks pass.

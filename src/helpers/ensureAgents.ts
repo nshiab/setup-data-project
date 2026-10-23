@@ -19,9 +19,9 @@ export function ensureAgents(
     createContent: (section) => section,
     content: `Read package.json for the installed libraries and scripts. Prefer the installed data libraries when they cover the task.
 
-Use sda/main.ts as the entry point and sda/helpers/ for reusable helpers. Put source data in sda/data/ and results in sda/output/.
+Use sda/main.ts as the entry point and sda/helpers/ for reusable helpers. Put source data in sda/data/ and results in sda/output/. Put tests in sda/test/ and prefer the runtime's built-in test runner.
 
-Run \`${run} sda\` to fix and check code, then execute the analysis once. Use \`${run} sda:watch\` to watch for changes. Before handing off code changes, run \`${run} all-tests\` for formatting, lint, and TypeScript checks and resolve failures. No test runner is installed by default.
+Run \`${run} sda\` to fix and check code, then execute the analysis once. Use \`${run} sda:watch\` to watch for changes. Before handing off code changes, run \`${run} all-tests\` for formatting, lint, and TypeScript checks and resolve failures.
 
 Before starting work, run \`${run} sda:status\` and follow its instructions.
 

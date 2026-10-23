@@ -11,7 +11,7 @@ export function ensureReadme(runtime: Runtime, installedPackages: string[] = [])
     name: "libraries",
     createContent: (section) =>
       `# Data project\n\nCreated with [setup-data-project](https://github.com/nshiab/setup-data-project).\n\n${section}`,
-    content: `${libraries ? `Installed libraries: ${libraries}.\n\n` : ""}Use sda/main.ts to process source data from sda/data/ and write results to sda/output/. Both data folders are ignored by Git. Put reusable helpers in sda/helpers/.
+    content: `${libraries ? `Installed libraries: ${libraries}.\n\n` : ""}Use sda/main.ts to process source data from sda/data/ and write results to sda/output/. Both data folders are ignored by Git. Put reusable helpers in sda/helpers/ and tests in sda/test/.
 
 - \`${run} sda\`: run \`${run} fix\`, then run the analysis once if checks pass.
 - \`${run} sda:watch\`: do the same on changes to sda/ and .env, excluding sda/output/.
@@ -22,8 +22,6 @@ export function ensureReadme(runtime: Runtime, installedPackages: string[] = [])
 - \`${run} clean\`: delete cached results and temporary files in .sda-cache/, .journalism-cache/, and .tmp/.
 
 SDA blocks simultaneous runs. Recovery after a forced termination is best effort.
-
-No test runner is installed by default.
 
 In VS Code, install the recommended Oxc extension for formatting and linting. Generated .vscode/settings.json enables formatting and lint fixes on save, plus visual line wrapping. Existing VS Code configuration files are preserved.
 

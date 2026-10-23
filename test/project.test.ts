@@ -108,7 +108,7 @@ test("reruns preserve source, .env and unmanaged documentation while updating ma
   const readme = readFileSync("README.md", "utf8");
   const agents = readFileSync("AGENTS.md", "utf8");
   expect(readme).toContain("check formatting, lint, and TypeScript types");
-  expect(readme).toContain("No test runner is installed by default");
+  expect(readme).toContain("tests in sda/test/");
   expect(readme).not.toContain("npm run test");
   writeFileSync("README.md", `Custom intro\n${readme}\nCustom footer`);
   writeFileSync("AGENTS.md", `Custom policy\n${agents}`);
@@ -119,7 +119,9 @@ test("reruns preserve source, .env and unmanaged documentation while updating ma
   expect(readFileSync("README.md", "utf8")).toContain("bun run all-tests");
   expect(readFileSync("README.md", "utf8")).not.toContain("npm run docs");
   expect(readFileSync("AGENTS.md", "utf8")).toContain("Custom policy");
-  expect(readFileSync("AGENTS.md", "utf8")).toContain("No test runner is installed by default");
+  expect(readFileSync("AGENTS.md", "utf8")).toContain(
+    "Put tests in sda/test/ and prefer the runtime's built-in test runner.",
+  );
   expect(readFileSync("AGENTS.md", "utf8")).not.toContain("vite-plus/test");
   expect(readFileSync("AGENTS.md", "utf8")).toContain("docs/simple-data-analysis-core/llms.txt");
   expect(readFileSync(".gitignore", "utf8")).toContain("docs/");
