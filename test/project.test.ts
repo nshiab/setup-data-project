@@ -142,7 +142,7 @@ for (const file of ["README.md", "AGENTS.md"]) {
         file === "README.md" ? ensureReadme(runtime) : ensureAgents({}, runtime);
       generate("node");
       const generated = readFileSync(file, "utf8");
-      expect(generated).toContain("Safe to remove if you don't want this section.");
+      expect(generated).toContain("Safe to remove if you don't want this generated section.");
       expect(generated).not.toContain("Do not remove");
       const custom =
         generated
