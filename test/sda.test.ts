@@ -113,22 +113,6 @@ test.skipIf(!windows).each([
       "sda/main.ts",
       'import { writeFileSync } from "node:fs"; writeFileSync("ready", ""); setInterval(() => {}, 1000);',
     );
-    if (runtime === "bun") {
-      writeFileSync(
-        "probe.cjs",
-        `
-const { spawnSync } = require("node:child_process");
-const { realpathSync } = require("node:fs");
-console.log("[DEBUG-windows-bun]", JSON.stringify({ execPath: process.execPath, argv0: process.argv0, realpath: realpathSync(process.execPath) }));
-for (const [label, command, options] of [["execPath", process.execPath, {}], ["realpath", realpathSync(process.execPath), {}], ["bun", "bun", {}], ["argv0", process.execPath, { argv0: "bun" }]]) {
-  const result = spawnSync(command, ["run", "fix"], { encoding: "utf8", ...options });
-  console.log("[DEBUG-windows-bun]", JSON.stringify({ label, status: result.status, error: result.error?.message, stdout: result.stdout, stderr: result.stderr }));
-}
-`,
-      );
-      const probe = spawnSync("bun", ["run", "--bun", "node", "probe.cjs"], { encoding: "utf8" });
-      console.log("[DEBUG-windows-bun]", probe.stdout, probe.stderr);
-    }
     const child = spawn(
       runtime === "bun" ? "bun" : npm,
       ["run", mode === "watch" ? "sda:watch" : "sda"],
