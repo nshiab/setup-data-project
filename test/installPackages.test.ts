@@ -33,12 +33,10 @@ test.skipIf(process.platform === "win32")(
       chmodSync(command, 0o755);
       vi.stubEnv("PATH", process.cwd());
       try {
-        await installPackages(["vite-plus@latest"], { development: true });
+        await installPackages(["oxfmt@latest"], { development: true });
         const args: unknown = JSON.parse(readFileSync("arguments.json", "utf8"));
         expect(args).toEqual(
-          bun
-            ? ["add", "--dev", "vite-plus@latest"]
-            : ["install", "--save-dev", "vite-plus@latest"],
+          bun ? ["add", "--dev", "oxfmt@latest"] : ["install", "--save-dev", "oxfmt@latest"],
         );
         writeFileSync("package.json", '{"private":true}');
         await ensureTooling(ProjectManifest.open());
@@ -46,7 +44,9 @@ test.skipIf(process.platform === "win32")(
         expect(tooling).toEqual([
           bun ? "add" : "install",
           bun ? "--dev" : "--save-dev",
-          "vite-plus@latest",
+          "oxfmt@latest",
+          "oxlint@latest",
+          "oxlint-tsgolint@latest",
           "@types/node@latest",
           ...(bun ? ["@types/bun@latest"] : []),
           `${metadata.name}@${metadata.version}`,

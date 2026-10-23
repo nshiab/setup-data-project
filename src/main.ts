@@ -130,7 +130,7 @@ async function main() {
   sConfig.start("Preparing project files and configuration...");
   try {
     projectManifest.updateTasks(getProjectTasks());
-    execFileSync(process.execPath, ["node_modules/vite-plus/bin/vp", "fmt", "package.json"], {
+    execFileSync(process.execPath, ["node_modules/oxfmt/bin/oxfmt", "--write", "package.json"], {
       stdio: "pipe",
     });
 
