@@ -2,7 +2,7 @@ import { getRuntime, type Runtime } from "./getRuntime.ts";
 import metadata from "../../package.json" with { type: "json" };
 export function getProjectTasks(runtime: Runtime = getRuntime()) {
   const fmt = runtime === "bun" ? "bun run --bun oxfmt" : "oxfmt";
-  const lint = runtime === "bun" ? "bun run --bun oxlint" : "oxlint";
+  const lint = `${runtime === "bun" ? "bun run --bun oxlint" : "oxlint"} --type-aware --type-check`;
   const runner = runtime === "bun" ? "bun run --bun --no-env-file sda-run" : "sda-run";
   return {
     sda: `${runner} sda/main.ts`,

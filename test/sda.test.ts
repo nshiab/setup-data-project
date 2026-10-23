@@ -269,6 +269,19 @@ for (const runtime of ["node", "bun"] as const) {
       );
       const checks = run("all-tests");
       expect(checks.status, checks.stdout + checks.stderr).toBe(0);
+
+      // Reusing a lint-only configuration must not disable the scripts' compiler checks.
+      const existingConfig = '{ "rules": { "no-debugger": "error" } }\n';
+      writeFileSync(".oxlintrc.json", existingConfig);
+      await ensureTooling(ProjectManifest.open());
+      expect(readFileSync(".oxlintrc.json", "utf8")).toBe(existingConfig);
+      writeFileSync("sda/main.ts", fixed + '\nexport const invalid: number = "wrong";\n');
+      for (const script of ["all-tests", "fix"]) {
+        const result = run(script);
+        expect(result.status, result.stdout + result.stderr).not.toBe(0);
+        expect(result.stdout + result.stderr).toContain("2322");
+      }
+      expect(readFileSync(".oxlintrc.json", "utf8")).toBe(existingConfig);
     },
     60000,
   );
