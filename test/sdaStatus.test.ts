@@ -2,7 +2,15 @@ import { expect, test, vi } from "vite-plus/test";
 import { spawn, spawnSync } from "node:child_process";
 import { once } from "node:events";
 import { randomUUID } from "node:crypto";
-import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import {
+  cpSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  realpathSync,
+  writeFileSync,
+} from "node:fs";
 import { fileURLToPath } from "node:url";
 import { temporaryProject } from "./helpers/utils.ts";
 
@@ -49,6 +57,15 @@ test("status refuses an unrelated live PID, even before the PID file is publishe
     expect(existsSync("sda/.sda.pid")).toBe(false);
     writeFileSync("sda/.sda.pid", `${child.pid}\n`);
     expect(status().status).toBe(2);
+    writeFileSync(
+      `${claim}/owner.json`,
+      JSON.stringify({
+        ticket: 1,
+        command: "npm run sda",
+        projectRoot: realpathSync(process.cwd()),
+      }),
+    );
+    expect(status().status).toBe(2);
     expect(child.exitCode).toBe(null);
     expect(existsSync(claim)).toBe(true);
   } finally {
@@ -57,29 +74,34 @@ test("status refuses an unrelated live PID, even before the PID file is publishe
   }
 });
 
-test.skipIf(process.platform === "win32")(
-  "status refuses an SDA process belonging to another directory",
-  async () => {
-    mkdirSync("other/sda", { recursive: true });
-    writeFileSync("other/.env", "");
-    writeFileSync("other/package.json", JSON.stringify({ scripts: { fix: 'node -e ""' } }));
-    writeFileSync("other/sda/main.ts", "setInterval(() => {}, 1000);");
-    const child = spawn(process.execPath, [runner, "sda/main.ts"], {
-      cwd: "other",
-      stdio: "ignore",
-    });
-    const closed = once(child, "close");
-    try {
-      await vi.waitFor(() => expect(existsSync("other/sda/.sda.pid")).toBe(true));
-      mkdirSync("sda");
-      writeFileSync("sda/.sda.pid", `${child.pid}\n`);
-      const result = status();
-      expect(result.status).toBe(2);
-      expect(result.stderr).toContain("could not be verified as this project's SDA process");
-      expect(child.exitCode).toBe(null);
-    } finally {
-      child.kill();
-      await closed;
-    }
-  },
-);
+test("status refuses an SDA process belonging to another directory", async () => {
+  mkdirSync("other/sda", { recursive: true });
+  writeFileSync("other/.env", "");
+  writeFileSync("other/package.json", JSON.stringify({ scripts: { fix: "node fix.cjs" } }));
+  writeFileSync("other/fix.cjs", "");
+  writeFileSync(
+    "other/sda/main.ts",
+    'import { existsSync } from "node:fs"; setInterval(() => { if (existsSync("stop")) process.exit(0); }, 50);',
+  );
+  const child = spawn(process.execPath, [runner, "sda/main.ts"], {
+    cwd: "other",
+    stdio: "ignore",
+  });
+  const closed = once(child, "close");
+  try {
+    await vi.waitFor(() => expect(existsSync("other/sda/.sda.pid")).toBe(true));
+    mkdirSync("sda");
+    writeFileSync("sda/.sda.pid", `${child.pid}\n`);
+    // A PID alone is insufficient on Windows; a copied owner record must not
+    // turn another project's process into a verified local run either.
+    expect(status().status).toBe(2);
+    cpSync("other/sda/.sda-lock", "sda/.sda-lock", { recursive: true });
+    const result = status();
+    expect(result.status).toBe(2);
+    expect(result.stderr).toContain("could not be verified as this project's SDA process");
+    expect(child.exitCode).toBe(null);
+  } finally {
+    writeFileSync("other/stop", "");
+    await closed;
+  }
+}, 15000);

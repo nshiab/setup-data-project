@@ -9,6 +9,8 @@ import {
   statSync,
   readFileSync,
   renameSync,
+  readdirSync,
+  realpathSync,
   symlinkSync,
   truncateSync,
   writeFileSync,
@@ -33,13 +35,17 @@ let fixture: string;
 let installedModules: string;
 let runner: string;
 beforeAll(async () => {
-  fixture = mkdtempSync(join(tmpdir(), "sda-package-test-"));
+  fixture = mkdtempSync(join(tmpdir(), windows ? "sda-package été-" : "sda-package-test-"));
   execFileSync(process.execPath, [join(modules, "vite-plus/bin/vp"), "pack"], { cwd: repository });
-  execFileSync(npm, ["pack", "--ignore-scripts", "--pack-destination", fixture], {
-    cwd: repository,
-    stdio: "pipe",
-    shell: windows,
-  });
+  execFileSync(
+    npm,
+    ["pack", "--ignore-scripts", "--pack-destination", windows ? `"${fixture}"` : fixture],
+    {
+      cwd: repository,
+      stdio: "pipe",
+      shell: windows,
+    },
+  );
   const archive = join(
     fixture,
     metadata.name.replace("@", "").replace("/", "-") + "-" + metadata.version + ".tgz",
@@ -86,6 +92,91 @@ test("the published package provides an executable watcher", () => {
       }),
     ).toContain("--docs");
 });
+
+test.skipIf(!windows).each([
+  ["node", "once"],
+  ["node", "watch"],
+  ["bun", "once"],
+  ["bun", "watch"],
+] as const)(
+  "Windows status inspects generated %s scripts in %s mode",
+  async (runtime, mode) => {
+    expect(hasBun, "Windows status coverage requires Bun").toBe(true);
+    mkdirSync("projet été/sda", { recursive: true });
+    process.chdir("projet été");
+    symlinkSync(installedModules, "node_modules", "junction");
+    writeFileSync(".env", "");
+    const scripts = { ...getProjectTasks(runtime), fix: "node fix.cjs" };
+    writeFileSync("package.json", JSON.stringify({ scripts }));
+    writeFileSync("fix.cjs", 'require("node:fs").appendFileSync("fix-runs.txt", "fix\\n");');
+    writeFileSync(
+      "sda/main.ts",
+      'import { writeFileSync } from "node:fs"; writeFileSync("ready", ""); setInterval(() => {}, 1000);',
+    );
+    const child = spawn(
+      runtime === "bun" ? "bun" : npm,
+      ["run", mode === "watch" ? "sda:watch" : "sda"],
+      {
+        shell: runtime === "node",
+        stdio: "pipe",
+      },
+    );
+    const closed = once(child, "close");
+    let output = "";
+    child.stdout?.on("data", (data: Buffer) => {
+      output += data.toString();
+    });
+    child.stderr?.on("data", (data: Buffer) => {
+      output += data.toString();
+    });
+    const check = (statusRuntime: "node" | "bun") => {
+      writeFileSync(
+        "package.json",
+        JSON.stringify({
+          scripts: { ...scripts, "sda:status": getProjectTasks(statusRuntime)["sda:status"] },
+        }),
+      );
+      return spawnSync(statusRuntime === "bun" ? "bun" : npm, ["run", "sda:status"], {
+        shell: statusRuntime === "node",
+        encoding: "utf8",
+        timeout: 15000,
+      });
+    };
+    try {
+      await vi.waitFor(() => expect(existsSync("ready"), output).toBe(true), { timeout: 15000 });
+      const pid = readFileSync("sda/.sda.pid", "utf8");
+      const claim = `sda/.sda-lock/${readdirSync("sda/.sda-lock")[0]}/owner.json`;
+      const owner = readFileSync(claim, "utf8");
+      expect(JSON.parse(owner)).toMatchObject({ projectRoot: realpathSync(process.cwd()) });
+      const fixes = readFileSync("fix-runs.txt", "utf8");
+      for (const statusRuntime of ["node", "bun"] as const) {
+        const result = check(statusRuntime);
+        expect(result.error, result.stdout + result.stderr).toBeUndefined();
+        expect(result.status, result.stdout + result.stderr).toBe(1);
+        expect(result.stdout).toContain(
+          mode === "watch" ? "SDA watcher is running" : "SDA analysis is running",
+        );
+        expect(result.stdout).toContain(`PID ${pid.trim()}`);
+        expect(readFileSync("sda/.sda.pid", "utf8")).toBe(pid);
+        expect(readFileSync(claim, "utf8")).toBe(owner);
+        expect(readFileSync("fix-runs.txt", "utf8")).toBe(fixes);
+        expect(() => process.kill(Number(pid), 0)).not.toThrow();
+      }
+    } finally {
+      if (child.pid)
+        spawnSync("taskkill", ["/PID", String(child.pid), "/T", "/F"], { stdio: "ignore" });
+      await closed;
+    }
+    // Forced test cleanup leaves stale records. Both generated status commands
+    // must report idle without removing those records or starting another fix.
+    for (const runtime of ["node", "bun"] as const) {
+      const result = check(runtime);
+      expect(result.status, result.stdout + result.stderr).toBe(0);
+      expect(result.stdout).toContain("No active SDA process found");
+    }
+  },
+  60000,
+);
 
 for (const runtime of ["node", "bun"] as const) {
   test.skipIf(windows || (runtime === "bun" && !hasBun)).each([
