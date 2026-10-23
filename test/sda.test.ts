@@ -227,12 +227,12 @@ for (const runtime of ["node", "bun"] as const) {
       execFileSync(executable, ["node_modules/oxfmt/bin/oxfmt", "--write"], {
         env: standaloneEnv,
       });
-      const run = (script: string) => {
+      const run = (script: string, env: NodeJS.ProcessEnv = {}) => {
         const result = spawnSync(runtime === "bun" ? "bun" : npm, ["run", script], {
           encoding: "utf8",
           shell: windows,
           timeout: 15000,
-          env: standaloneEnv,
+          env: { ...standaloneEnv, NO_COLOR: "1", FORCE_COLOR: undefined, ...env },
         });
         expect(result.error, result.stdout + result.stderr).toBeUndefined();
         return result;
@@ -246,6 +246,12 @@ for (const runtime of ["node", "bun"] as const) {
       expect(unformatted.stdout + unformatted.stderr).toContain("sda/main.ts");
       const analysis = run("sda");
       expect(analysis.status, analysis.stdout + analysis.stderr).toBe(0);
+      expect(analysis.stdout).toMatch(/Formatting: [\d.]+ (?:ms|s)\n/);
+      expect(analysis.stdout).toMatch(/Linting and type checking: [\d.]+ (?:ms|s)\n\n$/);
+      expect(analysis.stdout).not.toContain("\u001b[");
+      expect(analysis.stdout + analysis.stderr).not.toMatch(
+        /Finished in|Found 0 warnings|Fixing and checking|Running analysis|> fix|\$ oxfmt/,
+      );
       expect(readFileSync("sda/output/run.txt", "utf8")).toBe("loaded");
       const fixed = readFileSync("sda/main.ts", "utf8");
       expect(fixed).toContain('import { writeFileSync } from "node:fs";');
@@ -260,7 +266,16 @@ for (const runtime of ["node", "bun"] as const) {
       rmSync("sda/output/run.txt");
       const blocked = run("sda");
       expect(blocked.status, blocked.stdout + blocked.stderr).not.toBe(0);
+      expect(blocked.stdout + blocked.stderr).toContain("2322");
       expect(existsSync("sda/output/run.txt")).toBe(false);
+
+      writeFileSync(".oxlintrc.json", '{"rules":{"no-debugger":"warn"}}');
+      writeFileSync("sda/main.ts", fixed + "\ndebugger;\n");
+      const warning = run("sda", { NO_COLOR: undefined, FORCE_COLOR: "1" });
+      expect(warning.status, warning.stdout + warning.stderr).toBe(0);
+      expect(warning.stdout + warning.stderr).toContain("no-debugger");
+      expect(warning.stdout).toContain("\u001b[34mFormatting:");
+      expect(warning.stdout).toContain("\u001b[34mLinting and type checking:");
 
       writeFileSync("sda/main.ts", fixed);
       writeFileSync(
