@@ -208,6 +208,7 @@ for (const runtime of ["node", "bun"] as const) {
       const child = spawn(runtime === "bun" ? "bun" : process.execPath, [runner, "sda/main.ts"], {
         stdio: "pipe",
       });
+      const exited = once(child, "exit");
       const closed = once(child, "close");
       let output = "";
       child.stdout.on("data", (data: Buffer) => {
@@ -218,7 +219,7 @@ for (const runtime of ["node", "bun"] as const) {
       });
       try {
         await vi.waitFor(() => expect(output).toContain("analysis completed"), { timeout: 5000 });
-        expect((await closed)[0], output).toBe(0);
+        expect((await exited)[0], output).toBe(0);
       } finally {
         if (existsSync("worker.pid")) {
           const pid = Number(readFileSync("worker.pid", "utf8"));
