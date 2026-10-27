@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { existsSync, lstatSync, type FSWatcher, readdirSync, watch } from "node:fs";
+import { existsSync, lstatSync, type FSWatcher, readdirSync, rmSync, watch } from "node:fs";
 import { spawn, spawnSync, type ChildProcess } from "node:child_process";
 import { dirname, join, resolve, sep } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
@@ -14,15 +14,31 @@ const {
 } = parseArgs({
   allowPositionals: true,
   options: {
+    clean: { type: "boolean", default: false },
     status: { type: "boolean", default: false },
     watch: { type: "boolean", default: false },
     ignore: { type: "string", multiple: true, default: [] },
   },
 });
+if (values.clean) {
+  if (entry || values.status || values.watch || values.ignore.length) {
+    console.error("Usage: sda-run --clean (without other options or paths)");
+    process.exit(1);
+  }
+  try {
+    for (const path of [".sda-cache", ".journalism-cache", ".tmp"]) {
+      rmSync(path, { recursive: true, force: true });
+    }
+  } catch (error) {
+    console.error("Could not clean caches: " + errorMessage(error));
+    process.exit(1);
+  }
+  process.exit(0);
+}
 if (values.status) process.exit(printSdaStatus());
 if (!entry) {
   console.error(
-    "Usage: sda-run --status | [--watch] <entry-file> [watch-paths...] [--ignore path]",
+    "Usage: sda-run --clean | --status | [--watch] <entry-file> [watch-paths...] [--ignore path]",
   );
   process.exit(1);
 }

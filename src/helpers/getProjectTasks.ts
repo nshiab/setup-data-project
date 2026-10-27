@@ -9,7 +9,7 @@ export function getProjectTasks(runtime: Runtime = getRuntime()) {
     "sda:watch": `${runner} --watch sda/main.ts sda .env --ignore sda/output`,
     "sda:status": `${runner} --status`,
     "all-tests": `${fmt} --check && ${lint}`,
-    clean: `${runtime} -e "const fs = require('node:fs'); for (const path of ['.sda-cache', '.journalism-cache', '.tmp']) fs.rmSync(path, { recursive: true, force: true });"`,
+    clean: `${runner} --clean`,
     fix: `${fmt} --write && ${lint} --fix --format default`,
     docs: `${runtime === "bun" ? "bunx --bun" : "npx"} @nshiab/setup-data-project@${metadata.version} --docs`,
   };
