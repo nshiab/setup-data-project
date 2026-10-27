@@ -24,7 +24,7 @@ import { ensureGitignore } from "../src/helpers/ensureGitignore.ts";
 import { createFolderStructure } from "../src/helpers/createFolderStructure.ts";
 import { ProjectManifest } from "../src/helpers/projectManifest.ts";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { extract } from "tar";
 import metadata from "../package.json" with { type: "json" };
 import { temporaryProject } from "./helpers/utils.ts";
@@ -190,6 +190,97 @@ test.skipIf(!windows).each([
 );
 
 for (const runtime of ["node", "bun"] as const) {
+  test.skipIf(runtime === "bun" && !hasBun)(
+    `${runtime === "bun" ? "bun" : "npm"} run clean removes only cache paths from a project with spaces été`,
+    () => {
+      mkdirSync("project with spaces été");
+      process.chdir("project with spaces été");
+      symlinkSync(installedModules, "node_modules", windows ? "junction" : "dir");
+      const cachePaths = [".sda-cache", ".journalism-cache", ".tmp"];
+      const tasks = getProjectTasks(runtime);
+      expect(tasks.clean).toBe(
+        runtime === "bun" ? "bun run --bun --no-env-file sda-run --clean" : "sda-run --clean",
+      );
+      tasks.fix = 'node -e "process.exit(99)"';
+      ProjectManifest.open().updateTasks(tasks);
+
+      const preservedFiles = {
+        "package.json": readFileSync("package.json", "utf8"),
+        ".env": "EXAMPLE=preserved\n",
+        ".sda-cache-keep/cached.json": '{"keep":true}\n',
+        "sda/main.ts": 'throw new Error("Cleanup must not run the analysis");\n',
+        "sda/output/report.csv": "name,value\nexample,1\n",
+      };
+      for (const [path, content] of Object.entries(preservedFiles)) {
+        mkdirSync(dirname(path), { recursive: true });
+        writeFileSync(path, content);
+      }
+
+      const clean = () => {
+        const result = spawnSync(runtime === "bun" ? "bun" : "npm", ["run", "clean"], {
+          encoding: "utf8",
+          shell: runtime === "node" && process.platform === "win32",
+          timeout: 10_000,
+        });
+        expect(result.error).toBeUndefined();
+        expect(result.status, `${result.stdout}\n${result.stderr}`).toBe(0);
+        for (const path of cachePaths) expect(existsSync(path)).toBe(false);
+        for (const [path, content] of Object.entries(preservedFiles)) {
+          expect(readFileSync(path, "utf8")).toBe(content);
+        }
+        expect(readdirSync(".").sort()).toEqual([
+          ".env",
+          ".sda-cache-keep",
+          "node_modules",
+          "package.json",
+          "sda",
+        ]);
+      };
+
+      for (const path of cachePaths) {
+        const nested = join(path, "nested folder", "deeper");
+        mkdirSync(nested, { recursive: true });
+        writeFileSync(join(nested, "cached data.json"), '{"temporary":true}\n');
+      }
+      clean();
+
+      for (const path of cachePaths) writeFileSync(path, "temporary cache file\n");
+      clean();
+      clean();
+
+      const outside = resolve("../preserved outside cache");
+      mkdirSync(outside);
+      writeFileSync(join(outside, "keep.txt"), "preserved");
+      symlinkSync(outside, ".sda-cache", windows ? "junction" : "dir");
+      clean();
+      expect(readFileSync(join(outside, "keep.txt"), "utf8")).toBe("preserved");
+    },
+    30_000,
+  );
+
+  test.skipIf(runtime === "bun" && !hasBun)(
+    `${runtime}: run clean rejects other modes and paths without deleting caches`,
+    () => {
+      mkdirSync(".sda-cache");
+      writeFileSync(".sda-cache/keep.txt", "preserved");
+      for (const args of [["--status"], ["--watch"], ["sda/main.ts"], ["--ignore", "sda"]]) {
+        const result = spawnSync(
+          runtime === "bun" ? "bun" : process.execPath,
+          [runner, "--clean", ...args],
+          {
+            encoding: "utf8",
+            timeout: 5000,
+          },
+        );
+        expect(result.error).toBeUndefined();
+        expect(result.status, result.stdout + result.stderr).toBe(1);
+        expect(result.stderr).toContain("Usage: sda-run --clean");
+        expect(readFileSync(".sda-cache/keep.txt", "utf8")).toBe("preserved");
+        expect(existsSync("sda")).toBe(false);
+      }
+    },
+  );
+
   test.skipIf(runtime === "bun" && !hasBun)(
     `${runtime}: standalone tooling handles custom fixers with inherited background output`,
     async () => {
