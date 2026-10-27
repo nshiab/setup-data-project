@@ -13,7 +13,7 @@ test("createFolderStructure - should create the correct files and folders", () =
   assertExists(join("sda", "data"));
   assertExists(join("sda", "helpers"));
   assertExists(join("sda", "output"));
-  assertExists(join("sda", "tests"));
+  expect(existsSync(join("sda", "tests"))).toBe(false);
   assertExists(join("sda", "main.ts"));
 });
 
@@ -27,12 +27,14 @@ test("createFolderStructure - should use @nshiab/simple-data-analysis-core if se
 });
 
 test("createFolderStructure - should preserve an existing main.ts", () => {
-  mkdirSync("sda");
+  mkdirSync("sda/tests", { recursive: true });
+  writeFileSync("sda/tests/custom.test.ts", "// Keep my tests\n");
   writeFileSync(join("sda", "main.ts"), "// Keep my code\n");
 
   createFolderStructure(["@nshiab/simple-data-analysis"]);
 
   assertEquals(readFileSync(join("sda", "main.ts"), "utf-8"), "// Keep my code\n");
+  assertEquals(readFileSync("sda/tests/custom.test.ts", "utf8"), "// Keep my tests\n");
 });
 
 test("createFolderStructure - should preserve a symlinked main.ts", () => {

@@ -1,6 +1,6 @@
 {
   "name": "@nshiab/setup-data-project",
-  "version": "4.0.1",
+  "version": "4.0.5",
   "description": "Quickly kick off a project using simple-data-analysis-core, simple-data-analysis, and journalism libraries.",
   "license": "MIT",
   "repository": "https://github.com/nshiab/setup-data-project",
@@ -32,10 +32,14 @@
     "tar": "^7.5.11"
   },
   "devDependencies": {
+    "@types/bun": "1.4.4",
     "@types/node": "24.19.2",
+    "oxfmt": "0.74.0",
+    "oxlint": "1.89.0",
+    "oxlint-tsgolint": "7.0.2005",
     "vite-plus": "1.2.0"
   },
   "engines": {
-    "node": ">=24.21.0"
+    "node": "^22.18.0 || >=23.6.0"
   }
 }

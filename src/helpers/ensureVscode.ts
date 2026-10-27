@@ -5,7 +5,7 @@ export function ensureVscode(): void {
   const formatter = "oxc.oxc-vscode";
   const files = {
     "extensions.json": `{
-  "recommendations": ["VoidZero.vite-plus-extension-pack"]
+  "recommendations": ["oxc.oxc-vscode"]
 }
 `,
     "settings.json": `${JSON.stringify(

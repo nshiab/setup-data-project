@@ -9,6 +9,8 @@ import {
   statSync,
   readFileSync,
   renameSync,
+  readdirSync,
+  realpathSync,
   symlinkSync,
   truncateSync,
   writeFileSync,
@@ -16,6 +18,11 @@ import {
 import { fileURLToPath } from "node:url";
 import { setTimeout as delay } from "node:timers/promises";
 import { getProjectTasks } from "../src/helpers/getProjectTasks.ts";
+import * as runtimeHelpers from "../src/helpers/getRuntime.ts";
+import { ensureTooling } from "../src/helpers/ensureTooling.ts";
+import { ensureGitignore } from "../src/helpers/ensureGitignore.ts";
+import { createFolderStructure } from "../src/helpers/createFolderStructure.ts";
+import { ProjectManifest } from "../src/helpers/projectManifest.ts";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { extract } from "tar";
@@ -29,17 +36,24 @@ const hasBun = spawnSync("bun", ["--version"]).status === 0;
 const repository = fileURLToPath(new URL("..", import.meta.url));
 const windows = process.platform === "win32";
 const npm = windows ? "npm.cmd" : "npm";
+const tooling = ["oxfmt", "oxlint", "oxlint-tsgolint", "@types/node", "@types/bun"] as const;
+// The library's test launcher sets Vite+ mode; generated projects run Oxc independently.
+const standaloneEnv = { ...process.env, VP_VERSION: undefined, OXLINT_TSGOLINT_PATH: undefined };
 let fixture: string;
 let installedModules: string;
 let runner: string;
 beforeAll(async () => {
-  fixture = mkdtempSync(join(tmpdir(), "sda-package-test-"));
+  fixture = mkdtempSync(join(tmpdir(), windows ? "sda-package été-" : "sda-package-test-"));
   execFileSync(process.execPath, [join(modules, "vite-plus/bin/vp"), "pack"], { cwd: repository });
-  execFileSync(npm, ["pack", "--ignore-scripts", "--pack-destination", fixture], {
-    cwd: repository,
-    stdio: "pipe",
-    shell: windows,
-  });
+  execFileSync(
+    npm,
+    ["pack", "--ignore-scripts", "--pack-destination", windows ? `"${fixture}"` : fixture],
+    {
+      cwd: repository,
+      stdio: "pipe",
+      shell: windows,
+    },
+  );
   const archive = join(
     fixture,
     metadata.name.replace("@", "").replace("/", "-") + "-" + metadata.version + ".tgz",
@@ -52,16 +66,19 @@ beforeAll(async () => {
   // Install the unpacked release locally so tests need no registry access or cached dependencies.
   execFileSync(
     npm,
-    ["install", "--offline", "--ignore-scripts", "--no-audit", "--no-fund", "../package"],
+    [
+      "install",
+      "--offline",
+      "--ignore-scripts",
+      "--no-audit",
+      "--no-fund",
+      "../package",
+      ...tooling.map((name) => (windows ? `"${join(modules, name)}"` : join(modules, name))),
+    ],
     { cwd: project, stdio: "pipe", shell: windows },
   );
   installedModules = join(project, "node_modules");
   runner = join(installedModules, "@nshiab/setup-data-project/dist/sda.mjs");
-  if (!windows) {
-    symlinkSync(join(modules, "vite-plus"), join(installedModules, "vite-plus"), "dir");
-    symlinkSync(join(modules, "vite-plus/bin/vp"), join(installedModules, ".bin/vp"));
-    symlinkSync(join(modules, "@types"), join(installedModules, "@types"), "dir");
-  }
 }, 30000);
 afterAll(() => {
   if (fixture) rmSync(fixture, { recursive: true, force: true });
@@ -87,7 +104,247 @@ test("the published package provides an executable watcher", () => {
     ).toContain("--docs");
 });
 
+test.skipIf(!windows).each([
+  ["node", "once"],
+  ["node", "watch"],
+  ["bun", "once"],
+  ["bun", "watch"],
+] as const)(
+  "Windows status inspects generated %s scripts in %s mode",
+  async (runtime, mode) => {
+    expect(hasBun, "Windows status coverage requires Bun").toBe(true);
+    mkdirSync("projet été/sda", { recursive: true });
+    process.chdir("projet été");
+    symlinkSync(installedModules, "node_modules", "junction");
+    writeFileSync(".env", "");
+    const scripts = { ...getProjectTasks(runtime), fix: "node fix.cjs" };
+    writeFileSync("package.json", JSON.stringify({ scripts }));
+    writeFileSync("fix.cjs", 'require("node:fs").appendFileSync("fix-runs.txt", "fix\\n");');
+    writeFileSync(
+      "sda/main.ts",
+      'import { writeFileSync } from "node:fs"; writeFileSync("ready", ""); setInterval(() => {}, 1000);',
+    );
+    const child = spawn(
+      runtime === "bun" ? "bun" : npm,
+      ["run", mode === "watch" ? "sda:watch" : "sda"],
+      {
+        shell: runtime === "node",
+        stdio: "pipe",
+      },
+    );
+    const closed = once(child, "close");
+    let output = "";
+    child.stdout?.on("data", (data: Buffer) => {
+      output += data.toString();
+    });
+    child.stderr?.on("data", (data: Buffer) => {
+      output += data.toString();
+    });
+    const check = (statusRuntime: "node" | "bun") => {
+      writeFileSync(
+        "package.json",
+        JSON.stringify({
+          scripts: { ...scripts, "sda:status": getProjectTasks(statusRuntime)["sda:status"] },
+        }),
+      );
+      return spawnSync(statusRuntime === "bun" ? "bun" : npm, ["run", "sda:status"], {
+        shell: statusRuntime === "node",
+        encoding: "utf8",
+        timeout: 15000,
+      });
+    };
+    try {
+      await vi.waitFor(() => expect(existsSync("ready"), output).toBe(true), { timeout: 15000 });
+      const pid = readFileSync("sda/.sda.pid", "utf8");
+      const claim = `sda/.sda-lock/${readdirSync("sda/.sda-lock")[0]}/owner.json`;
+      const owner = readFileSync(claim, "utf8");
+      expect(JSON.parse(owner)).toMatchObject({ projectRoot: realpathSync(process.cwd()) });
+      const fixes = readFileSync("fix-runs.txt", "utf8");
+      for (const statusRuntime of ["node", "bun"] as const) {
+        const result = check(statusRuntime);
+        expect(result.error, result.stdout + result.stderr).toBeUndefined();
+        expect(result.status, result.stdout + result.stderr).toBe(1);
+        expect(result.stdout).toContain(
+          mode === "watch" ? "SDA watcher is running" : "SDA analysis is running",
+        );
+        expect(result.stdout).toContain(`PID ${pid.trim()}`);
+        expect(readFileSync("sda/.sda.pid", "utf8")).toBe(pid);
+        expect(readFileSync(claim, "utf8")).toBe(owner);
+        expect(readFileSync("fix-runs.txt", "utf8")).toBe(fixes);
+        expect(() => process.kill(Number(pid), 0)).not.toThrow();
+      }
+    } finally {
+      if (child.pid)
+        spawnSync("taskkill", ["/PID", String(child.pid), "/T", "/F"], { stdio: "ignore" });
+      await closed;
+    }
+    // Forced test cleanup leaves stale records. Both generated status commands
+    // must report idle without removing those records or starting another fix.
+    for (const runtime of ["node", "bun"] as const) {
+      const result = check(runtime);
+      expect(result.status, result.stdout + result.stderr).toBe(0);
+      expect(result.stdout).toContain("No active SDA process found");
+    }
+  },
+  60000,
+);
+
 for (const runtime of ["node", "bun"] as const) {
+  test.skipIf(runtime === "bun" && !hasBun)(
+    `${runtime}: standalone tooling handles custom fixers with inherited background output`,
+    async () => {
+      mkdirSync("sda");
+      writeFileSync(".env", "");
+      writeFileSync("package.json", JSON.stringify({ scripts: { fix: "node fix.cjs" } }));
+      writeFileSync(
+        "fix.cjs",
+        'require("node:child_process").spawn(process.execPath, ["worker.cjs"], { stdio: "inherit" }).unref();',
+      );
+      writeFileSync(
+        "worker.cjs",
+        'require("node:fs").writeFileSync("worker.pid", String(process.pid)); setInterval(() => {}, 1000);',
+      );
+      writeFileSync("sda/main.ts", 'console.log("analysis completed");');
+      const child = spawn(runtime === "bun" ? "bun" : process.execPath, [runner, "sda/main.ts"], {
+        stdio: "pipe",
+      });
+      const exited = once(child, "exit");
+      const closed = once(child, "close");
+      let output = "";
+      child.stdout.on("data", (data: Buffer) => {
+        output += data.toString();
+      });
+      child.stderr.on("data", (data: Buffer) => {
+        output += data.toString();
+      });
+      try {
+        await vi.waitFor(() => expect(output).toContain("analysis completed"), { timeout: 5000 });
+        expect((await exited)[0], output).toBe(0);
+      } finally {
+        if (existsSync("worker.pid")) {
+          const pid = Number(readFileSync("worker.pid", "utf8"));
+          try {
+            process.kill(pid, "SIGKILL");
+          } catch {}
+        }
+        child.kill("SIGTERM");
+        await closed;
+      }
+    },
+    15000,
+  );
+
+  test.skipIf(runtime === "bun" && !hasBun)(
+    `${runtime}: standalone tooling fixes code, checks types, and runs analysis without a test runner`,
+    async () => {
+      symlinkSync(installedModules, "node_modules", windows ? "junction" : "dir");
+      writeFileSync(
+        "package.json",
+        JSON.stringify({
+          type: "module",
+          scripts: getProjectTasks(runtime),
+          devDependencies: {
+            ...Object.fromEntries(tooling.map((name) => [name, metadata.devDependencies[name]])),
+            [metadata.name]: metadata.version,
+          },
+        }),
+      );
+      vi.spyOn(runtimeHelpers, "getRuntime").mockReturnValue(runtime);
+      await ensureTooling(ProjectManifest.open());
+      createFolderStructure([]);
+      ensureGitignore();
+      writeFileSync(".env", "SDA_TOOL_TEST=loaded\n");
+      mkdirSync("docs");
+      const ignored = ["docs/example.json", "sda/data/input.json", "sda/output/result.json"];
+      for (const file of ignored) writeFileSync(file, "Unformatted source data, not JSON.");
+      expect(existsSync("node_modules/vite-plus")).toBe(false);
+      expect(existsSync("node_modules/vitest")).toBe(false);
+      expect(existsSync("node_modules/vite")).toBe(false);
+      expect(existsSync("vite.config.ts")).toBe(false);
+      expect(existsSync("sda/tests")).toBe(false);
+
+      const executable = runtime === "bun" ? "bun" : process.execPath;
+      // The setup CLI uses this exact invocation to format the generated manifest.
+      execFileSync(executable, ["node_modules/oxfmt/bin/oxfmt", "--write", "package.json"], {
+        env: standaloneEnv,
+      });
+      execFileSync(executable, ["node_modules/oxfmt/bin/oxfmt", "--write"], {
+        env: standaloneEnv,
+      });
+      const run = (script: string, env: NodeJS.ProcessEnv = {}) => {
+        const result = spawnSync(runtime === "bun" ? "bun" : npm, ["run", script], {
+          encoding: "utf8",
+          shell: windows,
+          timeout: 15000,
+          env: { ...standaloneEnv, NO_COLOR: "1", FORCE_COLOR: undefined, ...env },
+        });
+        expect(result.error, result.stdout + result.stderr).toBeUndefined();
+        return result;
+      };
+      writeFileSync(
+        "sda/main.ts",
+        'import {writeFileSync as writeFileSync} from "node:fs"; if (process.env.SDA_TOOL_TEST) {writeFileSync("sda/output/run.txt",process.env.SDA_TOOL_TEST)}\n',
+      );
+      const unformatted = run("all-tests");
+      expect(unformatted.status, unformatted.stdout + unformatted.stderr).not.toBe(0);
+      expect(unformatted.stdout + unformatted.stderr).toContain("sda/main.ts");
+      const analysis = run("sda");
+      expect(analysis.status, analysis.stdout + analysis.stderr).toBe(0);
+      expect(analysis.stdout).toMatch(/Formatting: [\d.]+ (?:ms|s)\n/);
+      expect(analysis.stdout).toMatch(/Linting and type checking: [\d.]+ (?:ms|s)\n\n$/);
+      expect(analysis.stdout).not.toContain("\u001b[");
+      expect(analysis.stdout + analysis.stderr).not.toMatch(
+        /Finished in|Found 0 warnings|Fixing and checking|Running analysis|> fix|\$ oxfmt/,
+      );
+      expect(readFileSync("sda/output/run.txt", "utf8")).toBe("loaded");
+      const fixed = readFileSync("sda/main.ts", "utf8");
+      expect(fixed).toContain('import { writeFileSync } from "node:fs";');
+      expect(fixed).not.toContain("writeFileSync as writeFileSync");
+      for (const file of ignored)
+        expect(readFileSync(file, "utf8")).toBe("Unformatted source data, not JSON.");
+
+      writeFileSync("sda/main.ts", fixed + '\nexport const invalid: number = "wrong";\n');
+      const invalid = run("all-tests");
+      expect(invalid.status, invalid.stdout + invalid.stderr).not.toBe(0);
+      expect(invalid.stdout + invalid.stderr).toContain("2322");
+      rmSync("sda/output/run.txt");
+      const blocked = run("sda");
+      expect(blocked.status, blocked.stdout + blocked.stderr).not.toBe(0);
+      expect(blocked.stdout + blocked.stderr).toContain("2322");
+      expect(existsSync("sda/output/run.txt")).toBe(false);
+
+      writeFileSync(".oxlintrc.json", '{"rules":{"no-debugger":"warn"}}');
+      writeFileSync("sda/main.ts", fixed + "\ndebugger;\n");
+      const warning = run("sda", { NO_COLOR: undefined, FORCE_COLOR: "1" });
+      expect(warning.status, warning.stdout + warning.stderr).toBe(0);
+      expect(warning.stdout + warning.stderr).toContain("no-debugger");
+      expect(warning.stdout).toContain("\u001b[34mFormatting:");
+      expect(warning.stdout).toContain("\u001b[34mLinting and type checking:");
+
+      writeFileSync("sda/main.ts", fixed);
+      writeFileSync(
+        "sda/example.test.ts",
+        'throw new Error("Static checks must not execute tests");\n',
+      );
+      const checks = run("all-tests");
+      expect(checks.status, checks.stdout + checks.stderr).toBe(0);
+
+      // Reusing a lint-only configuration must not disable the scripts' compiler checks.
+      const existingConfig = '{ "rules": { "no-debugger": "error" } }\n';
+      writeFileSync(".oxlintrc.json", existingConfig);
+      await ensureTooling(ProjectManifest.open());
+      expect(readFileSync(".oxlintrc.json", "utf8")).toBe(existingConfig);
+      writeFileSync("sda/main.ts", fixed + '\nexport const invalid: number = "wrong";\n');
+      for (const script of ["all-tests", "fix"]) {
+        const result = run(script);
+        expect(result.status, result.stdout + result.stderr).not.toBe(0);
+        expect(result.stdout + result.stderr).toContain("2322");
+      }
+      expect(readFileSync(".oxlintrc.json", "utf8")).toBe(existingConfig);
+    },
+    60000,
+  );
+
   test.skipIf(windows || (runtime === "bun" && !hasBun)).each([
     ["once", "fixing"],
     ["once", "analysis"],
@@ -280,8 +537,15 @@ if (existsSync("fail-analysis")) process.exit(3);
         JSON.stringify({ type: "module", scripts: getProjectTasks(runtime) }),
       );
       writeFileSync(
-        "vite.config.ts",
-        'import { defineConfig } from "vite-plus";\nexport default defineConfig({ lint: { options: { typeAware: true, typeCheck: true }, rules: { "no-debugger": "error" } }, fmt: { ignorePatterns: ["sda/data/**", "sda/output/**"] } });\n',
+        ".oxlintrc.json",
+        JSON.stringify({
+          options: { typeAware: true, typeCheck: true },
+          rules: { "no-debugger": "error" },
+        }),
+      );
+      writeFileSync(
+        ".oxfmtrc.json",
+        JSON.stringify({ ignorePatterns: ["sda/data/**", "sda/output/**"] }),
       );
       writeFileSync(
         "tsconfig.json",
@@ -313,6 +577,7 @@ if (existsSync("fail-analysis")) process.exit(3);
         {
           detached: true,
           stdio: ["ignore", "pipe", "pipe"],
+          env: standaloneEnv,
         },
       );
       let output = "";

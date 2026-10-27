@@ -4,6 +4,7 @@ import {
   mkdirSync,
   readFileSync,
   readdirSync,
+  realpathSync,
   renameSync,
   rmSync,
   writeFileSync,
@@ -82,7 +83,10 @@ export async function acquireSdaLock(command: string): Promise<() => void> {
       const claim = readClaim(candidate);
       if (claim) ticket = Math.max(ticket, claim.ticket + 1);
     }
-    writeFileSync(join(ownDirectory, "owner.tmp"), JSON.stringify({ ticket, command }));
+    writeFileSync(
+      join(ownDirectory, "owner.tmp"),
+      JSON.stringify({ ticket, command, projectRoot: realpathSync(process.cwd()) }),
+    );
     renameSync(join(ownDirectory, "owner.tmp"), join(ownDirectory, "owner.json"));
     const deadline = performance.now() + 5000;
     for (const candidate of readdirSync(directory)) {
