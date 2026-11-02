@@ -98,8 +98,9 @@ bunx --bun @nshiab/setup-data-project --docs
 `--docs` requires installed dependencies and only refreshes documentation. It
 runs no prompts or installs and leaves project configuration unchanged.
 Failed downloads preserve previous files, warn that they may be stale, and
-exit unsuccessfully. Generated docs scripts pin the setup CLI version that
-created them. Use `--help` for usage.
+exit unsuccessfully. Generated docs scripts use the project's locally installed
+setup CLI, so upgrading that dependency also updates the documentation command.
+Use `--help` for usage.
 
 For development, use `npm ci` and `npm run all-tests`.
 Releases use `npm run patch`, `npm run minor`, or `npm run major` from main;

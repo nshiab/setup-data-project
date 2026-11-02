@@ -1,5 +1,4 @@
 import { getRuntime, type Runtime } from "./getRuntime.ts";
-import metadata from "../../package.json" with { type: "json" };
 export function getProjectTasks(runtime: Runtime = getRuntime()) {
   const fmt = runtime === "bun" ? "bun run --bun oxfmt" : "oxfmt";
   const lint = `${runtime === "bun" ? "bun run --bun oxlint" : "oxlint"} --type-aware --type-check`;
@@ -11,6 +10,6 @@ export function getProjectTasks(runtime: Runtime = getRuntime()) {
     "all-tests": `${fmt} --check && ${lint}`,
     clean: `${runner} --clean`,
     fix: `${fmt} --write && ${lint} --fix --format default`,
-    docs: `${runtime === "bun" ? "bunx --bun" : "npx"} @nshiab/setup-data-project@${metadata.version} --docs`,
+    docs: `${runtime === "bun" ? "bun run --bun --no-env-file " : ""}setup-data-project --docs`,
   };
 }

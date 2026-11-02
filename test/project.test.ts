@@ -41,7 +41,6 @@ test("VS Code setup preserves existing JSONC settings while adding missing recom
 test("Bun wins over Node compatibility version", () => {
   expect(getRuntime({ bun: "1.3.0", node: "24.0.0" })).toBe("bun");
   expect(getRuntime({ node: "24.21.0" })).toBe("node");
-  expect(getProjectTasks("bun").docs).toContain("bunx --bun");
 });
 test("flags preserve noninteractive selection and isolate docs-only", () => {
   expect(parseArguments([]).packages).toEqual([]);
