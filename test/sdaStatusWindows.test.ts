@@ -16,7 +16,7 @@ beforeEach(() => {
   vi.stubGlobal("process", { ...process, platform: "win32", argv: [process.execPath, runner] });
   vi.spyOn(console, "log").mockImplementation(() => {});
   vi.spyOn(console, "error").mockImplementation(() => {});
-  claim = `sda/.sda-lock/${process.pid}-${randomUUID()}`;
+  claim = `.sda-cache/lock/${process.pid}-${randomUUID()}`;
   mkdirSync(claim, { recursive: true });
   writeFileSync(
     `${claim}/owner.json`,

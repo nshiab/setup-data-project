@@ -13,8 +13,7 @@ import { join, resolve } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import { isObject } from "./jsonObject.ts";
 
-export const SDA_PID_FILE = "sda/.sda.pid";
-export const SDA_LOCK_DIRECTORY = "sda/.sda-lock";
+export const SDA_LOCK_DIRECTORY = ".sda-cache/lock";
 
 type Claim = { id: string; pid: number; ticket: number; command?: string };
 
@@ -27,18 +26,11 @@ function errorCode(error: unknown) {
 // https://www.microsoft.com/en-us/research/publication/new-solution-dijkstras-concurrent-programming-problem/
 export async function acquireSdaLock(command: string): Promise<() => void> {
   const directory = resolve(SDA_LOCK_DIRECTORY);
-  const pidFile = resolve(SDA_PID_FILE);
   const id = `${process.pid}-${randomUUID()}`;
   const ownDirectory = join(directory, id);
   mkdirSync(directory, { recursive: true });
   mkdirSync(ownDirectory);
-  let ownsPid = false;
   const release = () => {
-    if (ownsPid) {
-      // Remove the informational PID before releasing ownership to the next run.
-      rmSync(pidFile, { force: true });
-      ownsPid = false;
-    }
     rmSync(ownDirectory, { recursive: true, force: true });
     process.removeListener("exit", release);
   };
@@ -105,9 +97,6 @@ export async function acquireSdaLock(command: string): Promise<() => void> {
           `${claim.command} is already running${claim.command?.endsWith("sda:watch") ? " and watching this project's files" : " an analysis for this project"} (PID ${claim.pid}). Wait for it to finish or stop it with Ctrl+C in its terminal, then try again.`,
         );
     }
-    // Only the winner touches the shared PID file, including stale-file recovery.
-    writeFileSync(pidFile, String(process.pid) + "\n");
-    ownsPid = true;
     return release;
   } catch (error) {
     release();

@@ -2,15 +2,7 @@ import { expect, test, vi } from "vite-plus/test";
 import { spawn, spawnSync } from "node:child_process";
 import { once } from "node:events";
 import { randomUUID } from "node:crypto";
-import {
-  cpSync,
-  existsSync,
-  mkdirSync,
-  readFileSync,
-  readdirSync,
-  realpathSync,
-  writeFileSync,
-} from "node:fs";
+import { cpSync, existsSync, mkdirSync, readdirSync, realpathSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { temporaryProject } from "./helpers/utils.ts";
 
@@ -29,33 +21,29 @@ test("status without an active run creates no files and runs no fixes", () => {
 test("status ignores dead owners without modifying their records", async () => {
   const child = spawn(process.execPath, ["-e", ""]);
   await once(child, "close");
-  const claim = `sda/.sda-lock/${child.pid}-${randomUUID()}`;
+  const claim = `.sda-cache/lock/${child.pid}-${randomUUID()}`;
   mkdirSync(claim, { recursive: true });
-  writeFileSync("sda/.sda.pid", `${child.pid}\n`);
   const result = status();
   expect(result.status, result.stderr).toBe(0);
   expect(existsSync(claim)).toBe(true);
-  expect(readFileSync("sda/.sda.pid", "utf8")).toBe(`${child.pid}\n`);
+  expect(readdirSync(claim)).toEqual([]);
 });
 
-test("status refuses malformed PIDs without changing files", () => {
-  mkdirSync("sda");
-  writeFileSync("sda/.sda.pid", "invalid");
+test("status refuses invalid claim PIDs without changing files", () => {
+  const claim = `.sda-cache/lock/2147483648-${randomUUID()}`;
+  mkdirSync(claim, { recursive: true });
   const result = status();
   expect(result.status).toBe(2);
   expect(result.stderr).toContain("Unable to verify SDA status");
-  expect(readFileSync("sda/.sda.pid", "utf8")).toBe("invalid");
+  expect(readdirSync(claim)).toEqual([]);
 });
 
-test("status refuses an unrelated live PID, even before the PID file is published", async () => {
+test("status refuses an unrelated live PID, even before its owner record is published", async () => {
   const child = spawn(process.execPath, ["-e", "setInterval(() => {}, 1000)"]);
   const closed = once(child, "close");
-  const claim = `sda/.sda-lock/${child.pid}-${randomUUID()}`;
+  const claim = `.sda-cache/lock/${child.pid}-${randomUUID()}`;
   try {
     mkdirSync(claim, { recursive: true });
-    expect(status().status).toBe(2);
-    expect(existsSync("sda/.sda.pid")).toBe(false);
-    writeFileSync("sda/.sda.pid", `${child.pid}\n`);
     expect(status().status).toBe(2);
     writeFileSync(
       `${claim}/owner.json`,
@@ -89,13 +77,12 @@ test("status refuses an SDA process belonging to another directory", async () =>
   });
   const closed = once(child, "close");
   try {
-    await vi.waitFor(() => expect(existsSync("other/sda/.sda.pid")).toBe(true));
-    mkdirSync("sda");
-    writeFileSync("sda/.sda.pid", `${child.pid}\n`);
-    // A PID alone is insufficient on Windows; a copied owner record must not
-    // turn another project's process into a verified local run either.
-    expect(status().status).toBe(2);
-    cpSync("other/sda/.sda-lock", "sda/.sda-lock", { recursive: true });
+    await vi.waitFor(() => {
+      const [claim] = readdirSync("other/.sda-cache/lock");
+      expect(existsSync(`other/.sda-cache/lock/${claim}/owner.json`)).toBe(true);
+    });
+    // A copied owner record must not turn another project's process into a verified local run.
+    cpSync("other/.sda-cache/lock", ".sda-cache/lock", { recursive: true });
     const result = status();
     expect(result.status).toBe(2);
     expect(result.stderr).toContain("could not be verified as this project's SDA process");

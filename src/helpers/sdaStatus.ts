@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process";
 import { readFileSync, readdirSync, realpathSync } from "node:fs";
 import { join } from "node:path";
 import { isObject } from "./jsonObject.ts";
-import { SDA_LOCK_DIRECTORY, SDA_PID_FILE } from "./sdaLock.ts";
+import { SDA_LOCK_DIRECTORY } from "./sdaLock.ts";
 
 function errorCode(error: unknown) {
   return error instanceof Error && "code" in error ? error.code : undefined;
@@ -13,29 +13,20 @@ export function printSdaStatus(): number {
   const run = `${process.versions.bun ? "bun" : "npm"} run`;
   const retry = `${run} sda:status`;
   try {
-    const pids = new Set<number>();
     const claims = new Map<number, string[]>();
     try {
       for (const name of readdirSync(SDA_LOCK_DIRECTORY)) {
         const match = /^(\d+)-[\da-f-]{36}$/.exec(name);
         if (match) {
           const pid = Number(match[1]);
-          pids.add(pid);
           claims.set(pid, [...(claims.get(pid) ?? []), name]);
         }
       }
     } catch (error) {
       if (errorCode(error) !== "ENOENT") throw error;
     }
-    try {
-      const value = readFileSync(SDA_PID_FILE, "utf8").trim();
-      if (!/^\d+$/.test(value)) throw new Error("The SDA PID file is invalid.");
-      pids.add(Number(value));
-    } catch (error) {
-      if (errorCode(error) !== "ENOENT") throw error;
-    }
     const messages: string[] = [];
-    for (const pid of pids) {
+    for (const [pid, owners] of claims) {
       if (!Number.isInteger(pid) || pid <= 0 || pid > 2147483647)
         throw new Error("The recorded SDA PID is invalid.");
       try {
@@ -46,7 +37,6 @@ export function printSdaStatus(): number {
       }
       let command: string;
       if (process.platform === "win32") {
-        const owners = claims.get(pid) ?? [];
         if (owners.length !== 1) throw new Error(`PID ${pid} has no unambiguous SDA owner record.`);
         const owner: unknown = JSON.parse(
           readFileSync(join(SDA_LOCK_DIRECTORY, owners[0], "owner.json"), "utf8"),

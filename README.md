@@ -70,6 +70,8 @@ Put tests in `sda/test/`. Use these commands
 
 The watcher comes from the installed setup-data-project package; no runner script is added to your project.
 SDA blocks simultaneous runs. Recovery after a forced termination is best effort.
+Lock records live in `.sda-cache/lock/`. The `clean` command preserves that directory
+and its parent so an active run keeps its lock.
 New development tools are installed at their latest versions; existing dependencies
 are preserved.
 

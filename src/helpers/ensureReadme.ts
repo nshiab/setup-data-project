@@ -22,6 +22,7 @@ export function ensureReadme(runtime: Runtime, installedPackages: string[] = [])
 - \`${run} clean\`: delete cached results and temporary files in .sda-cache/, .journalism-cache/, and .tmp/.
 
 SDA blocks simultaneous runs. Recovery after a forced termination is best effort.
+Lock records live in .sda-cache/lock/. The clean command preserves that directory and its parent so an active run keeps its lock.
 
 In VS Code, install the recommended Oxc extension for formatting and linting. Generated .vscode/settings.json enables formatting and lint fixes on save, plus visual line wrapping. Existing VS Code configuration files are preserved.
 
