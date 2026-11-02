@@ -20,7 +20,7 @@ import { randomUUID } from "node:crypto";
 import { setTimeout as delay } from "node:timers/promises";
 const [name, mode] = process.argv.slice(2);
 process.on("SIGTERM", () => process.exit(0));
-if (mode === "choosing") mkdirSync("sda/.sda-lock/" + process.pid + "-" + randomUUID(), { recursive: true });
+if (mode === "choosing") mkdirSync(".sda-cache/lock/" + process.pid + "-" + randomUUID(), { recursive: true });
 writeFileSync("ready-" + name, "");
 if (mode === "choosing") {
   setInterval(() => {}, 1000);
@@ -59,7 +59,7 @@ if (mode === "choosing") {
           await vi.waitFor(() => expect(result("previous")).toMatch(/^acquired:/));
           abandoned.child.kill("SIGKILL");
           await abandoned.closed;
-          expect(existsSync("sda/.sda.pid")).toBe(true);
+          expect(readdirSync(".sda-cache/lock")).toHaveLength(1);
           rmSync("start");
         }
       }
@@ -70,7 +70,7 @@ if (mode === "choosing") {
       });
       writeFileSync("start", "");
       if (state === "choosing" && abandoned) {
-        await vi.waitFor(() => expect(readdirSync("sda/.sda-lock").length).toBeGreaterThan(1));
+        await vi.waitFor(() => expect(readdirSync(".sda-cache/lock").length).toBeGreaterThan(1));
         await delay(50);
         for (const name of names) {
           if (existsSync("result-" + name)) expect(result(name)).not.toMatch(/^acquired:/);
@@ -85,20 +85,23 @@ if (mode === "choosing") {
       expect(winners).toHaveLength(1);
       const winner = winners[0];
       const winnerPid = contenders[Number(winner)].child.pid;
-      expect(readFileSync("sda/.sda.pid", "utf8")).toBe(`${winnerPid}\n`);
+      expect(readdirSync(".sda-cache/lock")).toEqual([
+        expect.stringMatching(new RegExp(`^${winnerPid}-`)),
+      ]);
       for (const name of names) {
         if (name !== winner) expect(result(name)).toContain("is already running");
       }
       const later = start("later");
       await later.closed;
       expect(result("later")).toContain("is already running");
-      expect(readFileSync("sda/.sda.pid", "utf8")).toBe(`${winnerPid}\n`);
+      expect(readdirSync(".sda-cache/lock")).toEqual([
+        expect.stringMatching(new RegExp(`^${winnerPid}-`)),
+      ]);
     } finally {
       for (const { child } of workers) child.kill("SIGTERM");
       await Promise.all(workers.map(({ closed }) => closed));
     }
-    expect(existsSync("sda/.sda.pid")).toBe(false);
-    expect(readdirSync("sda/.sda-lock")).toEqual([]);
+    expect(readdirSync(".sda-cache/lock")).toEqual([]);
   },
   15000,
 );

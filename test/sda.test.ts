@@ -3,6 +3,7 @@ import { execFileSync, spawn, spawnSync } from "node:child_process";
 import { once } from "node:events";
 import {
   existsSync,
+  lstatSync,
   mkdirSync,
   mkdtempSync,
   rmSync,
@@ -35,6 +36,7 @@ const hasBun = spawnSync("bun", ["--version"]).status === 0;
 
 const repository = fileURLToPath(new URL("..", import.meta.url));
 const windows = process.platform === "win32";
+const lockPids = () => readdirSync(".sda-cache/lock").map((name) => Number(name.split("-")[0]));
 const npm = windows ? "npm.cmd" : "npm";
 const tooling = ["oxfmt", "oxlint", "oxlint-tsgolint", "@types/node", "@types/bun"] as const;
 // The library's test launcher sets Vite+ mode; generated projects run Oxc independently.
@@ -155,8 +157,8 @@ test.skipIf(!windows).each([
     };
     try {
       await vi.waitFor(() => expect(existsSync("ready"), output).toBe(true), { timeout: 15000 });
-      const pid = readFileSync("sda/.sda.pid", "utf8");
-      const claim = `sda/.sda-lock/${readdirSync("sda/.sda-lock")[0]}/owner.json`;
+      const [pid] = lockPids();
+      const claim = `.sda-cache/lock/${readdirSync(".sda-cache/lock")[0]}/owner.json`;
       const owner = readFileSync(claim, "utf8");
       expect(JSON.parse(owner)).toMatchObject({ projectRoot: realpathSync(process.cwd()) });
       const fixes = readFileSync("fix-runs.txt", "utf8");
@@ -167,8 +169,8 @@ test.skipIf(!windows).each([
         expect(result.stdout).toContain(
           mode === "watch" ? "SDA watcher is running" : "SDA analysis is running",
         );
-        expect(result.stdout).toContain(`PID ${pid.trim()}`);
-        expect(readFileSync("sda/.sda.pid", "utf8")).toBe(pid);
+        expect(result.stdout).toContain(`PID ${pid}`);
+        expect(lockPids()).toEqual([pid]);
         expect(readFileSync(claim, "utf8")).toBe(owner);
         expect(readFileSync("fix-runs.txt", "utf8")).toBe(fixes);
         expect(() => process.kill(Number(pid), 0)).not.toThrow();
@@ -217,6 +219,9 @@ for (const runtime of ["node", "bun"] as const) {
       }
 
       const clean = () => {
+        const keepsCacheDirectory = lstatSync(".sda-cache", {
+          throwIfNoEntry: false,
+        })?.isDirectory();
         const result = spawnSync(runtime === "bun" ? "bun" : "npm", ["run", "clean"], {
           encoding: "utf8",
           shell: runtime === "node" && process.platform === "win32",
@@ -224,12 +229,15 @@ for (const runtime of ["node", "bun"] as const) {
         });
         expect(result.error).toBeUndefined();
         expect(result.status, `${result.stdout}\n${result.stderr}`).toBe(0);
-        for (const path of cachePaths) expect(existsSync(path)).toBe(false);
+        for (const path of cachePaths.slice(1)) expect(existsSync(path)).toBe(false);
+        if (keepsCacheDirectory) expect(readdirSync(".sda-cache")).toEqual([]);
+        else expect(existsSync(".sda-cache")).toBe(false);
         for (const [path, content] of Object.entries(preservedFiles)) {
           expect(readFileSync(path, "utf8")).toBe(content);
         }
         expect(readdirSync(".").sort()).toEqual([
           ".env",
+          ...(keepsCacheDirectory ? [".sda-cache"] : []),
           ".sda-cache-keep",
           "node_modules",
           "package.json",
@@ -244,6 +252,7 @@ for (const runtime of ["node", "bun"] as const) {
       }
       clean();
 
+      rmSync(".sda-cache", { recursive: true });
       for (const path of cachePaths) writeFileSync(path, "temporary cache file\n");
       clean();
       clean();
@@ -482,6 +491,13 @@ ${phase === "fixing" ? 'fs.writeFileSync("ready", ""); setInterval(() => {}, 100
     try {
       await vi.waitFor(() => expect(existsSync("ready")).toBe(true));
       const competingRuntime = runtime === "node" && hasBun ? "bun" : process.execPath;
+      const claim = `.sda-cache/lock/${readdirSync(".sda-cache/lock")[0]}/owner.json`;
+      const owner = readFileSync(claim, "utf8");
+      writeFileSync(".sda-cache/cached.json", "{}");
+      const cleaned = spawnSync(competingRuntime, [runner, "--clean"], { encoding: "utf8" });
+      expect(cleaned.status, cleaned.stderr).toBe(0);
+      expect(existsSync(".sda-cache/cached.json")).toBe(false);
+      expect(readFileSync(claim, "utf8")).toBe(owner);
       const status = spawnSync(runtime === "bun" ? "bun" : npm, ["run", "sda:status"], {
         encoding: "utf8",
       });
@@ -490,7 +506,7 @@ ${phase === "fixing" ? 'fs.writeFileSync("ready", ""); setInterval(() => {}, 100
         mode === "watch" ? "SDA watcher is running" : "SDA analysis is running",
       );
       expect(status.stdout).toContain(`PID ${child.pid}`);
-      expect(readFileSync("sda/.sda.pid", "utf8")).toBe(`${child.pid}\n`);
+      expect(lockPids()).toEqual([child.pid]);
       for (const flags of [[], ["--watch"]]) {
         const competing = spawnSync(competingRuntime, [runner, ...flags, "sda/main.ts"], {
           encoding: "utf8",
@@ -501,14 +517,14 @@ ${phase === "fixing" ? 'fs.writeFileSync("ready", ""); setInterval(() => {}, 100
           `${runtime === "bun" ? "bun" : "npm"} run sda${mode === "watch" ? ":watch" : ""} is already running`,
         );
         expect(competing.stderr).toContain(`PID ${child.pid}`);
-        expect(readFileSync("sda/.sda.pid", "utf8")).toBe(`${child.pid}\n`);
+        expect(lockPids()).toEqual([child.pid]);
       }
       expect(readFileSync("fix-runs.txt", "utf8")).toBe("fix\n");
     } finally {
       child.kill("SIGTERM");
       await closed;
     }
-    expect(existsSync("sda/.sda.pid")).toBe(false);
+    expect(lockPids()).toEqual([]);
   });
 
   test.skipIf(windows || (runtime === "bun" && !hasBun))(
@@ -533,8 +549,8 @@ if (fs.existsSync("fail-fix")) process.exit(2);
       );
       writeFileSync(
         "sda/main.ts",
-        `import { appendFileSync, existsSync } from "node:fs";
-if (!existsSync("sda/.sda.pid")) throw new Error("Single execution must hold the lock");
+        `import { appendFileSync, existsSync, readdirSync } from "node:fs";
+if (readdirSync(".sda-cache/lock").length !== 1) throw new Error("Single execution must hold the lock");
 appendFileSync("runs.txt", (process.versions.bun ? "bun" : "node") + ":" + process.env.SDA_ONCE_TEST + "\\n");
 if (existsSync("fail-analysis")) process.exit(3);
 `,
@@ -545,7 +561,7 @@ if (existsSync("fail-analysis")) process.exit(3);
           timeout: 5000,
         });
         expect(result.error, result.stdout + result.stderr).toBeUndefined();
-        expect(existsSync("sda/.sda.pid")).toBe(false);
+        expect(lockPids()).toEqual([]);
         return result;
       };
       expect(run().status).toBe(0);
@@ -568,7 +584,7 @@ if (existsSync("fail-analysis")) process.exit(3);
   );
 
   test.skipIf(process.platform === "win32" || (runtime === "bun" && !hasBun))(
-    `${runtime}: PID file identifies the runner, prevents duplicates, and is removed on shutdown`,
+    `${runtime}: lock identifies the runner, prevents duplicates, and is released on shutdown`,
     async () => {
       mkdirSync("sda");
       writeFileSync(".env", "");
@@ -580,7 +596,7 @@ if (existsSync("fail-analysis")) process.exit(3);
       const child = spawn(command, args, { stdio: "ignore" });
       const closed = once(child, "close");
       try {
-        await vi.waitFor(() => expect(readFileSync("sda/.sda.pid", "utf8")).toBe(`${child.pid}\n`));
+        await vi.waitFor(() => expect(lockPids()).toEqual([child.pid]));
         const duplicate = spawnSync(command, args, { encoding: "utf8" });
         expect(duplicate.status).toBe(1);
         expect(duplicate.stderr).toContain(
@@ -588,39 +604,26 @@ if (existsSync("fail-analysis")) process.exit(3);
         );
         expect(duplicate.stderr).toContain(`PID ${child.pid}`);
         expect(duplicate.stderr).toContain("stop it with Ctrl+C");
-        expect(readFileSync("sda/.sda.pid", "utf8")).toBe(`${child.pid}\n`);
+        expect(lockPids()).toEqual([child.pid]);
       } finally {
         child.kill("SIGTERM");
         await closed;
       }
-      expect(existsSync("sda/.sda.pid")).toBe(false);
+      expect(lockPids()).toEqual([]);
 
-      // Recreate the file left by a crash using a process known to have exited.
-      writeFileSync("sda/.sda.pid", `${child.pid}\n`);
+      // Recreate a claim left by a crash using a process known to have exited.
+      mkdirSync(`.sda-cache/lock/${child.pid}-00000000-0000-0000-0000-000000000000`);
       const restarted = spawn(command, args, { stdio: "ignore" });
       const restartedClosed = once(restarted, "close");
       try {
-        await vi.waitFor(() =>
-          expect(readFileSync("sda/.sda.pid", "utf8")).toBe(`${restarted.pid}\n`),
-        );
+        await vi.waitFor(() => expect(lockPids()).toEqual([restarted.pid]));
         expect(spawnSync(command, args).status).toBe(1);
-        expect(readFileSync("sda/.sda.pid", "utf8")).toBe(`${restarted.pid}\n`);
+        expect(lockPids()).toEqual([restarted.pid]);
       } finally {
         restarted.kill("SIGTERM");
         await restartedClosed;
       }
-      expect(existsSync("sda/.sda.pid")).toBe(false);
-
-      // The PID is informational; abandoned or interrupted writes recover under the lock.
-      for (const value of ["", "invalid"]) {
-        writeFileSync("sda/.sda.pid", value);
-        const recovered = spawnSync(command, [runner, "sda/main.ts"], {
-          encoding: "utf8",
-          timeout: 5000,
-        });
-        expect(recovered.status, recovered.stderr).toBe(0);
-        expect(existsSync("sda/.sda.pid")).toBe(false);
-      }
+      expect(lockPids()).toEqual([]);
     },
     10000,
   );
@@ -632,7 +635,7 @@ if (existsSync("fail-analysis")) process.exit(3);
       mkdirSync("sda/data");
       mkdirSync("sda/output");
       symlinkSync(installedModules, "node_modules", "dir");
-      writeFileSync(".gitignore", "node_modules/\nsda/output/\nsda/.sda.pid\nsda/.sda-lock/\n");
+      writeFileSync(".gitignore", "node_modules/\nsda/output/\n.sda-cache/\n");
       writeFileSync(
         "package.json",
         JSON.stringify({ type: "module", scripts: getProjectTasks(runtime) }),
@@ -711,9 +714,10 @@ if (existsSync("fail-analysis")) process.exit(3);
         await waitForRun();
         expect(readFileSync(helper, "utf8")).toBe("export const value: number = 1;\n");
         expect(existsSync("scripts")).toBe(false);
-        expect(existsSync(".sda.pid")).toBe(false);
+        expect(existsSync("sda/.sda.pid")).toBe(false);
         output = "";
-        writeFileSync("sda/.sda.pid", readFileSync("sda/.sda.pid", "utf8"));
+        const claim = `.sda-cache/lock/${readdirSync(".sda-cache/lock")[0]}/owner.json`;
+        writeFileSync(claim, readFileSync(claim, "utf8"));
         await expectNoRun();
         writeFileSync(helper, 'export const value: number = "invalid again";\n');
         await waitForError();
@@ -813,12 +817,12 @@ setInterval(() => {}, 1000);
     const closed = once(child, "close");
     try {
       await vi.waitFor(() => expect(readFileSync("checks.txt", "utf8")).toBe("check\n"));
-      expect(readFileSync("sda/.sda.pid", "utf8")).toBe(`${child.pid}\n`);
+      expect(lockPids()).toEqual([child.pid]);
       if (phase === "fixing") {
         const fixerPid = Number(readFileSync("fixer.pid", "utf8"));
         child.kill("SIGINT");
         await closed;
-        expect(existsSync("sda/.sda.pid")).toBe(false);
+        expect(lockPids()).toEqual([]);
         expect(() => process.kill(fixerPid, 0)).toThrow();
         return;
       }
@@ -830,7 +834,7 @@ setInterval(() => {}, 1000);
       const analysisPid = Number(readFileSync("analysis.pid", "utf8"));
       child.kill("SIGINT");
       await closed;
-      expect(existsSync("sda/.sda.pid")).toBe(false);
+      expect(lockPids()).toEqual([]);
       expect(() => process.kill(analysisPid, 0)).toThrow();
     } finally {
       child.kill("SIGTERM");

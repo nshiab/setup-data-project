@@ -3,8 +3,6 @@ export const GITIGNORE_ENTRIES = [
   "docs/",
   ".tmp",
   ".sda-cache",
-  "sda/.sda.pid",
-  "sda/.sda-lock/",
   ".journalism-cache",
   "sda/data",
   "sda/output",

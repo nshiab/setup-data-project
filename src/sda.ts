@@ -4,7 +4,7 @@ import { spawn, spawnSync, type ChildProcess } from "node:child_process";
 import { dirname, join, resolve, sep } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import { parseArgs } from "node:util";
-import { acquireSdaLock, SDA_PID_FILE, SDA_LOCK_DIRECTORY } from "./helpers/sdaLock.ts";
+import { acquireSdaLock, SDA_LOCK_DIRECTORY } from "./helpers/sdaLock.ts";
 import { printSdaStatus } from "./helpers/sdaStatus.ts";
 import { pipeFixOutput } from "./helpers/pipeFixOutput.ts";
 
@@ -27,6 +27,21 @@ if (values.clean) {
   }
   try {
     for (const path of [".sda-cache", ".journalism-cache", ".tmp"]) {
+      if (path === ".sda-cache") {
+        const stat = lstatSync(path, { throwIfNoEntry: false });
+        if (!stat) continue;
+        if (!stat.isDirectory()) {
+          rmSync(path, { force: true });
+          continue;
+        }
+        // Keep the lock and its parent stable, including during concurrent starts.
+        for (const name of readdirSync(path)) {
+          const child = join(path, name);
+          if (resolve(child) !== resolve(SDA_LOCK_DIRECTORY))
+            rmSync(child, { recursive: true, force: true });
+        }
+        continue;
+      }
       rmSync(path, { recursive: true, force: true });
     }
   } catch (error) {
@@ -44,7 +59,7 @@ if (!entry) {
 }
 const watching = values.watch;
 const selected = [entry, ...paths].map((path) => resolve(path));
-const ignored = [SDA_PID_FILE, SDA_LOCK_DIRECTORY, ...values.ignore].map((path) => resolve(path));
+const ignored = [SDA_LOCK_DIRECTORY, ...values.ignore].map((path) => resolve(path));
 const within = (path: string, root: string) => path === root || path.startsWith(root + sep);
 const excluded = (path: string) => ignored.some((root) => within(path, root));
 const bun = Boolean(process.versions.bun);
