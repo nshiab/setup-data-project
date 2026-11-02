@@ -326,7 +326,7 @@ for (const runtime of ["node", "bun"] as const) {
   );
 
   test.skipIf(runtime === "bun" && !hasBun)(
-    `${runtime}: standalone tooling fixes code, checks types, and runs analysis without a test runner`,
+    `${runtime}: standalone tooling refreshes docs, fixes code, checks types, and runs analysis without a test runner`,
     async () => {
       symlinkSync(installedModules, "node_modules", windows ? "junction" : "dir");
       writeFileSync(
@@ -340,6 +340,16 @@ for (const runtime of ["node", "bun"] as const) {
           },
         }),
       );
+      const manifestBeforeDocs = readFileSync("package.json", "utf8");
+      expect(
+        execFileSync(runtime === "bun" ? "bun" : npm, ["run", "docs"], {
+          env: standaloneEnv,
+          encoding: "utf8",
+          shell: windows && runtime === "node",
+          timeout: 10000,
+        }),
+      ).toContain("No library documentation to download.");
+      expect(readFileSync("package.json", "utf8")).toBe(manifestBeforeDocs);
       vi.spyOn(runtimeHelpers, "getRuntime").mockReturnValue(runtime);
       await ensureTooling(ProjectManifest.open());
       createFolderStructure([]);
