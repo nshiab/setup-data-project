@@ -7,6 +7,7 @@ import { parseArgs } from "node:util";
 import { acquireSdaLock, SDA_LOCK_DIRECTORY } from "./helpers/sdaLock.ts";
 import { printSdaStatus } from "./helpers/sdaStatus.ts";
 import { pipeFixOutput } from "./helpers/pipeFixOutput.ts";
+import { createFileChanges } from "./helpers/fileChanges.ts";
 
 const {
   positionals: [entry, ...paths],
@@ -73,7 +74,7 @@ let timer: ReturnType<typeof setTimeout> | undefined;
 let checking = false;
 let closing = false;
 let needsCheck = true;
-let contents = new Map<string, string | null>();
+const changes = createFileChanges(selected, excluded);
 const watchers = new Map<string, { watcher: FSWatcher; recursive: boolean }>();
 
 function launch(args: string[], command = process.execPath, summarize = false) {
@@ -101,36 +102,6 @@ function launch(args: string[], command = process.execPath, summarize = false) {
     child.once("close", resolve);
   });
   return { child, done };
-}
-
-function snapshot() {
-  const files = new Map<string, string | null>();
-  function collect(path: string) {
-    if (excluded(path) || files.has(path)) return;
-    try {
-      const stat = lstatSync(path, { bigint: true });
-      if (stat.isDirectory()) {
-        files.set(path, "directory");
-        for (const name of readdirSync(path)) collect(join(path, name));
-      } else {
-        // Compare metadata without reading potentially large datasets or following symlinks.
-        files.set(path, [stat.dev, stat.ino, stat.size, stat.mtimeNs, stat.ctimeNs].join(":"));
-      }
-    } catch (error) {
-      if (errorCode(error) !== "ENOENT" && errorCode(error) !== "ENOTDIR") throw error;
-      files.set(path, null);
-    }
-  }
-  for (const path of selected) collect(path);
-  return files;
-}
-
-function equal(left: Map<string, string | null>, right: Map<string, string | null>) {
-  if (left.size !== right.size) return false;
-  for (const [path, value] of left) {
-    if (right.get(path) !== value) return false;
-  }
-  return true;
 }
 
 function refreshWatchers() {
@@ -203,12 +174,10 @@ async function stop(job: Job | undefined) {
 
 async function check() {
   if (closing || checking) return;
-  const before = snapshot();
-  if (!needsCheck && equal(contents, before)) return;
+  const changed = changes.check();
+  if (!needsCheck && !changed) return;
   checking = true;
   needsCheck = false;
-  // Reuse this snapshot; the post-fix scan also catches edits made while stopping analysis.
-  contents = before;
   await stop(analysis);
   analysis = undefined;
   if (closing) return;
@@ -221,10 +190,8 @@ async function check() {
   );
   const fixed = await fixer.done;
   if (closing) return;
-  const current = snapshot();
   // Recheck edits made during fixes; ignore delayed events for unchanged file states.
-  needsCheck = !equal(contents, current);
-  contents = current;
+  needsCheck = changes.check();
   refreshWatchers();
   fixer = undefined;
   checking = false;

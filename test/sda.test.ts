@@ -787,6 +787,127 @@ if (existsSync("fail-analysis")) process.exit(3);
   );
 }
 
+for (const runtime of ["node", "bun"] as const) {
+  test.skipIf(runtime === "bun" && !hasBun)(
+    `${runtime}: watch mode reruns on code and data edits without watching output`,
+    async () => {
+      mkdirSync("sda/data", { recursive: true });
+      mkdirSync("sda/output");
+      writeFileSync(".env", "");
+      writeFileSync("package.json", JSON.stringify({ scripts: { fix: "node fix.cjs" } }));
+      writeFileSync("fix.cjs", "");
+      const main = (value: string) =>
+        `import { appendFileSync } from "node:fs"; appendFileSync("sda/output/runs.txt", ${JSON.stringify(value + "\n")});\n`;
+      writeFileSync("sda/main.ts", main("first"));
+      const child = spawn(
+        runtime === "bun" ? "bun" : process.execPath,
+        [runner, "--watch", "sda/main.ts", "sda", ".env", "--ignore", "sda/output"],
+        { stdio: "ignore" },
+      );
+      const closed = once(child, "close");
+      const waitForRuns = (expected: string) =>
+        vi.waitFor(() => expect(readFileSync("sda/output/runs.txt", "utf8")).toBe(expected), {
+          timeout: 10000,
+        });
+      try {
+        await waitForRuns("first\n");
+        writeFileSync("sda/main.ts", main("second"));
+        await waitForRuns("first\nsecond\n");
+        writeFileSync("sda/data/new.csv", "new data\n");
+        await waitForRuns("first\nsecond\nsecond\n");
+        writeFileSync("sda/output/result.json", "{}");
+        await delay(500);
+        expect(readFileSync("sda/output/runs.txt", "utf8")).toBe("first\nsecond\nsecond\n");
+      } finally {
+        child.kill("SIGTERM");
+        await closed;
+      }
+    },
+    30000,
+  );
+}
+
+for (const scenario of ["batch", "missing", "symlink"] as const) {
+  test.skipIf(windows && scenario === "symlink")(
+    `watch mode reconciles ${scenario} notifications`,
+    async () => {
+      mkdirSync("sda/data", { recursive: true });
+      writeFileSync("sda/data/input.csv", "initial");
+      writeFileSync(".env", "");
+      writeFileSync("package.json", JSON.stringify({ scripts: { fix: "node fix.cjs" } }));
+      writeFileSync("fix.cjs", 'require("node:fs").appendFileSync("fixes.txt", "fix\\n");');
+      writeFileSync(
+        "sda/main.ts",
+        'import { appendFileSync } from "node:fs"; appendFileSync("runs.txt", "run\\n");',
+      );
+      // Deliver a controlled subset of events through the actual runner callback.
+      // This makes delayed paths and dropped notifications deterministic on all OSes.
+      writeFileSync(
+        "preload.cjs",
+        `const fs = require("node:fs");
+const { EventEmitter } = require("node:events");
+const { resolve } = require("node:path");
+const listeners = new Map();
+fs.watch = (directory, _options, listener) => {
+  listeners.set(directory, listener);
+  const watcher = new EventEmitter();
+  watcher.close = () => {};
+  return watcher;
+};
+require("node:module").syncBuiltinESMExports();
+setInterval(() => {
+  if (!fs.existsSync("notify.json")) return;
+  const event = JSON.parse(fs.readFileSync("notify.json", "utf8"));
+  fs.rmSync("notify.json");
+  listeners.get(resolve("sda"))("rename", event.name);
+  if (event.replaceDirectory) {
+    fs.renameSync("sda/data", "saved-data");
+    fs.symlinkSync("data", "sda/data", "dir");
+  }
+}, 10);
+`,
+      );
+      const child = spawn(
+        process.execPath,
+        ["--require", resolve("preload.cjs"), runner, "--watch", "sda/main.ts", "sda"],
+        { stdio: ["ignore", "ignore", "pipe"] },
+      );
+      const closed = once(child, "close");
+      let output = "";
+      child.stderr.on("data", (data: Buffer) => (output += data.toString()));
+      const notify = (event: { name: string; replaceDirectory?: boolean }) => {
+        writeFileSync("notify.tmp", JSON.stringify(event));
+        renameSync("notify.tmp", "notify.json");
+      };
+      try {
+        await vi.waitFor(() => expect(readFileSync("runs.txt", "utf8")).toBe("run\n"), {
+          timeout: 10000,
+        });
+        if (scenario === "batch") {
+          for (let n = 0; n < 12; n++) writeFileSync(`sda/data/${n}.csv`, "new data");
+          notify({ name: "data/0.csv" });
+        } else if (scenario === "missing") {
+          writeFileSync("sda/data/input.csv", "updated without its own notification");
+          notify({ name: "data/deleted-temporary.csv" });
+        } else {
+          notify({ name: "data/input.csv", replaceDirectory: true });
+        }
+        await vi.waitFor(
+          () => expect(readFileSync("runs.txt", "utf8"), output).toBe("run\nrun\n"),
+          { timeout: 5000 },
+        );
+        await delay(100);
+        expect(child.exitCode, output).toBeNull();
+        expect(readFileSync("fixes.txt", "utf8")).toBe("fix\nfix\n");
+      } finally {
+        child.kill("SIGTERM");
+        await closed;
+      }
+    },
+    15000,
+  );
+}
+
 test.skipIf(process.platform === "win32").each(["fixing", "analysis"])(
   "runner discards stale check results and cleans up during %s",
   async (phase) => {

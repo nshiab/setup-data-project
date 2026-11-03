@@ -1,0 +1,188 @@
+{
+  "node": "v24.22.1",
+  "platform": "darwin",
+  "files": 100000,
+  "gcMode": "collect",
+  "results": [
+    {
+      "label": "baseline",
+      "initial": {
+        "rssMiB": 242.5625,
+        "heapMiB": 28.940017700195312,
+        "peakRSSMiB": 252.59375,
+        "metadataCalls": 200008,
+        "datasetReads": 0,
+        "cpuMs": 784.689
+      },
+      "updates": [
+        {
+          "rssMiB": 254.25,
+          "heapMiB": 28.632369995117188,
+          "peakRSSMiB": 254.359375,
+          "metadataCalls": 200008,
+          "datasetReads": 0,
+          "cpuMs": 739.849,
+          "rerunMs": 837.0061670000005
+        }
+      ],
+      "afterCollection": {
+        "rssMiB": 247.28125,
+        "heapMiB": 28.632347106933594,
+        "peakRSSMiB": 254.359375,
+        "metadataCalls": 0,
+        "datasetReads": 0,
+        "cpuMs": 1.296
+      }
+    },
+    {
+      "label": "candidate",
+      "initial": {
+        "rssMiB": 171.53125,
+        "heapMiB": 32.40388488769531,
+        "peakRSSMiB": 171.671875,
+        "metadataCalls": 200008,
+        "datasetReads": 0,
+        "cpuMs": 737.637
+      },
+      "updates": [
+        {
+          "rssMiB": 234.375,
+          "heapMiB": 32.45769500732422,
+          "peakRSSMiB": 234.4375,
+          "metadataCalls": 200008,
+          "datasetReads": 0,
+          "cpuMs": 690.109,
+          "rerunMs": 803.1779169999991
+        }
+      ],
+      "afterCollection": {
+        "rssMiB": 233.625,
+        "heapMiB": 32.457672119140625,
+        "peakRSSMiB": 234.4375,
+        "metadataCalls": 0,
+        "datasetReads": 0,
+        "cpuMs": 0.137
+      }
+    },
+    {
+      "label": "candidate",
+      "initial": {
+        "rssMiB": 171.0625,
+        "heapMiB": 32.526275634765625,
+        "peakRSSMiB": 171.34375,
+        "metadataCalls": 200008,
+        "datasetReads": 0,
+        "cpuMs": 725.806
+      },
+      "updates": [
+        {
+          "rssMiB": 233.328125,
+          "heapMiB": 32.587677001953125,
+          "peakRSSMiB": 234.859375,
+          "metadataCalls": 200008,
+          "datasetReads": 0,
+          "cpuMs": 666.872,
+          "rerunMs": 780.3979589999999
+        }
+      ],
+      "afterCollection": {
+        "rssMiB": 233.625,
+        "heapMiB": 32.58765411376953,
+        "peakRSSMiB": 234.859375,
+        "metadataCalls": 0,
+        "datasetReads": 0,
+        "cpuMs": 0.656
+      }
+    },
+    {
+      "label": "baseline",
+      "initial": {
+        "rssMiB": 242.5625,
+        "heapMiB": 28.940834045410156,
+        "peakRSSMiB": 252.609375,
+        "metadataCalls": 200008,
+        "datasetReads": 0,
+        "cpuMs": 765.656
+      },
+      "updates": [
+        {
+          "rssMiB": 251.828125,
+          "heapMiB": 28.634620666503906,
+          "peakRSSMiB": 252.609375,
+          "metadataCalls": 200008,
+          "datasetReads": 0,
+          "cpuMs": 755.424,
+          "rerunMs": 853.6909999999989
+        }
+      ],
+      "afterCollection": {
+        "rssMiB": 245.15625,
+        "heapMiB": 28.634597778320312,
+        "peakRSSMiB": 252.609375,
+        "metadataCalls": 0,
+        "datasetReads": 0,
+        "cpuMs": 0.188
+      }
+    },
+    {
+      "label": "baseline",
+      "initial": {
+        "rssMiB": 242.484375,
+        "heapMiB": 28.939773559570312,
+        "peakRSSMiB": 252.515625,
+        "metadataCalls": 200008,
+        "datasetReads": 0,
+        "cpuMs": 767.184
+      },
+      "updates": [
+        {
+          "rssMiB": 244.234375,
+          "heapMiB": 28.632553100585938,
+          "peakRSSMiB": 252.515625,
+          "metadataCalls": 200008,
+          "datasetReads": 0,
+          "cpuMs": 733.34,
+          "rerunMs": 829.7044999999998
+        }
+      ],
+      "afterCollection": {
+        "rssMiB": 244.25,
+        "heapMiB": 28.632530212402344,
+        "peakRSSMiB": 252.515625,
+        "metadataCalls": 0,
+        "datasetReads": 0,
+        "cpuMs": 0.155
+      }
+    },
+    {
+      "label": "candidate",
+      "initial": {
+        "rssMiB": 171.046875,
+        "heapMiB": 32.40398406982422,
+        "peakRSSMiB": 171.359375,
+        "metadataCalls": 200008,
+        "datasetReads": 0,
+        "cpuMs": 720.502
+      },
+      "updates": [
+        {
+          "rssMiB": 233.34375,
+          "heapMiB": 32.45756530761719,
+          "peakRSSMiB": 233.4375,
+          "metadataCalls": 200008,
+          "datasetReads": 0,
+          "cpuMs": 668.774,
+          "rerunMs": 780.9155419999988
+        }
+      ],
+      "afterCollection": {
+        "rssMiB": 232.546875,
+        "heapMiB": 32.457542419433594,
+        "peakRSSMiB": 233.4375,
+        "metadataCalls": 0,
+        "datasetReads": 0,
+        "cpuMs": 0.145
+      }
+    }
+  ]
+}
