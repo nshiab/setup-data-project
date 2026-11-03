@@ -25,7 +25,7 @@ function fixture() {
 test("checks selected files and ignores duplicate notifications and unrelated files", () => {
   const changes = fixture();
   const main = resolve("sda/main.ts");
-  writeFileSync(main, "two");
+  writeFileSync(main, "updated main");
   expect(changes.check([main])).toBe(true);
   expect(changes.check([main, main])).toBe(false);
   writeFileSync("outside.txt", "one");
@@ -36,7 +36,7 @@ test("checks selected files and ignores duplicate notifications and unrelated fi
 
 test("finds edits without a notification during the full post-fix check", () => {
   const changes = fixture();
-  writeFileSync("sda/helpers/value.ts", "two");
+  writeFileSync("sda/helpers/value.ts", "updated helper");
   expect(changes.check([])).toBe(false);
   expect(changes.check()).toBe(true);
   expect(changes.check([resolve("sda/helpers/value.ts")])).toBe(false);
@@ -46,8 +46,9 @@ test("a file event leaves unrelated edits for their own notification or a full c
   const changes = fixture();
   const main = resolve("sda/main.ts");
   const helper = resolve("sda/helpers/value.ts");
-  writeFileSync(main, "two");
-  writeFileSync(helper, "two");
+  // Change sizes so the test does not depend on filesystem timestamp precision.
+  writeFileSync(main, "updated main");
+  writeFileSync(helper, "updated helper");
   expect(changes.check([main])).toBe(true);
   expect(changes.check([main])).toBe(false);
   expect(changes.check([helper])).toBe(true);
