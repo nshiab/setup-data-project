@@ -23,7 +23,8 @@ jobs:
         with:
           bun-version: latest
       - run: npm ci
-      - run: node node_modules/vite-plus/bin/vp test test/fileChanges.test.ts test/sda.test.ts
+      - run: node node_modules/vite-plus/bin/vp test test/fileChanges.test.ts
+      - run: node node_modules/vite-plus/bin/vp test test/sda.test.ts -t "watch mode|folders and explicit files|runner discards|runner terminates"
   all-tests:
     runs-on: ubuntu-latest
     steps:

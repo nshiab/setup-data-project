@@ -1,5 +1,5 @@
 // Build both revisions first, then compare their dist/sda.mjs files:
-// node scripts/benchmarkWatch.ts <baseline-runner> <candidate-runner> [files] [repetitions] [reruns]
+// node scripts/benchmarkWatch.ts <baseline-runner> <candidate-runner> [files] [repetitions] [reruns] [collect|natural]
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { once } from "node:events";
@@ -11,23 +11,27 @@ import { isObject } from "../src/helpers/jsonObject.ts";
 
 type Sample = {
   rssMiB: number;
-  retainedHeapMiB: number;
+  heapMiB: number;
   peakRSSMiB: number;
-  metadataCalls: number;
-  datasetReads: number;
+  metadataCalls: number | null;
+  datasetReads: number | null;
+  cpuMs: number;
+  rerunMs?: number;
 };
 
-const [baseline, candidate, files = "100000", repetitions = "3", reruns = "1"] =
+const [baseline, candidate, files = "100000", repetitions = "3", reruns = "1", gcMode = "collect"] =
   process.argv.slice(2);
 assert.ok(baseline && candidate, "Pass the baseline and candidate runner paths.");
 for (const value of [files, repetitions, reruns]) assert.match(value, /^\d+$/);
 assert.ok(Number(repetitions) > 0 && Number(reruns) > 0);
+assert.ok(gcMode === "collect" || gcMode === "natural");
 const runners = [resolve(baseline), resolve(candidate)];
 for (const runner of runners) assert.ok(existsSync(runner), `Missing runner: ${runner}`);
 const directory = mkdtempSync(join(tmpdir(), "sda-watch-benchmark-"));
 const ready = join(directory, "ready");
 const preload = join(directory, "preload.mjs");
-const results: { label: string; initial: Sample; updates: Sample[] }[] = [];
+const results: { label: string; initial: Sample; updates: Sample[]; afterCollection: Sample }[] =
+  [];
 
 async function measure(runner: string, label: string) {
   rmSync(ready, { force: true });
@@ -60,27 +64,31 @@ async function measure(runner: string, label: string) {
       assert.ok(performance.now() < deadline, `Watcher timed out: ${output}`);
       await delay(10);
     }
+    const completed = performance.now();
     // Settle delayed OS notifications before sampling. This is benchmark-only;
     // the runner itself retains its immediate scheduling.
     await delay(200);
+    return completed;
   };
-  const sample = async (): Promise<Sample> => {
-    const message = once(child, "message");
-    child.send("sample");
+  const sample = async (collect = false): Promise<Sample> => {
+    const message = once(child, "message", { signal: AbortSignal.timeout(10000) });
+    child.send(collect ? "collect" : "sample");
     const result: unknown = (await message)[0];
     assert.ok(isObject(result));
     assert.ok(typeof result.rssMiB === "number");
-    assert.ok(typeof result.retainedHeapMiB === "number");
+    assert.ok(typeof result.heapMiB === "number");
     assert.ok(typeof result.peakRSSMiB === "number");
-    assert.ok(typeof result.metadataCalls === "number");
-    assert.ok(typeof result.datasetReads === "number");
-    assert.equal(result.datasetReads, 0);
+    assert.ok(result.metadataCalls === null || typeof result.metadataCalls === "number");
+    assert.ok(result.datasetReads === null || typeof result.datasetReads === "number");
+    assert.ok(typeof result.cpuMs === "number");
+    assert.ok(result.datasetReads === null || result.datasetReads === 0);
     return {
       rssMiB: result.rssMiB,
-      retainedHeapMiB: result.retainedHeapMiB,
+      heapMiB: result.heapMiB,
       peakRSSMiB: result.peakRSSMiB,
       metadataCalls: result.metadataCalls,
       datasetReads: result.datasetReads,
+      cpuMs: result.cpuMs,
     };
   };
   try {
@@ -89,11 +97,13 @@ async function measure(runner: string, label: string) {
     const updates: Sample[] = [];
     for (let n = 0; n < Number(reruns); n++) {
       rmSync(ready);
+      const started = performance.now();
       writeFileSync(join(directory, "sda/main.ts"), entry + `\n// edit ${n}\n`);
-      await waitForAnalysis();
-      updates.push(await sample());
+      const completed = await waitForAnalysis();
+      updates.push({ ...(await sample()), rerunMs: completed - started });
     }
-    const result = { label, initial, updates };
+    const afterCollection = await sample(true);
+    const result = { label, initial, updates, afterCollection };
     results.push(result);
     const last = updates.at(-1);
     assert.ok(last);
@@ -111,7 +121,7 @@ try {
   writeFileSync(join(directory, ".env"), "");
   writeFileSync(
     join(directory, "package.json"),
-    JSON.stringify({ scripts: { fix: "node fix.cjs" } }),
+    JSON.stringify({ type: "module", scripts: { fix: "node fix.cjs" } }),
   );
   writeFileSync(join(directory, "fix.cjs"), "");
   writeFileSync(join(directory, "sda/main.ts"), entry);
@@ -124,6 +134,7 @@ import fs from "node:fs";
 import { syncBuiltinESMExports } from "node:module";
 let metadataCalls = 0;
 let datasetReads = 0;
+let previousCpu = process.cpuUsage();
 const stat = fs.lstatSync;
 fs.lstatSync = function (...args) {
   if (args[1]?.bigint) metadataCalls++;
@@ -135,11 +146,20 @@ fs.readFileSync = function (...args) {
   return read.apply(this, args);
 };
 syncBuiltinESMExports();
-process.on("message", () => {
+// Bun's named builtin imports bypass these hooks, so its counters are unavailable.
+process.on("message", (mode) => {
   const rssMiB = process.memoryUsage().rss / 1024 ** 2;
-  globalThis.gc(); globalThis.gc();
-  process.send({ rssMiB, retainedHeapMiB: process.memoryUsage().heapUsed / 1024 ** 2,
-    peakRSSMiB: process.resourceUsage().maxRSS / 1024, metadataCalls, datasetReads });
+  const cpu = process.cpuUsage(previousCpu);
+  if (${gcMode === "collect"} || mode === "collect") {
+    if (process.versions.bun) { Bun.gc(true); Bun.gc(true); }
+    else { globalThis.gc(); globalThis.gc(); }
+  }
+  previousCpu = process.cpuUsage();
+  process.send({ rssMiB, heapMiB: process.memoryUsage().heapUsed / 1024 ** 2,
+    peakRSSMiB: process.resourceUsage().maxRSS / 1024,
+    metadataCalls: process.versions.bun ? null : metadataCalls,
+    datasetReads: process.versions.bun ? null : datasetReads,
+    cpuMs: (cpu.user + cpu.system) / 1000 });
   metadataCalls = 0;
   datasetReads = 0;
 });
@@ -153,7 +173,15 @@ process.on("message", () => {
   }
   console.log(
     JSON.stringify(
-      { node: process.version, platform: process.platform, files: Number(files), results },
+      {
+        node: process.version,
+        bun: process.versions.bun,
+        fsCountersSupported: !process.versions.bun,
+        platform: process.platform,
+        files: Number(files),
+        gcMode,
+        results,
+      },
       null,
       2,
     ),

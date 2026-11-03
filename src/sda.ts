@@ -75,7 +75,6 @@ let checking = false;
 let closing = false;
 let needsCheck = true;
 const changes = createFileChanges(selected, excluded);
-let pending: Set<string> | undefined = new Set();
 const watchers = new Map<string, { watcher: FSWatcher; recursive: boolean }>();
 
 function launch(args: string[], command = process.execPath, summarize = false) {
@@ -133,15 +132,8 @@ function refreshWatchers() {
         !changed ||
         (!excluded(changed) &&
           selected.some((path) => within(changed, path) || within(path, changed)))
-      ) {
-        if (!changed) pending = undefined;
-        else if (pending) {
-          pending.add(changed);
-          // Bound event bookkeeping for large bursts; a full scan is the fallback.
-          if (pending.size > 128) pending = undefined;
-        }
+      )
         schedule();
-      }
     });
     watcher.on("error", fail);
     watchers.set(directory, { watcher, recursive });
@@ -182,8 +174,7 @@ async function stop(job: Job | undefined) {
 
 async function check() {
   if (closing || checking) return;
-  const changed = changes.check(pending);
-  pending = new Set();
+  const changed = changes.check();
   if (!needsCheck && !changed) return;
   checking = true;
   needsCheck = false;
