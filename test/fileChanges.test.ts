@@ -1,5 +1,5 @@
 import { expect, test } from "vite-plus/test";
-import { mkdirSync, renameSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { mkdirSync, renameSync, rmSync, symlinkSync, utimesSync, writeFileSync } from "node:fs";
 import { join, resolve, sep } from "node:path";
 import { createFileChanges } from "../src/helpers/fileChanges.ts";
 import { temporaryProject } from "./helpers/utils.ts";
@@ -40,6 +40,15 @@ test("finds edits without a notification during the full post-fix check", () => 
   expect(changes.check([])).toBe(false);
   expect(changes.check()).toBe(true);
   expect(changes.check([resolve("sda/helpers/value.ts")])).toBe(false);
+});
+
+test("detects same-size edits with distinct modification times", () => {
+  const changes = fixture();
+  const main = resolve("sda/main.ts");
+  writeFileSync(main, "two");
+  utimesSync(main, new Date(0), new Date(0));
+  expect(changes.check([main])).toBe(true);
+  expect(changes.check()).toBe(false);
 });
 
 test("a file event leaves unrelated edits for their own notification or a full check", () => {
