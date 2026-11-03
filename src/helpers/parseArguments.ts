@@ -21,7 +21,8 @@ ${Array.from(packageFlags, ([flag, pkg]) => `  ${flag.padEnd(16)} Select ${pkg}.
 
 Without a package flag, choose packages interactively.
 Combine package flags to select libraries without prompting.
-Package flags keep existing versions and still set up project files and docs.`;
+Package flags install or update selected libraries to latest without prompting,
+and still set up project files and docs.`;
 
 export function parseArguments(args: string[]): CliOptions {
   const options: CliOptions = { help: false, docs: false, packages: [] };

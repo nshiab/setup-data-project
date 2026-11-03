@@ -64,9 +64,7 @@ async function main() {
   const packagesToInstall: string[] = [];
 
   for (const pkg of selectedPackages) {
-    if (alreadyInstalled.includes(pkg)) {
-      if (cliOptions.packages.length > 0) continue;
-
+    if (alreadyInstalled.includes(pkg) && cliOptions.packages.length === 0) {
       const action = await select({
         message: `${pkg} is already installed. What would you like to do?`,
         options: [
@@ -81,10 +79,10 @@ async function main() {
       }
 
       if (action === "update") {
-        packagesToInstall.push(pkg);
+        packagesToInstall.push(`${pkg}@latest`);
       }
     } else {
-      packagesToInstall.push(pkg);
+      packagesToInstall.push(`${pkg}@latest`);
     }
   }
 

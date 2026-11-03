@@ -47,7 +47,18 @@ Available library flags:
 - `--extras`: [journalism-extras](https://github.com/nshiab/journalism-extras)
 
 Run `--help` for usage.
-Library flags keep existing dependency versions and cannot be combined with `--docs`.
+Library flags install or update the selected libraries to their latest versions
+without prompting, even if they are already installed. They cannot be combined
+with `--docs`.
+
+For example, to upgrade an existing SDA project and refresh its documentation:
+
+```sh
+npx @nshiab/setup-data-project --sda
+```
+
+Without library flags, the interactive setup asks whether to keep each selected
+installed library's existing version or update it to latest.
 
 The project includes `sda/main.ts`, helpers, data and output folders,
 `.env`, `.gitignore`, and managed sections in README.md and AGENTS.md.
@@ -72,8 +83,8 @@ The watcher comes from the installed setup-data-project package; no runner scrip
 SDA blocks simultaneous runs. Recovery after a forced termination is best effort.
 Lock records live in `.sda-cache/lock/`. The `clean` command preserves that directory
 and its parent so an active run keeps its lock.
-New development tools are installed at their latest versions; existing dependencies
-are preserved.
+New development tools are installed at their latest versions. Existing development
+tools and libraries not selected for an update keep their declared versions.
 
 VS Code configuration recommends the Oxc extension and enables formatting,
 lint fixes on save, and visual line wrapping. Existing `.vscode/extensions.json`

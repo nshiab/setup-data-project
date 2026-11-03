@@ -57,18 +57,94 @@ test("cancelling library selection creates no project files", async () => {
   expect(readdirSync(".")).toEqual([]);
 });
 
-test("combined library flags install without prompts and failures stop the spinner", () => {
-  const result = spawnSync(process.execPath, [entry, "--format", "--geo", "--format"], {
+test.each(["new", "existing"])(
+  "combined library flags install latest in %s projects without prompts and failures stop the spinner",
+  (project) => {
+    const dependencies = {
+      "@nshiab/journalism-format": "1.0.0",
+      "@nshiab/journalism-geo": "1.0.0",
+      "@nshiab/journalism-ai": "1.0.0",
+    };
+    if (project === "existing") {
+      writeFileSync("package.json", JSON.stringify({ type: "module", dependencies }));
+    }
+    const result = spawnSync(process.execPath, [entry, "--format", "--geo", "--format"], {
+      env: { ...process.env, PATH: "" },
+      timeout: 3000,
+      encoding: "utf8",
+    });
+    expect(result.error).toBeUndefined();
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain("failed");
+    expect(result.stderr).toContain(
+      "install @nshiab/journalism-format@latest @nshiab/journalism-geo@latest failed",
+    );
+    expect(result.stdout).not.toContain("Which libraries");
+    expect(result.stdout).not.toContain("What would you like to do?");
+    expect(result.stderr).not.toContain("@nshiab/journalism-ai");
+    expect(result.stdout).toContain("Package installation failed");
+  },
+);
+
+test("the SDA flag upgrades an installed library to latest without prompting", () => {
+  writeFileSync(
+    "package.json",
+    JSON.stringify({ dependencies: { "@nshiab/simple-data-analysis": "6.0.0" } }),
+  );
+  const result = spawnSync(process.execPath, [entry, "--sda"], {
     env: { ...process.env, PATH: "" },
     timeout: 3000,
     encoding: "utf8",
   });
   expect(result.error).toBeUndefined();
   expect(result.status).toBe(1);
-  expect(result.stderr).toContain("failed");
-  expect(result.stderr).toContain(
-    "install @nshiab/journalism-format @nshiab/journalism-geo failed",
+  expect(result.stderr).toContain("install @nshiab/simple-data-analysis@latest failed");
+  expect(result.stdout).not.toContain("What would you like to do?");
+});
+
+test.each(["keep", "update"])("interactive setup can %s an installed library", async (action) => {
+  writeFileSync(
+    "package.json",
+    JSON.stringify({
+      dependencies: {
+        "@nshiab/simple-data-analysis": "6.0.0",
+        "@observablehq/plot": "0.6.17",
+      },
+    }),
   );
-  expect(result.stdout).not.toContain("Which libraries");
-  expect(result.stdout).toContain("Package installation failed");
+  const child = spawn(process.execPath, [entry], {
+    env: { ...process.env, PATH: "" },
+    stdio: ["pipe", "pipe", "pipe"],
+    timeout: 3000,
+  });
+  let output = "";
+  let errors = "";
+  let stage = 0;
+  child.stdout.on("data", (data: Buffer) => {
+    output += data.toString();
+    if (stage === 0 && output.includes("Which libraries")) {
+      stage++;
+      child.stdin.write(" \r");
+    } else if (stage === 1 && output.includes("What would you like to do?")) {
+      stage++;
+      child.stdin.write(action === "update" ? "\u001b[B\r" : "\r");
+    }
+  });
+  child.stderr.on("data", (data: Buffer) => {
+    errors += data.toString();
+  });
+  const code = await new Promise<number | null>((resolve, reject) => {
+    child.on("error", reject);
+    child.on("close", resolve);
+  });
+  expect(code).toBe(1);
+  expect(stage).toBe(2);
+  expect(output).toContain("Keep existing version");
+  expect(output).toContain("Update to latest");
+  if (action === "update") {
+    expect(errors).toContain("install @nshiab/simple-data-analysis@latest failed");
+  } else {
+    expect(errors).toContain("oxfmt@latest");
+    expect(errors).not.toContain("@nshiab/simple-data-analysis");
+  }
 });
