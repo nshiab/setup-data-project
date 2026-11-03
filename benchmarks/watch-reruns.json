@@ -1,0 +1,23 @@
+{
+  "node": "v24.22.1",
+  "platform": "darwin",
+  "files": 1000,
+  "results": [
+    {
+      "label": "baseline",
+      "reruns": 30,
+      "retainedHeapAfter10MiB": 5.872245788574219,
+      "retainedHeapAfter30MiB": 5.928977966308594,
+      "peakRSSMiB": 76.046875,
+      "metadataCallsPerRerun": 2008
+    },
+    {
+      "label": "candidate",
+      "reruns": 30,
+      "retainedHeapAfter10MiB": 5.9240570068359375,
+      "retainedHeapAfter30MiB": 5.959930419921875,
+      "peakRSSMiB": 67.859375,
+      "metadataCallsPerRerun": 1005
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "node": "v24.22.1",
+  "platform": "darwin",
+  "files": 100000,
+  "results": [
+    {
+      "label": "baseline",
+      "initial": {
+        "rssMiB": 242.640625,
+        "retainedHeapMiB": 28.93842315673828,
+        "peakRSSMiB": 252.671875,
+        "metadataCalls": 200008,
+        "datasetReads": 0
+      },
+      "updates": [
+        {
+          "rssMiB": 246.765625,
+          "retainedHeapMiB": 29.111061096191406,
+          "peakRSSMiB": 253.84375,
+          "metadataCalls": 200008,
+          "datasetReads": 0
+        }
+      ]
+    },
+    {
+      "label": "candidate",
+      "initial": {
+        "rssMiB": 170.921875,
+        "retainedHeapMiB": 32.406394958496094,
+        "peakRSSMiB": 171.0625,
+        "metadataCalls": 200008,
+        "datasetReads": 0
+      },
+      "updates": [
+        {
+          "rssMiB": 168.6875,
+          "retainedHeapMiB": 32.4666748046875,
+          "peakRSSMiB": 171.0625,
+          "metadataCalls": 100005,
+          "datasetReads": 0
+        }
+      ]
+    },
+    {
+      "label": "candidate",
+      "initial": {
+        "rssMiB": 170.6875,
+        "retainedHeapMiB": 32.40715789794922,
+        "peakRSSMiB": 170.9375,
+        "metadataCalls": 200008,
+        "datasetReads": 0
+      },
+      "updates": [
+        {
+          "rssMiB": 168.609375,
+          "retainedHeapMiB": 32.465850830078125,
+          "peakRSSMiB": 170.9375,
+          "metadataCalls": 100005,
+          "datasetReads": 0
+        }
+      ]
+    },
+    {
+      "label": "baseline",
+      "initial": {
+        "rssMiB": 242.578125,
+        "retainedHeapMiB": 28.937889099121094,
+        "peakRSSMiB": 252.625,
+        "metadataCalls": 200008,
+        "datasetReads": 0
+      },
+      "updates": [
+        {
+          "rssMiB": 250.734375,
+          "retainedHeapMiB": 28.63121795654297,
+          "peakRSSMiB": 252.625,
+          "metadataCalls": 200008,
+          "datasetReads": 0
+        }
+      ]
+    },
+    {
+      "label": "baseline",
+      "initial": {
+        "rssMiB": 242.578125,
+        "retainedHeapMiB": 28.939598083496094,
+        "peakRSSMiB": 252.609375,
+        "metadataCalls": 200008,
+        "datasetReads": 0
+      },
+      "updates": [
+        {
+          "rssMiB": 244.3125,
+          "retainedHeapMiB": 28.633834838867188,
+          "peakRSSMiB": 252.609375,
+          "metadataCalls": 200008,
+          "datasetReads": 0
+        }
+      ]
+    },
+    {
+      "label": "candidate",
+      "initial": {
+        "rssMiB": 171,
+        "retainedHeapMiB": 32.504302978515625,
+        "peakRSSMiB": 171.390625,
+        "metadataCalls": 200008,
+        "datasetReads": 0
+      },
+      "updates": [
+        {
+          "rssMiB": 169.3125,
+          "retainedHeapMiB": 32.56549835205078,
+          "peakRSSMiB": 171.390625,
+          "metadataCalls": 100005,
+          "datasetReads": 0
+        }
+      ]
+    }
+  ]
+}
