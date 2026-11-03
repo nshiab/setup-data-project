@@ -126,7 +126,11 @@ function snapshot() {
 }
 
 function equal(left: Map<string, string | null>, right: Map<string, string | null>) {
-  return left.size === right.size && [...left].every(([path, value]) => right.get(path) === value);
+  if (left.size !== right.size) return false;
+  for (const [path, value] of left) {
+    if (right.get(path) !== value) return false;
+  }
+  return true;
 }
 
 function refreshWatchers() {
@@ -199,14 +203,16 @@ async function stop(job: Job | undefined) {
 
 async function check() {
   if (closing || checking) return;
-  if (!needsCheck && equal(contents, snapshot())) return;
+  const before = snapshot();
+  if (!needsCheck && equal(contents, before)) return;
   checking = true;
   needsCheck = false;
+  // Reuse this snapshot; the post-fix scan also catches edits made while stopping analysis.
+  contents = before;
   await stop(analysis);
   analysis = undefined;
   if (closing) return;
   refreshWatchers();
-  contents = snapshot();
   process.stdout.write("\u001b[2J\u001b[3J\u001b[H");
   fixer = launch(
     ["run", "--silent", "fix"],
