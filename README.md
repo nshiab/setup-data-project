@@ -54,7 +54,7 @@ with `--docs`.
 For example, to upgrade an existing SDA project and refresh its documentation:
 
 ```sh
-npx @nshiab/setup-data-project --sda
+npx @nshiab/setup-data-project@latest --sda
 ```
 
 Without library flags, the interactive setup asks whether to keep each selected
