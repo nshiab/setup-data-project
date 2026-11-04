@@ -2,6 +2,7 @@ import { cleanPlotMarkdown } from "./cleanPlotMarkdown.ts";
 import { posix } from "node:path";
 import { proseLines } from "./combinePlotDocs.ts";
 import { PLOT_DOC_PAGES } from "./plotDocPages.ts";
+import { getPlotTag } from "./getPlotTag.ts";
 
 // Split the cached format without changing code examples or heading anchors.
 export function splitPlotDocs(reference: string, version: string): Map<string, string> {
@@ -12,7 +13,7 @@ export function splitPlotDocs(reference: string, version: string): Map<string, s
   ];
   const files = new Map<string, string>();
   const anchors = new Map<string, string>();
-  const source = `https://github.com/observablehq/plot/tree/v${version}/docs`;
+  const source = `https://github.com/observablehq/plot/tree/${getPlotTag(version)}/docs`;
   const completion = `<!-- setup-data-project:observable-plot:${version}:complete -->`;
   if (!reference.trimEnd().endsWith(completion)) throw new Error("Incomplete Plot reference.");
   const end = reference.lastIndexOf(completion);

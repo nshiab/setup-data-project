@@ -146,3 +146,34 @@ test("invalid or truncated Plot cache falls back and partial source failure pres
   expect(await fetchPlotDocs("0.6.17")).toEqual({});
   expect(readFileSync("docs/observable-plot/llms.txt", "utf8")).toBe("previous complete reference");
 });
+
+test("Plot 0.6.18 uses its upstream release tag in downloads, cached metadata and links", async () => {
+  const content = "# Plot API\n\n[Omitted](./tip.md)\n![Image](../images/chart.png)";
+  const urls: string[] = [];
+  const fetchMock = vi.fn<typeof fetch>(async (input) => {
+    const url = input instanceof Request ? input.url : String(input);
+    urls.push(url);
+    return new Response(content, {
+      status: url.includes("/refs/tags/v.0.6.18/") ? 200 : 404,
+    });
+  });
+  vi.stubGlobal("fetch", fetchMock);
+  const generated = await fetchPlotDocs("0.6.18");
+  expect(generated.plot?.version).toBe("0.6.18");
+  expect(urls.slice(1).every((url) => url.includes("/refs/tags/v.0.6.18/"))).toBe(true);
+  expect(generated.llm).toContain(
+    "Source: [v.0.6.18](https://github.com/observablehq/plot/tree/v.0.6.18/docs)",
+  );
+  expect(generated.llm).toContain(
+    "https://raw.githubusercontent.com/observablehq/plot/refs/tags/v.0.6.18/docs/images/chart.png",
+  );
+  expect(readFileSync("docs/observable-plot/llms.txt", "utf8")).toContain("/tree/v.0.6.18/docs");
+  expect(readFileSync("docs/observable-plot/marks/dot.md", "utf8")).toContain(
+    "/tree/v.0.6.18/docs/marks/tip.md",
+  );
+
+  fetchMock.mockImplementation(async () => new Response(generated.llm));
+  fetchMock.mockClear();
+  expect((await fetchPlotDocs("0.6.18")).llm).toBe(generated.llm);
+  expect(fetchMock).toHaveBeenCalledTimes(1);
+});

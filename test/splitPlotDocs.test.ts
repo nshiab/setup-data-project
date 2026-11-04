@@ -55,26 +55,30 @@ Inline \`[Code](#plot-features--scales)\`.
   ).toThrow();
 });
 
-test("the existing cached reference splits into pages with valid local Markdown links", () => {
-  const reference = readFileSync(
-    new URL("../docs-cache/observable-plot/0.6.17/llm.md", import.meta.url),
-    "utf8",
-  );
-  const files = splitPlotDocs(reference, "0.6.17");
-  expect(files.get("LICENSE")).toContain("Copyright 2020-2025 Observable, Inc.");
-  for (const [page, content] of files) {
-    proseLines(content, (line) => {
-      expect(line, page).not.toMatch(
-        /^[ \t]*:::|<(?:script|VersionBadge|PlotRender|input|select|label|span)\b/,
-      );
-      return line;
-    });
-    for (const match of content.matchAll(/\]\(([^\s)]+)\)/g)) {
-      if (/^[a-z]+:/i.test(match[1])) continue;
-      const [path, fragment] = match[1].split("#");
-      const target = path ? posix.join(posix.dirname(page), path) : page;
-      expect(files.has(target), `${page}: ${match[1]}`).toBe(true);
-      if (fragment) expect(files.get(target), `${page}: ${match[1]}`).toContain(`id="${fragment}"`);
+test.each(["0.6.17", "0.6.18"])(
+  "cached Plot %s splits into pages with valid local Markdown links",
+  (version) => {
+    const reference = readFileSync(
+      new URL(`../docs-cache/observable-plot/${version}/llm.md`, import.meta.url),
+      "utf8",
+    );
+    const files = splitPlotDocs(reference, version);
+    expect(files.get("LICENSE")).toContain("Copyright 2020-2025 Observable, Inc.");
+    for (const [page, content] of files) {
+      proseLines(content, (line) => {
+        expect(line, page).not.toMatch(
+          /^[ \t]*:::|<(?:script|VersionBadge|PlotRender|input|select|label|span)\b/,
+        );
+        return line;
+      });
+      for (const match of content.matchAll(/\]\(([^\s)]+)\)/g)) {
+        if (/^[a-z]+:/i.test(match[1])) continue;
+        const [path, fragment] = match[1].split("#");
+        const target = path ? posix.join(posix.dirname(page), path) : page;
+        expect(files.has(target), `${page}: ${match[1]}`).toBe(true);
+        if (fragment)
+          expect(files.get(target), `${page}: ${match[1]}`).toContain(`id="${fragment}"`);
+      }
     }
-  }
-});
+  },
+);

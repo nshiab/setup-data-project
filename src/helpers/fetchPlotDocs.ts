@@ -4,6 +4,7 @@ import { dirname, join } from "node:path";
 import { splitPlotDocs } from "./splitPlotDocs.ts";
 import { combinePlotDocs } from "./combinePlotDocs.ts";
 import { PLOT_DOC_PAGES } from "./plotDocPages.ts";
+import { getPlotTag } from "./getPlotTag.ts";
 import type { PackageDocs } from "./fetchPackageDocs.ts";
 
 // Replace local documentation only after every page is ready.
@@ -11,7 +12,7 @@ export async function fetchPlotDocs(
   version: string,
   options: { preferStored?: boolean } = {},
 ): Promise<PackageDocs> {
-  const tag = `v${version}`;
+  const tag = getPlotTag(version);
   const directory = join("docs", "observable-plot");
   try {
     let llm: string | undefined;
@@ -66,7 +67,7 @@ export async function fetchPlotDocs(
 export async function generatePlotReference(version: string): Promise<string> {
   if (!/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(version))
     throw new Error("An exact Plot version is required.");
-  const tag = `v${version}`;
+  const tag = getPlotTag(version);
   const pages = PLOT_DOC_PAGES;
   const documents = new Map<string, string>();
   const failed: string[] = [];
@@ -105,11 +106,12 @@ export async function generatePlotReference(version: string): Promise<string> {
 }
 
 function isStoredReference(content: string, version: string): boolean {
-  const source = `https://github.com/observablehq/plot/tree/v${version}/docs`;
+  const tag = getPlotTag(version);
+  const source = `https://github.com/observablehq/plot/tree/${tag}/docs`;
   const metadata = content.split(/\n\s*\n/)[1]?.replace(/\s+/g, " ");
   if (
     !content.startsWith(`# Observable Plot ${version}\n\n`) ||
-    metadata !== `Package: \`@observablehq/plot@${version}\`. Source: [v${version}](${source}).` ||
+    metadata !== `Package: \`@observablehq/plot@${version}\`. Source: [${tag}](${source}).` ||
     !content.trimEnd().endsWith(`<!-- setup-data-project:observable-plot:${version}:complete -->`)
   )
     return false;

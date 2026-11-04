@@ -126,6 +126,10 @@ npm run cache-plot-docs
 ```
 
 This checks npm and skips generation if that version is already cached. To generate
-or refresh a specific version, run `npm run cache-plot-docs -- 0.6.17`.
+or refresh a specific version, run `npm run cache-plot-docs -- 0.6.18`.
 Review and commit `docs-cache/observable-plot/<version>/llm.md`; keep earlier
 versions for pinned projects. The command fetches the tagged upstream pages and license.
+Push the cache to `main` to make it available to documentation downloads; it is
+served directly from GitHub rather than included in the npm package. Changes to
+the downloader itself also need an npm release. Plot 0.6.18 uses the upstream tag
+`v.0.6.18`, which the downloader handles explicitly.

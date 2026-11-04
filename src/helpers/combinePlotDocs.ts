@@ -1,11 +1,13 @@
 import { cleanPlotMarkdown } from "./cleanPlotMarkdown.ts";
 import { posix } from "node:path";
+import { getPlotTag } from "./getPlotTag.ts";
 
 // The Plot source uses ATX headings, explicit VitePress IDs, and Markdown fences.
 // Keep code verbatim; rewrite only prose links and anchors while joining pages.
 export function combinePlotDocs(version: string, documents: Map<string, string>): string {
   const pages = [...documents.keys()].sort();
-  const source = `https://github.com/observablehq/plot/tree/v${version}/docs`;
+  const tag = getPlotTag(version);
+  const source = `https://github.com/observablehq/plot/tree/${tag}/docs`;
   const anchors = new Map<string, Map<string, string>>();
   const sections = new Map<string, { line: number; title: string; id: string }[]>();
   const pageId = (page: string) => `plot-${page.replace(/\.md$/, "").replaceAll("/", "--")}`;
@@ -66,8 +68,7 @@ export function combinePlotDocs(version: string, documents: Map<string, string>)
     if (resolved.endsWith(".md")) {
       return `${source}/${resolved}${fragment ? `#${fragment}` : ""}`;
     }
-    const base =
-      "https://raw.githubusercontent.com/observablehq/plot/" + `refs/tags/v${version}/docs/`;
+    const base = "https://raw.githubusercontent.com/observablehq/plot/" + `refs/tags/${tag}/docs/`;
     return path.startsWith("/")
       ? new URL(`public${target}`, base).href
       : new URL(target, `${base}${page}`).href;
@@ -124,7 +125,7 @@ export function combinePlotDocs(version: string, documents: Map<string, string>)
     })
     .join("\n\n---\n\n");
   return cleanPlotMarkdown(
-    `# Observable Plot ${version}\n\nPackage: \`@observablehq/plot@${version}\`. Source: [v${version}](${source}).\n\nThis reference combines selected upstream documentation for static charts and maps. Introductory and site pages, interaction helpers, and the Auto and Tip marks are omitted. Website controls are omitted; upstream setup and interactive templates are labeled as reference code. Use the table of contents to find API signatures and examples; links to omitted pages lead to the tagged upstream documentation.\n\n## Table of contents\n\n${contents}\n\n---\n\n${combined}\n\n<!-- setup-data-project:observable-plot:${version}:complete -->\n`,
+    `# Observable Plot ${version}\n\nPackage: \`@observablehq/plot@${version}\`. Source: [${tag}](${source}).\n\nThis reference combines selected upstream documentation for static charts and maps. Introductory and site pages, interaction helpers, and the Auto and Tip marks are omitted. Website controls are omitted; upstream setup and interactive templates are labeled as reference code. Use the table of contents to find API signatures and examples; links to omitted pages lead to the tagged upstream documentation.\n\n## Table of contents\n\n${contents}\n\n---\n\n${combined}\n\n<!-- setup-data-project:observable-plot:${version}:complete -->\n`,
   );
 }
 
