@@ -68,14 +68,14 @@ Remove the generated section or its markers from README.md or AGENTS.md to stop 
 
 Generated projects run TypeScript directly with Node or Bun. Oxfmt and Oxlint
 provide formatting, linting, and TypeScript checking through oxlint-tsgolint.
-Put tests in `sda/test/` and name them `*.test.ts`. Bun projects need Bun 1.3.1
-or newer for the empty test suite to pass. Use these commands
-(replace `npm run` with `bun run` for Bun projects):
+Name tests `*.test.ts` and place them under `sda/`. Use `sda/test/` to keep tests
+together. Bun projects need Bun 1.3.1 or newer for the empty test suite to pass.
+Use these commands (replace `npm run` with `bun run` for Bun projects):
 
 - `npm run sda`: run `fix`, then execute `sda/main.ts` once if checks pass.
 - `npm run sda:watch`: do the same on changes to `sda/` and `.env`, excluding `sda/output/`.
 - `npm run sda:status`: check whether an SDA run or watcher is active.
-- `npm run sda:tests`: check formatting, lint, and TypeScript types, then run the tests in `sda/test/`.
+- `npm run sda:tests`: check formatting, lint, and TypeScript types, then run the tests under `sda/`.
 - `npm run sda:tests:watch`: rerun those checks and tests on changes to `sda/`, `.env`, and `tsconfig.json`, excluding `sda/output/`.
 - `npm run fix`: format files, apply automatic lint fixes, and check types.
 - `npm run docs`: refresh documentation for the installed library versions.

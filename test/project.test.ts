@@ -107,7 +107,7 @@ test("reruns preserve source, .env and unmanaged documentation while updating ma
   const readme = readFileSync("README.md", "utf8");
   const agents = readFileSync("AGENTS.md", "utf8");
   expect(readme).toContain("check formatting, lint, and TypeScript types");
-  expect(readme).toContain("tests in sda/test/");
+  expect(readme).toContain("run the tests under sda/");
   expect(readme).not.toContain("npm run test");
   writeFileSync("README.md", `Custom intro\n${readme}\nCustom footer`);
   writeFileSync("AGENTS.md", `Custom policy\n${agents}`);

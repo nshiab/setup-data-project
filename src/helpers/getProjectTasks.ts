@@ -5,8 +5,8 @@ export function getProjectTasks(runtime: Runtime = getRuntime()) {
   const runner = runtime === "bun" ? "bun run --bun --no-env-file sda-run" : "sda-run";
   const tests =
     runtime === "bun"
-      ? "bun test --pass-with-no-tests ./sda/test/"
-      : 'node --env-file-if-exists=.env --test "sda/test/**/*.test.ts"';
+      ? "bun test --pass-with-no-tests ./sda/"
+      : 'node --env-file-if-exists=.env --test "sda/**/*.test.ts"';
   return {
     sda: `${runner} sda/main.ts`,
     "sda:watch": `${runner} --watch sda/main.ts sda .env --ignore sda/output`,

@@ -12,6 +12,7 @@ import {
   renameSync,
   readdirSync,
   realpathSync,
+  rmdirSync,
   symlinkSync,
   truncateSync,
   writeFileSync,
@@ -432,22 +433,36 @@ for (const runtime of ["node", "bun"] as const) {
 
       writeFileSync("sda/main.ts", fixed);
       writeFileSync(
-        "sda/example.test.ts",
-        'throw new Error("The test runner must only execute tests under sda/test");\n',
+        "outside.test.ts",
+        'throw new Error("The test runner must only execute tests under sda/");\n',
       );
       const checks = run("sda:tests");
       expect(checks.status, checks.stdout + checks.stderr).toBe(0);
+
+      // Git omits the empty test directory from fresh clones.
+      rmdirSync("sda/test");
+      const withoutTestDirectory = run("sda:tests");
+      expect(
+        withoutTestDirectory.status,
+        withoutTestDirectory.stdout + withoutTestDirectory.stderr,
+      ).toBe(0);
+
       const testPath = "sda/test/helpers/example.test.ts";
-      mkdirSync("sda/test/helpers");
+      mkdirSync("sda/test/helpers", { recursive: true });
       const testImport = runtime === "bun" ? "bun:test" : "node:test";
       const registerTest = runtime === "bun" ? "test" : "await test";
       writeFileSync(
         testPath,
         `import { test } from "${testImport}";\n\n${registerTest}("runs nested SDA tests", () => {});\n`,
       );
+      writeFileSync(
+        "sda/helpers/example.test.ts",
+        `import { test } from "${testImport}";\n\n${registerTest}("runs tests beside helpers", () => {});\n`,
+      );
       const passing = run("sda:tests");
       expect(passing.status, passing.stdout + passing.stderr).toBe(0);
       expect(passing.stdout + passing.stderr).toContain("runs nested SDA tests");
+      expect(passing.stdout + passing.stderr).toContain("runs tests beside helpers");
       writeFileSync(
         testPath,
         `import { test } from "${testImport}";\n\n${registerTest}("fails the suite", () => {\n  throw new Error("SDA assertion failed");\n});\n`,

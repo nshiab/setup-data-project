@@ -16,9 +16,6 @@ export function createFolderStructure(selectedPackages: string[]) {
     }
   }
 
-  const gitkeep = join(sdaFolder, "test", ".gitkeep");
-  if (lstatSync(gitkeep, { throwIfNoEntry: false }) === undefined) writeFileSync(gitkeep, "");
-
   const mainTsPath = join(sdaFolder, "main.ts");
 
   let mainTsContent = 'console.log("Hello simple-data-analysis!");\n';

@@ -1,6 +1,6 @@
 import { deepStrictEqual as assertEquals } from "node:assert";
 import { test, expect } from "vite-plus/test";
-import { existsSync, mkdirSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync } from "node:fs";
 const assertExists = (path: string) => expect(existsSync(path)).toBe(true);
 import { join } from "node:path";
 import { readFileSync, symlinkSync, writeFileSync } from "node:fs";
@@ -13,7 +13,7 @@ test("createFolderStructure - should create the correct files and folders", () =
   assertExists(join("sda", "data"));
   assertExists(join("sda", "helpers"));
   assertExists(join("sda", "output"));
-  expect(readFileSync(join("sda", "test", ".gitkeep"), "utf8")).toBe("");
+  expect(readdirSync(join("sda", "test"))).toEqual([]);
   assertExists(join("sda", "main.ts"));
 });
 
