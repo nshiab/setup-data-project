@@ -27,8 +27,8 @@ Add focused tests for error-prone transformations, reusable logic with meaningfu
 
 Run \`${run} sda\` to fix and check code, then execute the analysis once.
 
-The clean script removes cached results and temporary files. Run it only when those cached results can be discarded.
+Run \`${run} sda:clean\` only when cached results and temporary files can be discarded.
 
-Before handing off code changes, run \`${run} sda:tests\` and resolve failures.`,
+Before handing off code changes, run \`${run} sda:test\` and resolve failures.`,
   });
 }

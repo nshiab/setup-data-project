@@ -121,7 +121,7 @@ try {
   writeFileSync(join(directory, ".env"), "");
   writeFileSync(
     join(directory, "package.json"),
-    JSON.stringify({ type: "module", scripts: { fix: "node fix.cjs" } }),
+    JSON.stringify({ type: "module", scripts: { "sda:fix": "node fix.cjs" } }),
   );
   writeFileSync(join(directory, "fix.cjs"), "");
   writeFileSync(join(directory, "sda/main.ts"), entry);

@@ -18,12 +18,12 @@ const {
     clean: { type: "boolean", default: false },
     status: { type: "boolean", default: false },
     watch: { type: "boolean", default: false },
-    "watch-tests": { type: "boolean", default: false },
+    "watch-test": { type: "boolean", default: false },
     ignore: { type: "string", multiple: true, default: [] },
   },
 });
 if (values.clean) {
-  if (entry || values.status || values.watch || values["watch-tests"] || values.ignore.length) {
+  if (entry || values.status || values.watch || values["watch-test"] || values.ignore.length) {
     console.error("Usage: sda-run --clean (without other options or paths)");
     process.exit(1);
   }
@@ -55,11 +55,11 @@ if (values.clean) {
 if (values.status) process.exit(printSdaStatus());
 if (!entry) {
   console.error(
-    "Usage: sda-run --clean | --status | [--watch] <entry-file> [watch-paths...] [--ignore path] | --watch-tests <watch-paths...> [--ignore path]",
+    "Usage: sda-run --clean | --status | [--watch] <entry-file> [watch-paths...] [--ignore path] | --watch-test <watch-paths...> [--ignore path]",
   );
   process.exit(1);
 }
-const watchingTests = values["watch-tests"];
+const watchingTests = values["watch-test"];
 const watching = values.watch || watchingTests;
 const selected = [entry, ...paths].map((path) => resolve(path));
 const ignored = [SDA_LOCK_DIRECTORY, ...values.ignore].map((path) => resolve(path));
@@ -68,7 +68,7 @@ const excluded = (path: string) => ignored.some((root) => within(path, root));
 const bun = Boolean(process.versions.bun);
 const runCommand =
   (bun ? "bun run " : "npm run ") +
-  (watchingTests ? "sda:tests:watch" : watching ? "sda:watch" : "sda");
+  (watchingTests ? "sda:test:watch" : watching ? "sda:watch" : "sda");
 const windows = process.platform === "win32";
 type Job = { child: ChildProcess; done: Promise<number | null> };
 let releaseLock: (() => void) | undefined;
@@ -198,11 +198,11 @@ async function check() {
   if (watchingTests) {
     // A fresh run sees edits made while the previous process was stopping.
     changes.check();
-    running = launchScript("sda:tests");
+    running = launchScript("sda:test");
     checking = false;
     return;
   }
-  fixer = launchScript("fix", true);
+  fixer = launchScript("sda:fix", true);
   const fixed = await fixer.done;
   if (closing) return;
   // Recheck edits made during fixes; ignore delayed events for unchanged file states.
@@ -252,7 +252,7 @@ process.on("SIGINT", () => void shutdown(0));
 process.on("SIGTERM", () => void shutdown(0));
 
 async function runOnce() {
-  fixer = launchScript("fix", true);
+  fixer = launchScript("sda:fix", true);
   const fixed = await fixer.done;
   if (closing) return;
   if (fixed !== 0) {

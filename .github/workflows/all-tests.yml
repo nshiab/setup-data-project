@@ -85,4 +85,4 @@ jobs:
         with:
           bun-version: latest
       - run: npm ci
-      - run: node node_modules/vite-plus/bin/vp test test/sda.test.ts -t "run clean"
+      - run: node node_modules/vite-plus/bin/vp test test/sda.test.ts -t "sda:clean"

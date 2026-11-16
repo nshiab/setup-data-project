@@ -72,18 +72,18 @@ Name tests `*.test.ts` and place them under `sda/`. Use `sda/test/` to keep test
 together. Bun projects need Bun 1.3.1 or newer for the empty test suite to pass.
 Use these commands (replace `npm run` with `bun run` for Bun projects):
 
-- `npm run sda`: run `fix`, then execute `sda/main.ts` once if checks pass.
+- `npm run sda`: run `sda:fix`, then execute `sda/main.ts` once if checks pass.
 - `npm run sda:watch`: do the same on changes to `sda/` and `.env`, excluding `sda/output/`.
 - `npm run sda:status`: check whether an SDA run or watcher is active.
-- `npm run sda:tests`: check formatting, lint, and TypeScript types, then run the tests under `sda/`.
-- `npm run sda:tests:watch`: rerun those checks and tests on changes to `sda/`, `.env`, and `tsconfig.json`, excluding `sda/output/`.
-- `npm run fix`: format files, apply automatic lint fixes, and check types.
-- `npm run docs`: refresh documentation for the installed library versions.
-- `npm run clean`: delete cached results and temporary files in `.sda-cache/`, `.journalism-cache/`, and `.tmp/`.
+- `npm run sda:test`: check formatting, lint, and TypeScript types under `sda/`, then run its tests.
+- `npm run sda:test:watch`: rerun those checks and tests on changes to `sda/`, `.env`, and `tsconfig.json`, excluding `sda/output/`.
+- `npm run sda:clean`: delete cached results and temporary files in `.sda-cache/`, `.journalism-cache/`, and `.tmp/`.
+- `npm run sda:fix`: format files, apply automatic lint fixes, and check types under `sda/`.
+- `npm run sda:docs`: refresh documentation for the installed library versions.
 
 The watcher comes from the installed setup-data-project package; no runner script is added to your project.
 SDA blocks simultaneous runs. Recovery after a forced termination is best effort.
-Lock records live in `.sda-cache/lock/`. The `clean` command preserves that directory
+Lock records live in `.sda-cache/lock/`. The `sda:clean` command preserves that directory
 and its parent so an active run keeps its lock.
 New development tools are installed at their latest versions. Existing development
 tools and libraries not selected for an update keep their declared versions.
@@ -102,7 +102,7 @@ maps is split into feature, mark, and transform pages, indexed at
 on upstream setup or interactive templates are labeled.
 The generated `docs/` folder is ignored by Git.
 
-After cloning or changing dependencies, run `npm run docs` or `bun run docs`.
+After cloning or changing dependencies, run `npm run sda:docs` or `bun run sda:docs`.
 You can also refresh documentation directly:
 
 ```sh

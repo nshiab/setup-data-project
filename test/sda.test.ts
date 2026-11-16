@@ -120,7 +120,7 @@ test.skipIf(!windows).each([
     process.chdir("projet été");
     symlinkSync(installedModules, "node_modules", "junction");
     writeFileSync(".env", "");
-    const scripts = { ...getProjectTasks(runtime), fix: "node fix.cjs" };
+    const scripts = { ...getProjectTasks(runtime), "sda:fix": "node fix.cjs" };
     writeFileSync("package.json", JSON.stringify({ scripts }));
     writeFileSync("fix.cjs", 'require("node:fs").appendFileSync("fix-runs.txt", "fix\\n");');
     writeFileSync(
@@ -194,17 +194,17 @@ test.skipIf(!windows).each([
 
 for (const runtime of ["node", "bun"] as const) {
   test.skipIf(runtime === "bun" && !hasBun)(
-    `${runtime === "bun" ? "bun" : "npm"} run clean removes only cache paths from a project with spaces été`,
+    `${runtime === "bun" ? "bun" : "npm"} run sda:clean removes only cache paths from a project with spaces été`,
     () => {
       mkdirSync("project with spaces été");
       process.chdir("project with spaces été");
       symlinkSync(installedModules, "node_modules", windows ? "junction" : "dir");
       const cachePaths = [".sda-cache", ".journalism-cache", ".tmp"];
       const tasks = getProjectTasks(runtime);
-      expect(tasks.clean).toBe(
+      expect(tasks["sda:clean"]).toBe(
         runtime === "bun" ? "bun run --bun --no-env-file sda-run --clean" : "sda-run --clean",
       );
-      tasks.fix = 'node -e "process.exit(99)"';
+      tasks["sda:fix"] = 'node -e "process.exit(99)"';
       ProjectManifest.open().updateTasks(tasks);
 
       const preservedFiles = {
@@ -223,7 +223,7 @@ for (const runtime of ["node", "bun"] as const) {
         const keepsCacheDirectory = lstatSync(".sda-cache", {
           throwIfNoEntry: false,
         })?.isDirectory();
-        const result = spawnSync(runtime === "bun" ? "bun" : "npm", ["run", "clean"], {
+        const result = spawnSync(runtime === "bun" ? "bun" : "npm", ["run", "sda:clean"], {
           encoding: "utf8",
           shell: runtime === "node" && process.platform === "win32",
           timeout: 10_000,
@@ -269,7 +269,7 @@ for (const runtime of ["node", "bun"] as const) {
   );
 
   test.skipIf(runtime === "bun" && !hasBun)(
-    `${runtime}: run clean rejects other modes and paths without deleting caches`,
+    `${runtime}: sda:clean rejects other modes and paths without deleting caches`,
     () => {
       mkdirSync(".sda-cache");
       writeFileSync(".sda-cache/keep.txt", "preserved");
@@ -296,7 +296,12 @@ for (const runtime of ["node", "bun"] as const) {
     async () => {
       mkdirSync("sda");
       writeFileSync(".env", "");
-      writeFileSync("package.json", JSON.stringify({ scripts: { fix: "node fix.cjs" } }));
+      writeFileSync(
+        "package.json",
+        JSON.stringify({
+          scripts: { fix: 'node -e "process.exit(99)"', "sda:fix": "node fix.cjs" },
+        }),
+      );
       writeFileSync(
         "fix.cjs",
         'require("node:child_process").spawn(process.execPath, ["worker.cjs"], { stdio: "inherit" }).unref();',
@@ -352,7 +357,7 @@ for (const runtime of ["node", "bun"] as const) {
       );
       const manifestBeforeDocs = readFileSync("package.json", "utf8");
       expect(
-        execFileSync(runtime === "bun" ? "bun" : npm, ["run", "docs"], {
+        execFileSync(runtime === "bun" ? "bun" : npm, ["run", "sda:docs"], {
           env: standaloneEnv,
           encoding: "utf8",
           shell: windows && runtime === "node",
@@ -378,9 +383,6 @@ for (const runtime of ["node", "bun"] as const) {
       execFileSync(executable, ["node_modules/oxfmt/bin/oxfmt", "--write", "package.json"], {
         env: standaloneEnv,
       });
-      execFileSync(executable, ["node_modules/oxfmt/bin/oxfmt", "--write"], {
-        env: standaloneEnv,
-      });
       const run = (script: string, env: NodeJS.ProcessEnv = {}) => {
         const result = spawnSync(runtime === "bun" ? "bun" : npm, ["run", script], {
           encoding: "utf8",
@@ -391,11 +393,17 @@ for (const runtime of ["node", "bun"] as const) {
         expect(result.error, result.stdout + result.stderr).toBeUndefined();
         return result;
       };
-      writeFileSync(
-        "sda/main.ts",
-        'import {writeFileSync as writeFileSync} from "node:fs"; if (process.env.SDA_TOOL_TEST) {writeFileSync("sda/output/run.txt",process.env.SDA_TOOL_TEST)}\n',
-      );
-      const unformatted = run("sda:tests");
+      const outside =
+        'export const invalid:number="wrong"\nthrow new Error("The test runner must only execute tests under sda/");\n';
+      writeFileSync("outside.test.ts", outside);
+      const tsconfig = JSON.parse(readFileSync("tsconfig.json", "utf8")) as { include: string[] };
+      tsconfig.include.push("outside.test.ts");
+      writeFileSync("tsconfig.json", JSON.stringify(tsconfig));
+
+      const unformattedMain =
+        'import {writeFileSync as writeFileSync} from "node:fs"; if (process.env.SDA_TOOL_TEST) {writeFileSync("sda/output/run.txt",process.env.SDA_TOOL_TEST)}\n';
+      writeFileSync("sda/main.ts", unformattedMain);
+      const unformatted = run("sda:test");
       expect(unformatted.status, unformatted.stdout + unformatted.stderr).not.toBe(0);
       expect(unformatted.stdout + unformatted.stderr).toContain("sda/main.ts");
       const analysis = run("sda");
@@ -404,17 +412,24 @@ for (const runtime of ["node", "bun"] as const) {
       expect(analysis.stdout).toMatch(/Linting and type checking: [\d.]+ (?:ms|s)\n\n$/);
       expect(analysis.stdout).not.toContain("\u001b[");
       expect(analysis.stdout + analysis.stderr).not.toMatch(
-        /Finished in|Found 0 warnings|Fixing and checking|Running analysis|> fix|\$ oxfmt/,
+        /Finished in|Found 0 warnings|Fixing and checking|Running analysis|> sda:fix|\$ oxfmt/,
       );
       expect(readFileSync("sda/output/run.txt", "utf8")).toBe("loaded");
       const fixed = readFileSync("sda/main.ts", "utf8");
       expect(fixed).toContain('import { writeFileSync } from "node:fs";');
       expect(fixed).not.toContain("writeFileSync as writeFileSync");
+      expect(readFileSync("outside.test.ts", "utf8")).toBe(outside);
+
+      writeFileSync("sda/main.ts", unformattedMain);
+      const fix = run("sda:fix");
+      expect(fix.status, fix.stdout + fix.stderr).toBe(0);
+      expect(readFileSync("sda/main.ts", "utf8")).toBe(fixed);
+      expect(readFileSync("outside.test.ts", "utf8")).toBe(outside);
       for (const file of ignored)
         expect(readFileSync(file, "utf8")).toBe("Unformatted source data, not JSON.");
 
       writeFileSync("sda/main.ts", fixed + '\nexport const invalid: number = "wrong";\n');
-      const invalid = run("sda:tests");
+      const invalid = run("sda:test");
       expect(invalid.status, invalid.stdout + invalid.stderr).not.toBe(0);
       expect(invalid.stdout + invalid.stderr).toContain("2322");
       rmSync("sda/output/run.txt");
@@ -432,16 +447,12 @@ for (const runtime of ["node", "bun"] as const) {
       expect(warning.stdout).toContain("\u001b[34mLinting and type checking:");
 
       writeFileSync("sda/main.ts", fixed);
-      writeFileSync(
-        "outside.test.ts",
-        'throw new Error("The test runner must only execute tests under sda/");\n',
-      );
-      const checks = run("sda:tests");
+      const checks = run("sda:test");
       expect(checks.status, checks.stdout + checks.stderr).toBe(0);
 
       // Git omits the empty test directory from fresh clones.
       rmdirSync("sda/test");
-      const withoutTestDirectory = run("sda:tests");
+      const withoutTestDirectory = run("sda:test");
       expect(
         withoutTestDirectory.status,
         withoutTestDirectory.stdout + withoutTestDirectory.stderr,
@@ -459,7 +470,7 @@ for (const runtime of ["node", "bun"] as const) {
         "sda/helpers/example.test.ts",
         `import { test } from "${testImport}";\n\n${registerTest}("runs tests beside helpers", () => {});\n`,
       );
-      const passing = run("sda:tests");
+      const passing = run("sda:test");
       expect(passing.status, passing.stdout + passing.stderr).toBe(0);
       expect(passing.stdout + passing.stderr).toContain("runs nested SDA tests");
       expect(passing.stdout + passing.stderr).toContain("runs tests beside helpers");
@@ -467,7 +478,7 @@ for (const runtime of ["node", "bun"] as const) {
         testPath,
         `import { test } from "${testImport}";\n\n${registerTest}("fails the suite", () => {\n  throw new Error("SDA assertion failed");\n});\n`,
       );
-      const failed = run("sda:tests");
+      const failed = run("sda:test");
       expect(failed.status, failed.stdout + failed.stderr).not.toBe(0);
       expect(failed.stdout + failed.stderr).toContain("SDA assertion failed");
 
@@ -477,7 +488,7 @@ for (const runtime of ["node", "bun"] as const) {
       await ensureTooling(ProjectManifest.open());
       expect(readFileSync(".oxlintrc.json", "utf8")).toBe(existingConfig);
       writeFileSync("sda/main.ts", fixed + '\nexport const invalid: number = "wrong";\n');
-      for (const script of ["sda:tests", "fix"]) {
+      for (const script of ["sda:test", "sda:fix"]) {
         const result = run(script);
         expect(result.status, result.stdout + result.stderr).not.toBe(0);
         expect(result.stdout + result.stderr).toContain("2322");
@@ -499,7 +510,7 @@ for (const runtime of ["node", "bun"] as const) {
     symlinkSync(installedModules, "node_modules", "dir");
     writeFileSync(
       "package.json",
-      JSON.stringify({ scripts: { ...getProjectTasks(runtime), fix: "node fix.cjs" } }),
+      JSON.stringify({ scripts: { ...getProjectTasks(runtime), "sda:fix": "node fix.cjs" } }),
     );
     writeFileSync(
       "fix.cjs",
@@ -570,7 +581,7 @@ ${phase === "fixing" ? 'fs.writeFileSync("ready", ""); setInterval(() => {}, 100
         "package.json",
         JSON.stringify({
           type: "module",
-          scripts: { ...getProjectTasks(runtime), fix: "node fix.cjs" },
+          scripts: { ...getProjectTasks(runtime), "sda:fix": "node fix.cjs" },
         }),
       );
       writeFileSync(
@@ -623,7 +634,7 @@ if (existsSync("fail-analysis")) process.exit(3);
       writeFileSync(".env", "");
       writeFileSync("sda/main.ts", "");
       writeFileSync("fix.cjs", "");
-      writeFileSync("package.json", JSON.stringify({ scripts: { fix: "node fix.cjs" } }));
+      writeFileSync("package.json", JSON.stringify({ scripts: { "sda:fix": "node fix.cjs" } }));
       const command = runtime === "bun" ? "bun" : process.execPath;
       const args = [runner, "--watch", "sda/main.ts"];
       const child = spawn(command, args, { stdio: "ignore" });
@@ -829,7 +840,7 @@ for (const runtime of ["node", "bun"] as const) {
       writeFileSync(
         "package.json",
         JSON.stringify({
-          scripts: { ...getProjectTasks(runtime), "sda:tests": "node checks.cjs" },
+          scripts: { ...getProjectTasks(runtime), "sda:test": "node checks.cjs" },
         }),
       );
       writeFileSync(
@@ -840,7 +851,7 @@ for (const runtime of ["node", "bun"] as const) {
           'if (state === "failed") process.exitCode = 1;\n',
       );
       writeFileSync("sda/test/state.txt", "failed");
-      const child = spawn(runtime === "bun" ? "bun" : npm, ["run", "sda:tests:watch"], {
+      const child = spawn(runtime === "bun" ? "bun" : npm, ["run", "sda:test:watch"], {
         shell: windows && runtime === "node",
         detached: !windows,
         stdio: "pipe",
@@ -884,7 +895,7 @@ for (const runtime of ["node", "bun"] as const) {
       mkdirSync("sda/data", { recursive: true });
       mkdirSync("sda/output");
       writeFileSync(".env", "");
-      writeFileSync("package.json", JSON.stringify({ scripts: { fix: "node fix.cjs" } }));
+      writeFileSync("package.json", JSON.stringify({ scripts: { "sda:fix": "node fix.cjs" } }));
       writeFileSync("fix.cjs", "");
       const main = (value: string) =>
         `import { appendFileSync } from "node:fs"; appendFileSync("sda/output/runs.txt", ${JSON.stringify(value + "\n")});\n`;
@@ -924,7 +935,7 @@ for (const scenario of ["batch", "missing", "symlink"] as const) {
       mkdirSync("sda/data", { recursive: true });
       writeFileSync("sda/data/input.csv", "initial");
       writeFileSync(".env", "");
-      writeFileSync("package.json", JSON.stringify({ scripts: { fix: "node fix.cjs" } }));
+      writeFileSync("package.json", JSON.stringify({ scripts: { "sda:fix": "node fix.cjs" } }));
       writeFileSync("fix.cjs", 'require("node:fs").appendFileSync("fixes.txt", "fix\\n");');
       writeFileSync(
         "sda/main.ts",
@@ -1003,7 +1014,7 @@ test.skipIf(process.platform === "win32").each(["fixing", "analysis"])(
   async (phase) => {
     mkdirSync("sda");
     writeFileSync(".env", "");
-    writeFileSync("package.json", JSON.stringify({ scripts: { fix: "node fix.cjs" } }));
+    writeFileSync("package.json", JSON.stringify({ scripts: { "sda:fix": "node fix.cjs" } }));
     // Control fix completion to make an edit during checking deterministic.
     writeFileSync(
       "fix.cjs",
@@ -1060,7 +1071,7 @@ test.skipIf(process.platform === "win32").each(["shutdown", "restart"])(
   async (action) => {
     mkdirSync("sda");
     writeFileSync(".env", "");
-    writeFileSync("package.json", JSON.stringify({ scripts: { fix: "node fix.cjs" } }));
+    writeFileSync("package.json", JSON.stringify({ scripts: { "sda:fix": "node fix.cjs" } }));
     writeFileSync("fix.cjs", "");
     writeFileSync(
       "worker.cjs",

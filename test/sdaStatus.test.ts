@@ -11,7 +11,7 @@ const runner = fileURLToPath(new URL("../src/sda.ts", import.meta.url));
 const status = () => spawnSync(process.execPath, [runner, "--status"], { encoding: "utf8" });
 
 test("status without an active run creates no files and runs no fixes", () => {
-  writeFileSync("package.json", JSON.stringify({ scripts: { fix: "exit 99" } }));
+  writeFileSync("package.json", JSON.stringify({ scripts: { "sda:fix": "exit 99" } }));
   const result = status();
   expect(result.status, result.stderr).toBe(0);
   expect(result.stdout).toContain("No active SDA process found");
@@ -65,7 +65,7 @@ test("status refuses an unrelated live PID, even before its owner record is publ
 test("status refuses an SDA process belonging to another directory", async () => {
   mkdirSync("other/sda", { recursive: true });
   writeFileSync("other/.env", "");
-  writeFileSync("other/package.json", JSON.stringify({ scripts: { fix: "node fix.cjs" } }));
+  writeFileSync("other/package.json", JSON.stringify({ scripts: { "sda:fix": "node fix.cjs" } }));
   writeFileSync("other/fix.cjs", "");
   writeFileSync(
     "other/sda/main.ts",

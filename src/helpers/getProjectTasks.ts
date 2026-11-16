@@ -11,10 +11,10 @@ export function getProjectTasks(runtime: Runtime = getRuntime()) {
     sda: `${runner} sda/main.ts`,
     "sda:watch": `${runner} --watch sda/main.ts sda .env --ignore sda/output`,
     "sda:status": `${runner} --status`,
-    "sda:tests": `${fmt} --check && ${lint} && ${tests}`,
-    "sda:tests:watch": `${runner} --watch-tests sda .env tsconfig.json --ignore sda/output`,
-    clean: `${runner} --clean`,
-    fix: `${fmt} --write && ${lint} --fix --format default`,
-    docs: `${runtime === "bun" ? "bun run --bun --no-env-file " : ""}setup-data-project --docs`,
+    "sda:test": `${fmt} --check sda && ${lint} sda && ${tests}`,
+    "sda:test:watch": `${runner} --watch-test sda .env tsconfig.json --ignore sda/output`,
+    "sda:clean": `${runner} --clean`,
+    "sda:fix": `${fmt} --write sda && ${lint} --fix --format default sda`,
+    "sda:docs": `${runtime === "bun" ? "bun run --bun --no-env-file " : ""}setup-data-project --docs`,
   };
 }

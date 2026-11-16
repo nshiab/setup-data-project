@@ -59,12 +59,24 @@ test("opening manifests is read-only and setup preserves scripts and versions", 
   const fresh = ProjectManifest.open();
   expect(existsSync("package.json")).toBe(false);
   fresh.updateTasks(getProjectTasks("node"));
-  expect(readFileSync("package.json", "utf8")).not.toContain('"test":');
+  const freshConfig = JSON.parse(readFileSync("package.json", "utf8")) as {
+    scripts: Record<string, string>;
+  };
+  expect(Object.keys(freshConfig.scripts)).toEqual([
+    "sda",
+    "sda:watch",
+    "sda:status",
+    "sda:test",
+    "sda:test:watch",
+    "sda:clean",
+    "sda:fix",
+    "sda:docs",
+  ]);
   writeFileSync(
     "package.json",
     JSON.stringify({
       type: "module",
-      scripts: { test: "custom-test", sda: "custom-run" },
+      scripts: { test: "custom-test", sda: "custom-run", fix: "custom-fix" },
       dependencies: { "@nshiab/journalism-format": "~1.1.0" },
     }),
   );
@@ -73,7 +85,8 @@ test("opening manifests is read-only and setup preserves scripts and versions", 
   const text = readFileSync("package.json", "utf8");
   expect(text).toContain("custom-test");
   expect(text).toContain("custom-run");
-  expect(text).toContain("oxfmt --check && oxlint");
+  expect(text).toContain('"fix": "custom-fix"');
+  expect(text).toContain('"sda:fix": "oxfmt --write sda');
   expect(manifest.getInstalledPackageSpecifiers()["@nshiab/journalism-format"]).toBe("~1.1.0");
   manifest.reload();
   expect(manifest.getInstalledPackages()).toEqual(["@nshiab/journalism-format"]);
@@ -107,16 +120,16 @@ test("reruns preserve source, .env and unmanaged documentation while updating ma
   const readme = readFileSync("README.md", "utf8");
   const agents = readFileSync("AGENTS.md", "utf8");
   expect(readme).toContain("check formatting, lint, and TypeScript types");
-  expect(readme).toContain("run the tests under sda/");
+  expect(readme).toContain("TypeScript types under sda/, then run its tests");
   expect(readme).not.toContain("npm run test");
   writeFileSync("README.md", `Custom intro\n${readme}\nCustom footer`);
   writeFileSync("AGENTS.md", `Custom policy\n${agents}`);
   ensureReadme("bun", ["@nshiab/simple-data-analysis-core"]);
   ensureAgents({}, "bun", ["@nshiab/simple-data-analysis-core"]);
   expect(readFileSync("README.md", "utf8")).toContain("Custom footer");
-  expect(readFileSync("README.md", "utf8")).toContain("bun run docs");
-  expect(readFileSync("README.md", "utf8")).toContain("bun run sda:tests:watch");
-  expect(readFileSync("README.md", "utf8")).not.toContain("npm run docs");
+  expect(readFileSync("README.md", "utf8")).toContain("bun run sda:docs");
+  expect(readFileSync("README.md", "utf8")).toContain("bun run sda:test:watch");
+  expect(readFileSync("README.md", "utf8")).not.toContain("npm run sda:docs");
   expect(readFileSync("AGENTS.md", "utf8")).toContain("Custom policy");
   expect(readFileSync("AGENTS.md", "utf8")).toContain("Prefer the runtime's built-in test runner.");
   expect(readFileSync("AGENTS.md", "utf8")).not.toContain("vite-plus/test");
@@ -149,7 +162,7 @@ for (const file of ["README.md", "AGENTS.md"]) {
       const updated = readFileSync(file, "utf8");
       expect(updated).toMatch(/^Custom intro\n/);
       expect(updated).toMatch(/\nCustom footer\n$/);
-      expect(updated).toContain("bun run sda:tests");
+      expect(updated).toContain("bun run sda:test");
       expect(updated).toContain("Safe to remove if you don't want this generated section.");
       expect(updated).not.toContain("Old content");
       expect(updated).not.toContain("Custom end explanation.");
