@@ -116,6 +116,21 @@ function launchScript(script: string, summarize = false) {
   );
 }
 
+function announceWatchRun(message: string) {
+  if (process.stdout.isTTY) process.stdout.write("\u001b[2J\u001b[H");
+  console.log(`Watching SDA for changes...\n\n${message}`);
+}
+
+function watchJob(job: Job, label: string, success: string) {
+  running = job;
+  void job.done.then((result) => {
+    if (closing || checking || running !== job) return;
+    const outcome =
+      result === 0 ? success : result === null ? "stopped" : `failed (exit code ${result})`;
+    console.log(`\n${label} ${outcome}. Waiting for changes...`);
+  });
+}
+
 function refreshWatchers() {
   const directories = new Map<string, boolean>();
   const add = (directory: string, recursive: boolean) => {
@@ -194,14 +209,15 @@ async function check() {
   running = undefined;
   if (closing) return;
   refreshWatchers();
-  process.stdout.write("\u001b[2J\u001b[3J\u001b[H");
   if (watchingTests) {
     // A fresh run sees edits made while the previous process was stopping.
     changes.check();
-    running = launchScript("sda:test");
+    announceWatchRun("Running SDA checks and tests...");
+    watchJob(launchScript("sda:test"), "SDA checks and tests", "passed");
     checking = false;
     return;
   }
+  announceWatchRun("Running SDA checks and analysis...");
   fixer = launchScript("sda:fix", true);
   const fixed = await fixer.done;
   if (closing) return;
@@ -214,9 +230,13 @@ async function check() {
     schedule();
   } else if (fixed === 0) {
     console.log();
-    running = launch(bun ? ["run", entry] : ["--env-file=.env", entry]);
+    watchJob(
+      launch(bun ? ["run", entry] : ["--env-file=.env", entry]),
+      "SDA analysis",
+      "completed",
+    );
   } else {
-    console.log("Fix failed. Watching for changes...");
+    console.log("Fix failed. Waiting for changes...");
   }
 }
 

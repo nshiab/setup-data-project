@@ -733,7 +733,9 @@ if (existsSync("fail-analysis")) process.exit(3);
       child.stdout.on("data", (data: Buffer) => (output += data.toString()));
       child.stderr.on("data", (data: Buffer) => (output += data.toString()));
       const waitForError = () =>
-        vi.waitFor(() => expect(output).toContain("Fix failed."), { timeout: 10000 });
+        vi.waitFor(() => expect(output).toContain("Fix failed. Waiting for changes..."), {
+          timeout: 10000,
+        });
       const waitForRun = async (environment = "loaded") => {
         expected += `${environment}\n`;
         await vi.waitFor(
@@ -746,13 +748,13 @@ if (existsSync("fail-analysis")) process.exit(3);
       };
       const expectNoRun = async () => {
         await delay(500);
-        expect(output).not.toContain("Fixing and checking...");
+        expect(output).not.toContain("Running SDA checks and analysis...");
         expect(readFileSync("sda/output/runs.txt", "utf8")).toBe(expected);
       };
       try {
         await waitForError();
         expect(output).toContain("2322");
-        expect(output).toContain("\u001b[2J");
+        expect(output).not.toContain("\u001b[2J");
         expect(existsSync("sda/output/runs.txt")).toBe(false);
         writeFileSync(helper, "export const value:number=1\n");
         await waitForRun();
@@ -871,8 +873,19 @@ for (const runtime of ["node", "bun"] as const) {
         );
       try {
         await waitForRuns("failed\n");
+        await vi.waitFor(() =>
+          expect(output).toContain(
+            "SDA checks and tests failed (exit code 1). Waiting for changes...",
+          ),
+        );
+        expect(output).toContain("Watching SDA for changes...");
+        expect(output).toContain("Running SDA checks and tests...");
         writeFileSync("sda/test/state.txt", "recovered");
         await waitForRuns("failed\nrecovered\n");
+        await vi.waitFor(() =>
+          expect(output).toContain("SDA checks and tests passed. Waiting for changes..."),
+        );
+        expect(output).not.toContain("\u001b[2J");
         writeFileSync("sda/output/ignored.txt", "result");
         await delay(500);
         expect(readFileSync("sda/output/runs.txt", "utf8")).toBe("failed\nrecovered\n");
@@ -903,15 +916,23 @@ for (const runtime of ["node", "bun"] as const) {
       const child = spawn(
         runtime === "bun" ? "bun" : process.execPath,
         [runner, "--watch", "sda/main.ts", "sda", ".env", "--ignore", "sda/output"],
-        { stdio: "ignore" },
+        { stdio: ["ignore", "pipe", "pipe"] },
       );
       const closed = once(child, "close");
+      let output = "";
+      child.stdout.on("data", (data: Buffer) => (output += data.toString()));
+      child.stderr.on("data", (data: Buffer) => (output += data.toString()));
       const waitForRuns = (expected: string) =>
         vi.waitFor(() => expect(readFileSync("sda/output/runs.txt", "utf8")).toBe(expected), {
           timeout: 10000,
         });
       try {
         await waitForRuns("first\n");
+        await vi.waitFor(() =>
+          expect(output).toContain("SDA analysis completed. Waiting for changes..."),
+        );
+        expect(output).toContain("Watching SDA for changes...");
+        expect(output).toContain("Running SDA checks and analysis...");
         writeFileSync("sda/main.ts", main("second"));
         await waitForRuns("first\nsecond\n");
         writeFileSync("sda/data/new.csv", "new data\n");
@@ -919,6 +940,7 @@ for (const runtime of ["node", "bun"] as const) {
         writeFileSync("sda/output/result.json", "{}");
         await delay(500);
         expect(readFileSync("sda/output/runs.txt", "utf8")).toBe("first\nsecond\nsecond\n");
+        expect(output).not.toContain("\u001b[2J");
       } finally {
         child.kill("SIGTERM");
         await closed;
