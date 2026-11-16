@@ -3,7 +3,7 @@ import { join } from "node:path";
 
 export function createFolderStructure(selectedPackages: string[]) {
   const sdaFolder = "sda";
-  const folders = ["data", "helpers", "output"];
+  const folders = ["data", "helpers", "output", "test"];
 
   if (!existsSync(sdaFolder)) {
     mkdirSync(sdaFolder, { recursive: true });
@@ -15,6 +15,9 @@ export function createFolderStructure(selectedPackages: string[]) {
       mkdirSync(path, { recursive: true });
     }
   }
+
+  const gitkeep = join(sdaFolder, "test", ".gitkeep");
+  if (lstatSync(gitkeep, { throwIfNoEntry: false }) === undefined) writeFileSync(gitkeep, "");
 
   const mainTsPath = join(sdaFolder, "main.ts");
 

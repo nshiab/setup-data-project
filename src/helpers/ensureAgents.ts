@@ -23,12 +23,12 @@ ${links.length ? `Documentation for these installed libraries is available local
 
 Use sda/main.ts as the entry point and sda/helpers/ for reusable helpers. Keep one function per helper file, with the file named after the function. Put source data in sda/data/ and results in sda/output/.
 
-Add focused tests for error-prone transformations, reusable logic with meaningful edge cases, and bug fixes. Mirror source paths under sda/test/: for example, sda/helpers/cleanRows.ts maps to sda/test/helpers/cleanRows.test.ts. Prefer the runtime's built-in test runner. When adding tests, extend the \`all-tests\` script to run them after the existing checks.
+Add focused tests for error-prone transformations, reusable logic with meaningful edge cases, and bug fixes. Mirror source paths under sda/test/: for example, sda/helpers/cleanRows.ts maps to sda/test/helpers/cleanRows.test.ts. Prefer the runtime's built-in test runner.
 
 Run \`${run} sda\` to fix and check code, then execute the analysis once.
 
 The clean script removes cached results and temporary files. Run it only when those cached results can be discarded.
 
-Before handing off code changes, run \`${run} all-tests\` and resolve failures.`,
+Before handing off code changes, run \`${run} sda:tests\` and resolve failures.`,
   });
 }

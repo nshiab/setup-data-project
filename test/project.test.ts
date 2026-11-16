@@ -115,7 +115,7 @@ test("reruns preserve source, .env and unmanaged documentation while updating ma
   ensureAgents({}, "bun", ["@nshiab/simple-data-analysis-core"]);
   expect(readFileSync("README.md", "utf8")).toContain("Custom footer");
   expect(readFileSync("README.md", "utf8")).toContain("bun run docs");
-  expect(readFileSync("README.md", "utf8")).toContain("bun run all-tests");
+  expect(readFileSync("README.md", "utf8")).toContain("bun run sda:tests:watch");
   expect(readFileSync("README.md", "utf8")).not.toContain("npm run docs");
   expect(readFileSync("AGENTS.md", "utf8")).toContain("Custom policy");
   expect(readFileSync("AGENTS.md", "utf8")).toContain("Prefer the runtime's built-in test runner.");
@@ -149,7 +149,7 @@ for (const file of ["README.md", "AGENTS.md"]) {
       const updated = readFileSync(file, "utf8");
       expect(updated).toMatch(/^Custom intro\n/);
       expect(updated).toMatch(/\nCustom footer\n$/);
-      expect(updated).toContain("bun run all-tests");
+      expect(updated).toContain("bun run sda:tests");
       expect(updated).toContain("Safe to remove if you don't want this generated section.");
       expect(updated).not.toContain("Old content");
       expect(updated).not.toContain("Custom end explanation.");
