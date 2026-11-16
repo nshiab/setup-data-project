@@ -11,12 +11,13 @@ export function ensureReadme(runtime: Runtime, installedPackages: string[] = [])
     name: "libraries",
     createContent: (section) =>
       `# Data project\n\nCreated with [setup-data-project](https://github.com/nshiab/setup-data-project).\n\n${section}`,
-    content: `${libraries ? `Installed libraries: ${libraries}.\n\n` : ""}Use sda/main.ts to process source data from sda/data/ and write results to sda/output/. Both data folders are ignored by Git. Put reusable helpers in sda/helpers/ and tests in sda/test/.
+    content: `${libraries ? `Installed libraries: ${libraries}.\n\n` : ""}Use sda/main.ts to process source data from sda/data/ and write results to sda/output/. Both data folders are ignored by Git. Put reusable helpers in sda/helpers/ and tests in sda/test/. Name test files \`*.test.ts\`.${runtime === "bun" ? " Use Bun 1.3.1 or newer to run checks before adding your first test." : ""}
 
 - \`${run} sda\`: run \`${run} fix\`, then run the analysis once if checks pass.
 - \`${run} sda:watch\`: do the same on changes to sda/ and .env, excluding sda/output/.
 - \`${run} sda:status\`: check whether an SDA run or watcher is active.
-- \`${run} all-tests\`: check formatting, lint, and TypeScript types. When adding tests, extend this script to run them after the existing checks.
+- \`${run} sda:tests\`: check formatting, lint, and TypeScript types, then run the tests in sda/test/.
+- \`${run} sda:tests:watch\`: rerun those checks and tests on changes to sda/, .env, and tsconfig.json, excluding sda/output/.
 - \`${run} fix\`: format files, apply automatic lint fixes, and check types.
 - \`${run} docs\`: refresh documentation for the installed library versions.
 - \`${run} clean\`: delete cached results and temporary files in .sda-cache/, .journalism-cache/, and .tmp/.

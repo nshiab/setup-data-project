@@ -18,11 +18,12 @@ const {
     clean: { type: "boolean", default: false },
     status: { type: "boolean", default: false },
     watch: { type: "boolean", default: false },
+    "watch-tests": { type: "boolean", default: false },
     ignore: { type: "string", multiple: true, default: [] },
   },
 });
 if (values.clean) {
-  if (entry || values.status || values.watch || values.ignore.length) {
+  if (entry || values.status || values.watch || values["watch-tests"] || values.ignore.length) {
     console.error("Usage: sda-run --clean (without other options or paths)");
     process.exit(1);
   }
@@ -54,22 +55,25 @@ if (values.clean) {
 if (values.status) process.exit(printSdaStatus());
 if (!entry) {
   console.error(
-    "Usage: sda-run --clean | --status | [--watch] <entry-file> [watch-paths...] [--ignore path]",
+    "Usage: sda-run --clean | --status | [--watch] <entry-file> [watch-paths...] [--ignore path] | --watch-tests <watch-paths...> [--ignore path]",
   );
   process.exit(1);
 }
-const watching = values.watch;
+const watchingTests = values["watch-tests"];
+const watching = values.watch || watchingTests;
 const selected = [entry, ...paths].map((path) => resolve(path));
 const ignored = [SDA_LOCK_DIRECTORY, ...values.ignore].map((path) => resolve(path));
 const within = (path: string, root: string) => path === root || path.startsWith(root + sep);
 const excluded = (path: string) => ignored.some((root) => within(path, root));
 const bun = Boolean(process.versions.bun);
-const runCommand = (bun ? "bun run " : "npm run ") + (watching ? "sda:watch" : "sda");
+const runCommand =
+  (bun ? "bun run " : "npm run ") +
+  (watchingTests ? "sda:tests:watch" : watching ? "sda:watch" : "sda");
 const windows = process.platform === "win32";
 type Job = { child: ChildProcess; done: Promise<number | null> };
 let releaseLock: (() => void) | undefined;
 let fixer: Job | undefined;
-let analysis: Job | undefined;
+let running: Job | undefined;
 let timer: ReturnType<typeof setTimeout> | undefined;
 let checking = false;
 let closing = false;
@@ -102,6 +106,14 @@ function launch(args: string[], command = process.execPath, summarize = false) {
     child.once("close", resolve);
   });
   return { child, done };
+}
+
+function launchScript(script: string, summarize = false) {
+  return launch(
+    ["run", "--silent", script],
+    bun ? process.execPath : windows ? "npm.cmd" : "npm",
+    summarize,
+  );
 }
 
 function refreshWatchers() {
@@ -178,16 +190,19 @@ async function check() {
   if (!needsCheck && !changed) return;
   checking = true;
   needsCheck = false;
-  await stop(analysis);
-  analysis = undefined;
+  await stop(running);
+  running = undefined;
   if (closing) return;
   refreshWatchers();
   process.stdout.write("\u001b[2J\u001b[3J\u001b[H");
-  fixer = launch(
-    ["run", "--silent", "fix"],
-    bun ? process.execPath : windows ? "npm.cmd" : "npm",
-    true,
-  );
+  if (watchingTests) {
+    // A fresh run sees edits made while the previous process was stopping.
+    changes.check();
+    running = launchScript("sda:tests");
+    checking = false;
+    return;
+  }
+  fixer = launchScript("fix", true);
   const fixed = await fixer.done;
   if (closing) return;
   // Recheck edits made during fixes; ignore delayed events for unchanged file states.
@@ -199,7 +214,7 @@ async function check() {
     schedule();
   } else if (fixed === 0) {
     console.log();
-    analysis = launch(bun ? ["run", entry] : ["--env-file=.env", entry]);
+    running = launch(bun ? ["run", entry] : ["--env-file=.env", entry]);
   } else {
     console.log("Fix failed. Watching for changes...");
   }
@@ -215,7 +230,7 @@ async function shutdown(code: number) {
   closing = true;
   clearTimeout(timer);
   for (const { watcher } of watchers.values()) watcher.close();
-  await Promise.all([stop(fixer), stop(analysis)]);
+  await Promise.all([stop(fixer), stop(running)]);
   releaseLock?.();
   process.exit(code);
 }
@@ -237,11 +252,7 @@ process.on("SIGINT", () => void shutdown(0));
 process.on("SIGTERM", () => void shutdown(0));
 
 async function runOnce() {
-  fixer = launch(
-    ["run", "--silent", "fix"],
-    bun ? process.execPath : windows ? "npm.cmd" : "npm",
-    true,
-  );
+  fixer = launchScript("fix", true);
   const fixed = await fixer.done;
   if (closing) return;
   if (fixed !== 0) {
@@ -252,14 +263,14 @@ async function runOnce() {
   fixer = undefined;
   if (closing) return;
   console.log();
-  analysis = launch(bun ? ["run", entry] : ["--env-file=.env", entry]);
-  const result = await analysis.done;
+  running = launch(bun ? ["run", entry] : ["--env-file=.env", entry]);
+  const result = await running.done;
   await shutdown(result ?? 1);
 }
 
 try {
-  releaseLock = await acquireSdaLock(runCommand);
-  if (closing) releaseLock();
+  if (!watchingTests) releaseLock = await acquireSdaLock(runCommand);
+  if (closing) releaseLock?.();
   else if (watching) {
     refreshWatchers();
     void check().catch(fail);

@@ -335,7 +335,7 @@ for (const runtime of ["node", "bun"] as const) {
   );
 
   test.skipIf(runtime === "bun" && !hasBun)(
-    `${runtime}: standalone tooling refreshes docs, fixes code, checks types, and runs analysis without a test runner`,
+    `${runtime}: standalone tooling runs analysis, static checks, and scoped native tests`,
     async () => {
       symlinkSync(installedModules, "node_modules", windows ? "junction" : "dir");
       writeFileSync(
@@ -371,7 +371,6 @@ for (const runtime of ["node", "bun"] as const) {
       expect(existsSync("node_modules/vitest")).toBe(false);
       expect(existsSync("node_modules/vite")).toBe(false);
       expect(existsSync("vite.config.ts")).toBe(false);
-      expect(existsSync("sda/tests")).toBe(false);
 
       const executable = runtime === "bun" ? "bun" : process.execPath;
       // The setup CLI uses this exact invocation to format the generated manifest.
@@ -395,7 +394,7 @@ for (const runtime of ["node", "bun"] as const) {
         "sda/main.ts",
         'import {writeFileSync as writeFileSync} from "node:fs"; if (process.env.SDA_TOOL_TEST) {writeFileSync("sda/output/run.txt",process.env.SDA_TOOL_TEST)}\n',
       );
-      const unformatted = run("all-tests");
+      const unformatted = run("sda:tests");
       expect(unformatted.status, unformatted.stdout + unformatted.stderr).not.toBe(0);
       expect(unformatted.stdout + unformatted.stderr).toContain("sda/main.ts");
       const analysis = run("sda");
@@ -414,7 +413,7 @@ for (const runtime of ["node", "bun"] as const) {
         expect(readFileSync(file, "utf8")).toBe("Unformatted source data, not JSON.");
 
       writeFileSync("sda/main.ts", fixed + '\nexport const invalid: number = "wrong";\n');
-      const invalid = run("all-tests");
+      const invalid = run("sda:tests");
       expect(invalid.status, invalid.stdout + invalid.stderr).not.toBe(0);
       expect(invalid.stdout + invalid.stderr).toContain("2322");
       rmSync("sda/output/run.txt");
@@ -434,10 +433,28 @@ for (const runtime of ["node", "bun"] as const) {
       writeFileSync("sda/main.ts", fixed);
       writeFileSync(
         "sda/example.test.ts",
-        'throw new Error("Static checks must not execute tests");\n',
+        'throw new Error("The test runner must only execute tests under sda/test");\n',
       );
-      const checks = run("all-tests");
+      const checks = run("sda:tests");
       expect(checks.status, checks.stdout + checks.stderr).toBe(0);
+      const testPath = "sda/test/helpers/example.test.ts";
+      mkdirSync("sda/test/helpers");
+      const testImport = runtime === "bun" ? "bun:test" : "node:test";
+      const registerTest = runtime === "bun" ? "test" : "await test";
+      writeFileSync(
+        testPath,
+        `import { test } from "${testImport}";\n\n${registerTest}("runs nested SDA tests", () => {});\n`,
+      );
+      const passing = run("sda:tests");
+      expect(passing.status, passing.stdout + passing.stderr).toBe(0);
+      expect(passing.stdout + passing.stderr).toContain("runs nested SDA tests");
+      writeFileSync(
+        testPath,
+        `import { test } from "${testImport}";\n\n${registerTest}("fails the suite", () => {\n  throw new Error("SDA assertion failed");\n});\n`,
+      );
+      const failed = run("sda:tests");
+      expect(failed.status, failed.stdout + failed.stderr).not.toBe(0);
+      expect(failed.stdout + failed.stderr).toContain("SDA assertion failed");
 
       // Reusing a lint-only configuration must not disable the scripts' compiler checks.
       const existingConfig = '{ "rules": { "no-debugger": "error" } }\n';
@@ -445,10 +462,11 @@ for (const runtime of ["node", "bun"] as const) {
       await ensureTooling(ProjectManifest.open());
       expect(readFileSync(".oxlintrc.json", "utf8")).toBe(existingConfig);
       writeFileSync("sda/main.ts", fixed + '\nexport const invalid: number = "wrong";\n');
-      for (const script of ["all-tests", "fix"]) {
+      for (const script of ["sda:tests", "fix"]) {
         const result = run(script);
         expect(result.status, result.stdout + result.stderr).not.toBe(0);
         expect(result.stdout + result.stderr).toContain("2322");
+        expect(result.stdout + result.stderr).not.toContain("SDA assertion failed");
       }
       expect(readFileSync(".oxlintrc.json", "utf8")).toBe(existingConfig);
     },
@@ -788,6 +806,63 @@ if (existsSync("fail-analysis")) process.exit(3);
 }
 
 for (const runtime of ["node", "bun"] as const) {
+  test.skipIf(runtime === "bun" && !hasBun)(
+    `${runtime}: test watch mode reruns the test script after failure and ignores output`,
+    async () => {
+      createFolderStructure([]);
+      symlinkSync(installedModules, "node_modules", windows ? "junction" : "dir");
+      writeFileSync(
+        "package.json",
+        JSON.stringify({
+          scripts: { ...getProjectTasks(runtime), "sda:tests": "node checks.cjs" },
+        }),
+      );
+      writeFileSync(
+        "checks.cjs",
+        'const { appendFileSync, readFileSync } = require("node:fs");\n' +
+          'const state = readFileSync("sda/test/state.txt", "utf8");\n' +
+          'appendFileSync("sda/output/runs.txt", state + "\\n");\n' +
+          'if (state === "failed") process.exitCode = 1;\n',
+      );
+      writeFileSync("sda/test/state.txt", "failed");
+      const child = spawn(runtime === "bun" ? "bun" : npm, ["run", "sda:tests:watch"], {
+        shell: windows && runtime === "node",
+        detached: !windows,
+        stdio: "pipe",
+        env: standaloneEnv,
+      });
+      const closed = once(child, "close");
+      let output = "";
+      child.stdout.on("data", (data: Buffer) => (output += data.toString()));
+      child.stderr.on("data", (data: Buffer) => (output += data.toString()));
+      const waitForRuns = (expected: string) =>
+        vi.waitFor(
+          () => {
+            expect(existsSync("sda/output/runs.txt"), output).toBe(true);
+            expect(readFileSync("sda/output/runs.txt", "utf8"), output).toBe(expected);
+          },
+          { timeout: 10000 },
+        );
+      try {
+        await waitForRuns("failed\n");
+        writeFileSync("sda/test/state.txt", "recovered");
+        await waitForRuns("failed\nrecovered\n");
+        writeFileSync("sda/output/ignored.txt", "result");
+        await delay(500);
+        expect(readFileSync("sda/output/runs.txt", "utf8")).toBe("failed\nrecovered\n");
+        expect(existsSync(".sda-cache/lock")).toBe(false);
+      } finally {
+        if (child.pid && child.exitCode === null && child.signalCode === null) {
+          if (windows)
+            spawnSync("taskkill", ["/PID", String(child.pid), "/T", "/F"], { stdio: "ignore" });
+          else process.kill(-child.pid, "SIGTERM");
+        }
+        await closed;
+      }
+    },
+    30000,
+  );
+
   test.skipIf(runtime === "bun" && !hasBun)(
     `${runtime}: watch mode reruns on code and data edits without watching output`,
     async () => {

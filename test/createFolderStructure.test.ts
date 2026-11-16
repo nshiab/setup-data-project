@@ -13,7 +13,7 @@ test("createFolderStructure - should create the correct files and folders", () =
   assertExists(join("sda", "data"));
   assertExists(join("sda", "helpers"));
   assertExists(join("sda", "output"));
-  expect(existsSync(join("sda", "tests"))).toBe(false);
+  expect(readFileSync(join("sda", "test", ".gitkeep"), "utf8")).toBe("");
   assertExists(join("sda", "main.ts"));
 });
 
