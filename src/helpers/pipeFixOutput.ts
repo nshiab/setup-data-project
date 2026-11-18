@@ -2,7 +2,7 @@ import { createInterface } from "node:readline";
 import type { Readable } from "node:stream";
 import { stripVTControlCharacters, styleText } from "node:util";
 
-export function pipeFixOutput(output: Readable) {
+export function pipeFixOutput(output: Readable, writeLine: (line: string) => void = console.log) {
   const lines = createInterface({ input: output, crlfDelay: Infinity });
   lines.on("line", (line: string) => {
     const plain = stripVTControlCharacters(line);
@@ -12,10 +12,10 @@ export function pipeFixOutput(output: Readable) {
     );
     if (timing) {
       const label = timing[3] ? "Linting and type checking" : "Formatting";
-      console.log(styleText("blue", `${label}: ${timing[1]} ${timing[2]}`));
+      writeLine(styleText("blue", `${label}: ${timing[1]} ${timing[2]}`));
     } else {
       // Forward diagnostics and unfamiliar output unchanged, including custom fix scripts.
-      console.log(line);
+      writeLine(line);
     }
   });
 }

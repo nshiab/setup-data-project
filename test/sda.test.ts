@@ -87,9 +87,10 @@ afterAll(() => {
   if (fixture) rmSync(fixture, { recursive: true, force: true });
 });
 
-test("the published package provides an executable watcher", () => {
+test("the published package provides executable watcher and preview commands", () => {
   expect(readFileSync(runner, "utf8")).toMatch(/^#!\/usr\/bin\/env node/);
   expect(existsSync(join(installedModules, ".bin/sda-run"))).toBe(true);
+  expect(existsSync(join(installedModules, ".bin/sda-preview"))).toBe(true);
   if (process.platform !== "win32") expect(statSync(runner).mode & 0o111).not.toBe(0);
   symlinkSync(installedModules, "node_modules", windows ? "junction" : "dir");
   // Adding a second binary must preserve package-name resolution for the setup command.
@@ -106,6 +107,145 @@ test("the published package provides an executable watcher", () => {
       }),
     ).toContain("--docs");
 });
+
+for (const runtime of ["node", "bun"] as const) {
+  test.skipIf(runtime === "bun" && !hasBun).each([
+    ["src/site", []],
+    ["src/report site", ["--dir", "src/report site"]],
+  ] as const)(
+    `${runtime} site preview serves and watches %s`,
+    async (site, args) => {
+      symlinkSync(installedModules, "node_modules", windows ? "junction" : "dir");
+      const preview = `${runtime === "bun" ? "bun" : "npm"} run sda:preview`;
+      const alias = args.length
+        ? `${preview}${runtime === "node" ? " --" : ""} --dir "${site}"`
+        : preview;
+      ProjectManifest.open().updateTasks({ ...getProjectTasks(runtime), "sda:dash": alias });
+      const manager = runtime === "bun" ? "bun" : npm;
+      const managerOptions = { encoding: "utf8", shell: windows && runtime === "node" } as const;
+      expect(
+        execFileSync(
+          manager,
+          runtime === "bun"
+            ? ["run", "sda:preview", "--help"]
+            : ["run", "sda:preview", "--", "--help"],
+          managerOptions,
+        ),
+      ).toContain("Serve and watch src/site/ on localhost by default");
+      const missing = spawnSync(manager, ["run", "sda:dash"], { ...managerOptions, timeout: 5000 });
+      expect(missing.status, missing.stdout + missing.stderr).toBe(1);
+      expect(missing.stderr).toContain(`Expected a site directory at "${site}"`);
+      expect(existsSync("src")).toBe(false);
+
+      const page =
+        '<!doctype html><body><p>İstanbul</p><script src="./assets/chart.js"></script></body>';
+      const externalBase = "https://example.invalid/assets/";
+      const additionalPages = {
+        "implicit-body.html":
+          '<!doctype html><title>Chart</title><script>const markup = "</body>";</script>',
+        "trailing-comment.html": "<!doctype html><body><p>Chart</p></body><!-- </body> -->",
+        "external-base.html": `<!doctype html><base href="${externalBase}"><body>Chart</body>`,
+      };
+      mkdirSync(join(site, "assets"), { recursive: true });
+      writeFileSync(join(site, "index.html"), page);
+      for (const [file, html] of Object.entries(additionalPages))
+        writeFileSync(join(site, file), html);
+      writeFileSync(join(site, "assets/chart.js"), "console.log('first');");
+      writeFileSync(join(site, ".env"), "PRIVATE=secret");
+      mkdirSync("src/test");
+      writeFileSync("src/test/chart.test.js", "// Web test");
+      mkdirSync("private");
+      writeFileSync("private/data.json", "[]");
+      symlinkSync(resolve("private"), join(site, "outside"), windows ? "junction" : "dir");
+
+      const entry = join(installedModules, "@nshiab/setup-data-project/dist/preview.mjs");
+      const child = spawn(runtime === "bun" ? "bun" : process.execPath, [entry, ...args]);
+      const closed = once(child, "close");
+      let output = "";
+      for (const stream of [child.stdout, child.stderr]) {
+        stream.on("data", (chunk: Buffer) => {
+          output += chunk.toString();
+        });
+      }
+      const abort = new AbortController();
+      try {
+        const base = await vi.waitFor(
+          () => {
+            const url = /http:\/\/127\.0\.0\.1:\d+/.exec(output)?.[0];
+            if (!url) throw new Error(`Preview did not report its URL. ${output}`);
+            return url;
+          },
+          { timeout: 5000 },
+        );
+        const get = (path: string) =>
+          fetch(base + path, {
+            signal: AbortSignal.any([abort.signal, AbortSignal.timeout(5000)]),
+          });
+        const index = await get("/");
+        expect(index.headers.get("content-type")).toContain("text/html");
+        expect(index.headers.get("cache-control")).toBe("no-store");
+        const html = await index.text();
+        expect(html).toContain(page);
+        const scriptTag = /<script src="([^"\n]+)"\s*><\/script>\s*$/.exec(html);
+        if (!scriptTag) throw new Error("Preview page is missing its local reload script.");
+        const reloadUrl = new URL(scriptTag[1], externalBase);
+        expect(reloadUrl.origin).toBe(base);
+        const reloadScript = await get(reloadUrl.pathname);
+        expect(reloadScript.headers.get("content-type")).toContain("text/javascript");
+        const listener = await reloadScript.text();
+        const reloadPath = /new EventSource\(location\.origin \+ "([^"]+)"\)/.exec(listener)?.[1];
+        if (!reloadPath) throw new Error("Preview script is missing its reload listener.");
+        expect(listener).toContain("location.reload()");
+        for (const [file, original] of Object.entries(additionalPages)) {
+          const preview = await (await get(`/${file}`)).text();
+          expect(preview).toContain(original);
+          expect(preview).toContain(scriptTag[0]);
+        }
+        expect(readFileSync(join(site, "index.html"), "utf8")).toBe(page);
+        const script = await get("/assets/chart.js?v=1");
+        expect(script.headers.get("content-type")).toContain("text/javascript");
+        expect(await script.text()).toBe("console.log('first');");
+        for (const path of [
+          "/.env",
+          "/outside/data.json",
+          "/%2e%2e%2fprivate/data.json",
+          "/test/chart.test.js",
+          "/%2e%2e%2ftest/chart.test.js",
+        ]) {
+          expect((await get(path)).status).toBe(404);
+        }
+
+        const events = await get(reloadPath);
+        expect(events.headers.get("content-type")).toBe("text/event-stream");
+        const reader = events.body?.getReader();
+        if (!reader) throw new Error("Preview did not open an event stream.");
+        const decoder = new TextDecoder();
+        let message = "";
+        const readUntil = async (event: string) => {
+          while (!message.includes(event)) {
+            const chunk = await reader.read();
+            if (chunk.done) throw new Error(`Reload stream closed before ${event}`);
+            message += decoder.decode(chunk.value, { stream: true });
+          }
+        };
+        await readUntil(": connected\n\n");
+        const reload = readUntil("data: reload\n\n");
+        writeFileSync("src/test/chart.test.js", "// Edited web test");
+        expect(await Promise.race([reload.then(() => "reload"), delay(300, "quiet")])).toBe(
+          "quiet",
+        );
+        writeFileSync(join(site, "assets/chart.js"), "console.log('second');");
+        await reload;
+        expect(await (await get("/assets/chart.js")).text()).toBe("console.log('second');");
+      } finally {
+        abort.abort();
+        child.kill();
+        await closed;
+      }
+    },
+    15000,
+  );
+}
 
 test.skipIf(!windows).each([
   ["node", "once"],
@@ -504,7 +644,7 @@ for (const runtime of ["node", "bun"] as const) {
     ["once", "analysis"],
     ["watch", "fixing"],
     ["watch", "analysis"],
-  ])(`${runtime}: %s mode excludes both commands during %s`, async (mode, phase) => {
+  ])(`${runtime}: %s mode excludes competing analysis owners during %s`, async (mode, phase) => {
     mkdirSync("sda");
     writeFileSync(".env", "");
     symlinkSync(installedModules, "node_modules", "dir");
@@ -550,9 +690,23 @@ ${phase === "fixing" ? 'fs.writeFileSync("ready", ""); setInterval(() => {}, 100
         mode === "watch" ? "SDA watcher is running" : "SDA analysis is running",
       );
       expect(status.stdout).toContain(`PID ${child.pid}`);
+      if (mode === "watch") {
+        expect(status.stdout).toContain("you can keep editing.");
+        const run = runtime === "bun" ? "bun run" : "npm run";
+        expect(status.stdout).toContain(
+          `start with ${run} sda:test. If formatting or lint checks fail, use ${run} sda:fix`,
+        );
+        expect(status.stdout).not.toContain("Ctrl+C");
+      } else {
+        expect(status.stdout).toContain("after 3 seconds");
+        expect(status.stdout).toContain("after 9 seconds, then every 27 seconds");
+      }
       expect(lockPids()).toEqual([child.pid]);
-      for (const flags of [[], ["--watch"]]) {
-        const competing = spawnSync(competingRuntime, [runner, ...flags, "sda/main.ts"], {
+      for (const args of [
+        ["--watch", "sda/main.ts"],
+        [mode === "watch" ? "sda/other.ts" : "sda/main.ts"],
+      ]) {
+        const competing = spawnSync(competingRuntime, [runner, ...args], {
           encoding: "utf8",
           timeout: 5000,
         });
@@ -606,6 +760,7 @@ if (existsSync("fail-analysis")) process.exit(3);
         });
         expect(result.error, result.stdout + result.stderr).toBeUndefined();
         expect(lockPids()).toEqual([]);
+        expect(readdirSync(".sda-cache")).toEqual(["lock"]);
         return result;
       };
       expect(run().status).toBe(0);
@@ -625,6 +780,116 @@ if (existsSync("fail-analysis")) process.exit(3);
       expect(readFileSync("runs.txt", "utf8")).toBe(expected + `fix\n${runtime}:second\n`);
     },
     15000,
+  );
+
+  test.skipIf(runtime === "bun" && !hasBun)(
+    `${runtime}: sda:watch shares one completed result with requests from sda`,
+    async () => {
+      mkdirSync("sda");
+      writeFileSync(".env", "");
+      symlinkSync(installedModules, "node_modules", windows ? "junction" : "dir");
+      ProjectManifest.open().updateTasks({
+        ...getProjectTasks(runtime),
+        "sda:fix": "node fix.cjs",
+      });
+      writeFileSync("fix.cjs", 'console.log("analysis checks passed");');
+      writeFileSync("label.txt", "initial");
+      writeFileSync("hold-initial", "");
+      writeFileSync("hold-requested", "");
+      writeFileSync(
+        "sda/main.ts",
+        `import { appendFileSync, existsSync, readFileSync } from "node:fs";
+import { setTimeout as delay } from "node:timers/promises";
+const label = readFileSync("label.txt", "utf8");
+appendFileSync("runs.txt", "start " + label + "\\n");
+console.log("analysis: " + label);
+console.error("stderr: " + label);
+while (existsSync("hold-" + label)) await delay(20);
+appendFileSync("runs.txt", "end " + label + "\\n");
+if (label === "failure") process.exitCode = 7;
+`,
+      );
+
+      const command = runtime === "bun" ? "bun" : process.execPath;
+      const watcher = spawn(command, [runner, "--watch", "sda/main.ts"]);
+      const watcherClosed = once(watcher, "close");
+      let live = "";
+      for (const stream of [watcher.stdout, watcher.stderr]) {
+        stream.on("data", (chunk: Buffer) => {
+          live += chunk.toString();
+        });
+      }
+      const manager = runtime === "bun" ? "bun" : npm;
+      const shell = windows && runtime === "node";
+      let requesterClosed: ReturnType<typeof once> | undefined;
+
+      try {
+        await vi.waitFor(() => expect(live).toContain("analysis: initial"), { timeout: 5000 });
+        const directory = join(".sda-cache/lock", readdirSync(".sda-cache/lock")[0]);
+        const owner = join(directory, "owner.json");
+        const record = readFileSync(owner, "utf8");
+        const modified = statSync(owner).mtimeMs;
+        expect(JSON.parse(record)).toMatchObject({ watcherReady: true });
+        await vi.waitFor(() => expect(statSync(owner).mtimeMs).toBeGreaterThan(modified), {
+          timeout: 3000,
+        });
+        expect(readFileSync(owner, "utf8")).toBe(record);
+        const result = join(directory, "watch-result.jsonl");
+        expect(existsSync(result)).toBe(false);
+        writeFileSync("label.txt", "requested");
+        const requester = spawn(manager, ["run", "sda"], { shell });
+        requesterClosed = once(requester, "close");
+        let stdout = "";
+        let stderr = "";
+        requester.stdout.on("data", (chunk: Buffer) => {
+          stdout += chunk.toString();
+        });
+        requester.stderr.on("data", (chunk: Buffer) => {
+          stderr += chunk.toString();
+        });
+        await vi.waitFor(() => expect(stdout).toContain("Requesting an analysis run"), {
+          timeout: 5000,
+        });
+        expect(readFileSync("runs.txt", "utf8")).toBe("start initial\n");
+        rmSync("hold-initial");
+        await vi.waitFor(() => expect(live).toContain("analysis: requested"), { timeout: 5000 });
+        expect(readFileSync(result, "utf8")).toContain("analysis: initial");
+        expect(readFileSync(result, "utf8")).not.toContain("analysis: requested");
+        expect(stdout).not.toContain("analysis: requested");
+        rmSync("hold-requested");
+        await requesterClosed;
+        expect(requester.exitCode, stdout + stderr).toBe(0);
+        expect(stdout).toContain("analysis checks passed");
+        expect(stdout).toContain("analysis: requested");
+        expect(stdout).not.toContain("analysis: initial");
+        expect(stderr).toContain("stderr: requested");
+        expect(readFileSync(result, "utf8")).toContain("analysis: requested");
+        expect(readdirSync(directory).sort()).toEqual(["owner.json", "watch-result.jsonl"]);
+
+        writeFileSync("label.txt", "failure");
+        const failed = spawnSync(manager, ["run", "sda"], {
+          shell,
+          encoding: "utf8",
+          timeout: 7000,
+        });
+        expect(failed.status, failed.stdout + failed.stderr).toBe(7);
+        expect(failed.stdout).toContain("analysis: failure");
+        expect(failed.stderr).toContain("stderr: failure");
+        expect(readFileSync(result, "utf8")).toContain("analysis: failure");
+        expect(readdirSync(directory).sort()).toEqual(["owner.json", "watch-result.jsonl"]);
+        expect(readFileSync("runs.txt", "utf8")).toBe(
+          "start initial\nend initial\nstart requested\nend requested\nstart failure\nend failure\n",
+        );
+      } finally {
+        if (windows && watcher.pid)
+          spawnSync("taskkill", ["/PID", String(watcher.pid), "/T", "/F"], { stdio: "ignore" });
+        else watcher.kill("SIGTERM");
+        await watcherClosed;
+        await requesterClosed;
+      }
+      if (!windows) expect(lockPids()).toEqual([]);
+    },
+    25000,
   );
 
   test.skipIf(process.platform === "win32" || (runtime === "bun" && !hasBun))(
