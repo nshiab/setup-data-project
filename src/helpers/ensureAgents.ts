@@ -34,6 +34,8 @@ When using Observable Plot, copy \`dist/plot.umd.min.js\` from the installed \`@
     createContent: (section) => section,
     content: `Read README.md for project guidance and package.json for the installed libraries and scripts. Use the installed libraries. Ask the user before adding a dependency.
 
+Keep changes focused on the user's request. Update README.md only when the user explicitly asks.
+
 ${links.length ? `Documentation for these installed libraries is available locally:\n\n${links.join("\n")}\n\n` : ""}Before making changes or running project commands, run \`${run} sda:status\` and follow its instructions.
 
 ## Data analysis

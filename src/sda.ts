@@ -137,7 +137,10 @@ function launchScript(script: string, summarize = false, report?: Report) {
 }
 
 function announceWatchRun(message: string) {
-  if (process.stdout.isTTY) process.stdout.write("\u001b[2J\u001b[H");
+  if (process.stdout.isTTY) {
+    const clearScrollback = watchingTests ? "" : "\u001b[3J";
+    process.stdout.write(`\u001b[2J${clearScrollback}\u001b[H`);
+  }
   console.log(`Watching SDA for changes...\n\n${message}`);
 }
 
