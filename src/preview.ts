@@ -9,7 +9,7 @@ import { parseArgs } from "node:util";
 const defaultSiteDirectory = "src/site";
 const reloadPath = "/__sda_preview_reload";
 const reloadScriptPath = `${reloadPath}.js`;
-const reloadScript = `new EventSource("${reloadPath}").onmessage = () => location.reload();`;
+const reloadScript = `new EventSource(location.origin + "${reloadPath}").onmessage = () => location.reload();`;
 const contentTypes: Record<string, string> = {
   ".html": "text/html; charset=utf-8",
   ".htm": "text/html; charset=utf-8",
@@ -111,8 +111,14 @@ async function main() {
         return;
       }
       const html = await readFile(file, "utf8");
-      // Append the preview script so tag text inside the page cannot change where it runs.
-      response.end(`${html}\n<script src="${reloadScriptPath}"></script>`);
+      const address = server.address();
+      if (!address || typeof address === "string")
+        throw new Error("Preview server is not listening");
+      const { port } = address;
+      const host =
+        request.headers.host?.toLowerCase() === `localhost:${port}` ? "localhost" : "127.0.0.1";
+      // The absolute URL keeps the reload script local even when the page has a <base> tag.
+      response.end(`${html}\n<script src="http://${host}:${port}${reloadScriptPath}"></script>`);
       return;
     }
 

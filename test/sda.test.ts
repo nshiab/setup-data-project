@@ -139,10 +139,12 @@ for (const runtime of ["node", "bun"] as const) {
 
       const page =
         '<!doctype html><body><p>İstanbul</p><script src="./assets/chart.js"></script></body>';
+      const externalBase = "https://example.invalid/assets/";
       const additionalPages = {
         "implicit-body.html":
           '<!doctype html><title>Chart</title><script>const markup = "</body>";</script>',
         "trailing-comment.html": "<!doctype html><body><p>Chart</p></body><!-- </body> -->",
+        "external-base.html": `<!doctype html><base href="${externalBase}"><body>Chart</body>`,
       };
       mkdirSync(join(site, "assets"), { recursive: true });
       writeFileSync(join(site, "index.html"), page);
@@ -184,12 +186,14 @@ for (const runtime of ["node", "bun"] as const) {
         expect(index.headers.get("cache-control")).toBe("no-store");
         const html = await index.text();
         expect(html).toContain(page);
-        const scriptTag = /<script src="(\/[^"\n]+)"><\/script>/.exec(html);
+        const scriptTag = /<script src="([^"\n]+)"\s*><\/script>\s*$/.exec(html);
         if (!scriptTag) throw new Error("Preview page is missing its local reload script.");
-        const reloadScript = await get(scriptTag[1]);
+        const reloadUrl = new URL(scriptTag[1], externalBase);
+        expect(reloadUrl.origin).toBe(base);
+        const reloadScript = await get(reloadUrl.pathname);
         expect(reloadScript.headers.get("content-type")).toContain("text/javascript");
         const listener = await reloadScript.text();
-        const reloadPath = /new EventSource\("([^"]+)"\)/.exec(listener)?.[1];
+        const reloadPath = /new EventSource\(location\.origin \+ "([^"]+)"\)/.exec(listener)?.[1];
         if (!reloadPath) throw new Error("Preview script is missing its reload listener.");
         expect(listener).toContain("location.reload()");
         for (const [file, original] of Object.entries(additionalPages)) {

@@ -51,8 +51,8 @@ test.each([
   expect(readFileSync(`${claim}/owner.json`, "utf8")).toBe(before);
 });
 
-test.each(["ready", "stale", "starting"])(
-  "status checks a %s watcher record when PID access is denied",
+test.each(["ready", "stale", "starting", "reused PID", "inspection denied"])(
+  "status checks a %s watcher record against live process information",
   (state) => {
     const file = `${claim}/owner.json`;
     const record = JSON.stringify({
@@ -68,11 +68,19 @@ test.each(["ready", "stale", "starting"])(
       utimesSync(file, old, old);
     }
     const modified = statSync(file).mtimeMs;
-    vi.spyOn(process, "kill").mockImplementation(() => {
-      throw Object.assign(new Error("Operation not permitted"), { code: "EPERM" });
-    });
+    if (state === "reused PID") {
+      vi.mocked(execFileSync).mockReturnValue(JSON.stringify("node.exe unrelated.js"));
+    } else if (state === "inspection denied") {
+      vi.mocked(execFileSync).mockImplementation(() => {
+        throw Object.assign(new Error("Permission denied"), { code: "EACCES" });
+      });
+    } else {
+      vi.spyOn(process, "kill").mockImplementation(() => {
+        throw Object.assign(new Error("Operation not permitted"), { code: "EPERM" });
+      });
+    }
 
-    if (state === "ready") {
+    if (state === "ready" || state === "inspection denied") {
       expect(printSdaStatus()).toBe(1);
       expect(console.log).toHaveBeenCalledWith(expect.stringContaining("SDA watcher is running"));
     } else {
@@ -81,7 +89,9 @@ test.each(["ready", "stale", "starting"])(
         expect.stringContaining("Unable to verify SDA status"),
       );
     }
-    expect(execFileSync).not.toHaveBeenCalled();
+    expect(execFileSync).toHaveBeenCalledTimes(
+      state === "reused PID" || state === "inspection denied" ? 1 : 0,
+    );
     expect(readFileSync(file, "utf8")).toBe(record);
     expect(statSync(file).mtimeMs).toBe(modified);
   },
