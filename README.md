@@ -72,7 +72,7 @@ Name tests `*.test.ts` and place them under `sda/`. Use `sda/test/` to keep test
 together. Bun projects need Bun 1.3.1 or newer for the empty test suite to pass.
 Use these commands (replace `npm run` with `bun run` for Bun projects):
 
-- `npm run sda`: run `sda:fix`, then execute `sda/main.ts` once if checks pass.
+- `npm run sda`: run `sda:fix`, then execute `sda/main.ts` once if checks pass. If the analysis watcher is running, request the run from it and receive its output and exit code when it finishes.
 - `npm run sda:watch`: do the same on changes to `sda/` and `.env`, excluding `sda/output/`.
 - `npm run sda:status`: check whether an SDA run or watcher is active.
 - `npm run sda:test`: check formatting, lint, and TypeScript types under `sda/`, then run its tests.
@@ -80,13 +80,11 @@ Use these commands (replace `npm run` with `bun run` for Bun projects):
 - `npm run sda:clean`: delete cached results and temporary files in `.sda-cache/`, `.journalism-cache/`, and `.tmp/`.
 - `npm run sda:fix`: format files, apply automatic lint fixes, and check types under `sda/`.
 - `npm run sda:docs`: refresh documentation for the installed library versions.
-- `npm run sda:preview`: serve a static site from `src/` and refresh the browser when its files change.
+- `npm run sda:preview`: serve a static site from `src/site/` and refresh the browser when its files change.
 
-For a web project, put `index.html` and its assets in `src/`, run the preview command, and open the local URL it prints. You can upload `src/` directly to a static host.
+For a web project, put `index.html` and its assets in `src/site/`, run the preview command, and open the local URL it prints. Use `npm run sda:preview -- --dir src/report` (or `bun run sda:preview --dir src/report`) to serve and watch a different directory. You can upload the site directory directly to a static host. Keep any automated web tests in `src/test/`.
 The analysis watcher and preview server come from the installed setup-data-project package.
-SDA blocks simultaneous runs. Recovery after a forced termination is best effort.
-Lock records live in `.sda-cache/lock/`. The `sda:clean` command preserves that directory
-and its parent so an active run keeps its lock.
+You can leave `sda:watch` running while you or an agent edits files and runs `sda`, `sda:test`, or `sda:fix` in another terminal. The watcher runs one analysis at a time and replaces its result file in `.sda-cache/lock/` after each completed run. The file is removed when the watcher stops. The `sda:clean` command preserves the active lock and its contents.
 New development tools are installed at their latest versions. Existing development
 tools and libraries not selected for an update keep their declared versions.
 

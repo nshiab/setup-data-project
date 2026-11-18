@@ -15,7 +15,18 @@ import { isObject } from "./jsonObject.ts";
 
 export const SDA_LOCK_DIRECTORY = ".sda-cache/lock";
 
-type Claim = { id: string; pid: number; ticket: number; command?: string };
+type Claim = { id: string; pid: number; ticket: number; command?: string; watchEntry?: string };
+
+export class SdaLockBusyError extends Error {
+  readonly watcher?: { directory: string; pid: number; entry: string };
+
+  constructor(claim: Claim, directory: string) {
+    super(
+      `${claim.command} is already running${claim.command?.endsWith("sda:watch") ? " and watching this project's files" : " an analysis for this project"} (PID ${claim.pid}). Wait for it to finish or stop it with Ctrl+C in its terminal, then try again.`,
+    );
+    if (claim.watchEntry) this.watcher = { directory, pid: claim.pid, entry: claim.watchEntry };
+  }
+}
 
 function errorCode(error: unknown) {
   return error instanceof Error && "code" in error ? error.code : undefined;
@@ -24,7 +35,7 @@ function errorCode(error: unknown) {
 // Bakery ordering: publish a unique claim before choosing a ticket, then wait for
 // concurrent ticket choices. Never replace/delete a shared lock during recovery.
 // https://www.microsoft.com/en-us/research/publication/new-solution-dijkstras-concurrent-programming-problem/
-export async function acquireSdaLock(command: string): Promise<() => void> {
+export async function acquireSdaLock(command: string, watchEntry?: string) {
   const directory = resolve(SDA_LOCK_DIRECTORY);
   const id = `${process.pid}-${randomUUID()}`;
   const ownDirectory = join(directory, id);
@@ -66,7 +77,13 @@ export async function acquireSdaLock(command: string): Promise<() => void> {
       typeof record.command !== "string"
     )
       throw new Error(`Cannot read the SDA lock owned by process ${pid}.`);
-    return { id: candidate, pid, ticket: record.ticket, command: record.command };
+    return {
+      id: candidate,
+      pid,
+      ticket: record.ticket,
+      command: record.command,
+      watchEntry: typeof record.watchEntry === "string" ? record.watchEntry : undefined,
+    };
   }
 
   try {
@@ -77,7 +94,7 @@ export async function acquireSdaLock(command: string): Promise<() => void> {
     }
     writeFileSync(
       join(ownDirectory, "owner.tmp"),
-      JSON.stringify({ ticket, command, projectRoot: realpathSync(process.cwd()) }),
+      JSON.stringify({ ticket, command, projectRoot: realpathSync(process.cwd()), watchEntry }),
     );
     renameSync(join(ownDirectory, "owner.tmp"), join(ownDirectory, "owner.json"));
     const deadline = performance.now() + 5000;
@@ -93,11 +110,9 @@ export async function acquireSdaLock(command: string): Promise<() => void> {
         claim = readClaim(candidate);
       }
       if (claim && (claim.ticket < ticket || (claim.ticket === ticket && claim.id < id)))
-        throw new Error(
-          `${claim.command} is already running${claim.command?.endsWith("sda:watch") ? " and watching this project's files" : " an analysis for this project"} (PID ${claim.pid}). Wait for it to finish or stop it with Ctrl+C in its terminal, then try again.`,
-        );
+        throw new SdaLockBusyError(claim, join(directory, claim.id));
     }
-    return release;
+    return { directory: ownDirectory, release };
   } catch (error) {
     release();
     throw error;

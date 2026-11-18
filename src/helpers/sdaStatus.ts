@@ -12,6 +12,7 @@ function errorCode(error: unknown) {
 export function printSdaStatus(): number {
   const run = `${process.versions.bun ? "bun" : "npm"} run`;
   const retry = `${run} sda:status`;
+  const watcherGuidance = `you can keep editing. The watcher formats source files, applies lint fixes, and reruns the analysis after changes. The user is likely watching the results live in their terminal while you work. Re-read a file before editing it again because the watcher may have changed it. Run ${run} sda to request a run from the watcher and receive its output and exit code when it finishes. Before handing off analysis code changes, start with ${run} sda:test. If formatting or lint checks fail, use ${run} sda:fix for automatic fixes. Resolve any remaining failures and rerun ${run} sda:test until it passes.`;
   try {
     const claims = new Map<number, string[]>();
     try {
@@ -107,8 +108,8 @@ export function printSdaStatus(): number {
         throw new Error(`PID ${pid} could not be verified as this project's SDA process.`);
       messages.push(
         /(?:^|["\s])--watch(?:["\s]|$)/.test(command)
-          ? `SDA watcher is running (${run} sda:watch, PID ${pid}). It automatically fixes files and reruns the analysis. If you are an agent, ask the user to stop it with Ctrl+C, then recheck with ${retry} before doing any work.`
-          : `SDA analysis is running (${run} sda, PID ${pid}). Wait for it to finish. Recheck with ${retry} in 30 seconds before doing any work.`,
+          ? `An SDA watcher is running (${run} sda:watch, PID ${pid}). While it runs, ${watcherGuidance}`
+          : `SDA analysis is running (${run} sda, PID ${pid}). Wait for it to finish before editing. Recheck with ${retry} after 3 seconds. If it is still running, recheck after 9 seconds, then every 27 seconds until it finishes.`,
       );
     }
     for (const message of messages) console.log(message);
@@ -117,7 +118,7 @@ export function printSdaStatus(): number {
     return 0;
   } catch (error) {
     console.error(
-      `Unable to verify SDA status: ${error instanceof Error ? error.message : String(error)} If you are an agent, ask the user to confirm that neither ${run} sda nor ${run} sda:watch is running and that you may proceed, then wait for their confirmation before doing any work.`,
+      `Unable to verify SDA status: ${error instanceof Error ? error.message : String(error)} If you are an agent, ask the user whether ${run} sda or ${run} sda:watch is running. Wait for a one-off analysis to finish. If a watcher is running, ${watcherGuidance}`,
     );
     return 2;
   }

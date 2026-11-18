@@ -11,23 +11,22 @@ export function ensureReadme(runtime: Runtime, installedPackages: string[] = [])
     name: "libraries",
     createContent: (section) =>
       `# Data project\n\nCreated with [setup-data-project](https://github.com/nshiab/setup-data-project).\n\n${section}`,
-    content: `${libraries ? `Installed libraries: ${libraries}.\n\n` : ""}Use sda/main.ts to process source data from sda/data/ and write results to sda/output/. Both data folders are ignored by Git. Put reusable helpers in sda/helpers/. Name tests \`*.test.ts\` and place them under sda/. Use sda/test/ to keep tests together.${runtime === "bun" ? " Use Bun 1.3.1 or newer to run checks before adding your first test." : ""}
+    content: `${libraries ? `Installed libraries: ${libraries}.\n\n` : ""}## Data analysis
+
+Use \`sda/main.ts\` to process source data from \`sda/data/\` and write results to \`sda/output/\`. Git ignores both data folders. Put reusable helpers in \`sda/helpers/\`. Use \`sda/test/\` for analysis tests named \`*.test.ts\`.${runtime === "bun" ? " Use Bun 1.3.1 or newer to run checks before adding your first test." : ""}
 
 - \`${run} sda\`: run \`${run} sda:fix\`, then run the analysis once if checks pass.
-- \`${run} sda:watch\`: do the same on changes to sda/ and .env, excluding sda/output/.
-- \`${run} sda:status\`: check whether an SDA run or watcher is active.
-- \`${run} sda:test\`: check formatting, lint, and TypeScript types under sda/, then run its tests.
-- \`${run} sda:test:watch\`: rerun those checks and tests on changes to sda/, .env, and tsconfig.json, excluding sda/output/.
-- \`${run} sda:clean\`: delete cached results and temporary files in .sda-cache/, .journalism-cache/, and .tmp/.
 - \`${run} sda:fix\`: format files, apply automatic lint fixes, and check types under sda/.
-- \`${run} sda:docs\`: refresh documentation for the installed library versions.
-- \`${run} sda:preview\`: serve a static site from src/ and refresh the browser when its files change.
+- \`${run} sda:watch\`: rerun fixes and analysis when sda/ or .env changes, excluding sda/output/.
+- \`${run} sda:status\`: check whether an analysis run or analysis watcher is active.
+- \`${run} sda:test\`: check formatting, lint, and TypeScript types under sda/, then run its tests.
+- \`${run} sda:test:watch\`: rerun checks and tests when analysis files or project settings change, excluding sda/output/.
+- \`${run} sda:clean\`: delete cached results and temporary files in .sda-cache/, .journalism-cache/, and .tmp/.
 
-SDA blocks simultaneous runs. Recovery after a forced termination is best effort.
-Lock records live in .sda-cache/lock/. The sda:clean command preserves that directory and its parent so an active run keeps its lock.
+## Editor and documentation
 
-In VS Code, install the recommended Oxc extension for formatting and linting. Generated .vscode/settings.json enables formatting and lint fixes on save, plus visual line wrapping. Existing VS Code configuration files are preserved.
+In VS Code, install the recommended Oxc extension for formatting and linting. The generated \`.vscode/settings.json\` enables formatting on save, Oxc lint fixes on explicit saves, and word wrapping. Setup preserves existing VS Code configuration files.
 
-The generated docs/ folder is ignored by Git. Refresh it after cloning or updating dependencies. See AGENTS.md for documentation pointers.`,
+Run \`${run} sda:docs\` after installing or updating an SDA, journalism, or Observable Plot package. It refreshes the local docs for the versions installed in your project. Git ignores \`docs/\`.`,
   });
 }

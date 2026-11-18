@@ -4,7 +4,9 @@ import { readFile, realpath, stat } from "node:fs/promises";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { extname, isAbsolute, join, relative, sep } from "node:path";
 import { pipeline } from "node:stream/promises";
+import { parseArgs } from "node:util";
 
+const defaultSiteDirectory = "src/site";
 const reloadPath = "/__sda_preview_reload";
 const reloadScript = `<script>new EventSource("${reloadPath}").onmessage = () => location.reload();</script>`;
 const contentTypes: Record<string, string> = {
@@ -35,19 +37,26 @@ function fail(error: unknown) {
 }
 
 async function main() {
-  const usage =
-    "Usage: sda-preview\nServe src/ on localhost and reload the browser when files change.";
-  const args = process.argv.slice(2);
-  if (args.length === 1 && args[0] === "--help") {
-    console.log(usage);
+  const { values } = parseArgs({
+    options: {
+      dir: { type: "string", default: defaultSiteDirectory },
+      help: { type: "boolean", short: "h" },
+    },
+  });
+  if (values.help) {
+    console.log(
+      `Usage: sda-preview [--dir <path>]\nServe and watch ${defaultSiteDirectory}/ on localhost by default. Use --dir to preview a different directory.`,
+    );
     return;
   }
-  if (args.length) throw new Error(usage);
-  if (!statSync("src", { throwIfNoEntry: false })?.isDirectory()) {
-    throw new Error("Create a src/ directory with an index.html page first.");
+  const directory = values.dir;
+  if (!statSync(directory, { throwIfNoEntry: false })?.isDirectory()) {
+    throw new Error(
+      `Expected a site directory at "${directory}". Create it with an index.html page first.`,
+    );
   }
 
-  const root = await realpath("src");
+  const root = await realpath(directory);
   const clients = new Set<ServerResponse>();
   let pendingReload: ReturnType<typeof setTimeout> | undefined;
 
@@ -81,7 +90,7 @@ async function main() {
       join(root, pathname.endsWith("/") ? pathname + "index.html" : pathname),
     );
     const withinRoot = relative(root, file);
-    // Check the resolved path too, including symlinks to files outside src/.
+    // Check the resolved path too, including symlinks to files outside the site directory.
     if (isAbsolute(withinRoot) || withinRoot.split(sep).some((part) => part.startsWith("."))) {
       throw new Error("File is outside the public site");
     }
@@ -117,7 +126,7 @@ async function main() {
   server.listen(0, "127.0.0.1", () => {
     const address = server.address();
     if (address && typeof address === "object") {
-      console.log(`Previewing src/ at http://127.0.0.1:${address.port}`);
+      console.log(`Previewing ${directory} at http://127.0.0.1:${address.port}`);
     }
   });
 }

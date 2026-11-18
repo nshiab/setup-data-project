@@ -4,10 +4,16 @@ import { spawn, spawnSync, type ChildProcess } from "node:child_process";
 import { dirname, join, resolve, sep } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import { parseArgs } from "node:util";
-import { acquireSdaLock, SDA_LOCK_DIRECTORY } from "./helpers/sdaLock.ts";
+import { acquireSdaLock, SdaLockBusyError, SDA_LOCK_DIRECTORY } from "./helpers/sdaLock.ts";
 import { printSdaStatus } from "./helpers/sdaStatus.ts";
 import { pipeFixOutput } from "./helpers/pipeFixOutput.ts";
 import { createFileChanges } from "./helpers/fileChanges.ts";
+import {
+  createWatchRequests,
+  requestWatchRun,
+  WATCH_REQUEST_POLL_MS,
+  type WatchOutput,
+} from "./helpers/sdaWatchRequests.ts";
 
 const {
   positionals: [entry, ...paths],
@@ -71,9 +77,13 @@ const runCommand =
   (watchingTests ? "sda:test:watch" : watching ? "sda:watch" : "sda");
 const windows = process.platform === "win32";
 type Job = { child: ChildProcess; done: Promise<number | null> };
+type Report = (stream: WatchOutput["stream"], text: string) => void;
 let releaseLock: (() => void) | undefined;
+let watchRequests: ReturnType<typeof createWatchRequests> | undefined;
+let requestTimer: ReturnType<typeof setInterval> | undefined;
 let fixer: Job | undefined;
 let running: Job | undefined;
+let runInProgress = false;
 let timer: ReturnType<typeof setTimeout> | undefined;
 let checking = false;
 let closing = false;
@@ -81,26 +91,35 @@ let needsCheck = true;
 const changes = createFileChanges(selected, excluded);
 const watchers = new Map<string, { watcher: FSWatcher; recursive: boolean }>();
 
-function launch(args: string[], command = process.execPath, summarize = false) {
+function launch(args: string[], command = process.execPath, summarize = false, report?: Report) {
   const child = spawn(command, args, {
     // Bun's Windows --bun shim is named node.exe; keep Bun CLI argument parsing.
     argv0: windows && bun && command === process.execPath ? "bun" : undefined,
-    stdio: ["inherit", summarize ? "pipe" : "inherit", "inherit"],
+    stdio: ["inherit", summarize || report ? "pipe" : "inherit", report ? "pipe" : "inherit"],
     detached: !windows,
     shell: windows && command === "npm.cmd",
   });
   if (summarize && child.stdout) {
-    const output = child.stdout;
-    pipeFixOutput(output);
+    pipeFixOutput(child.stdout, report && ((line) => report("stdout", line + "\n")));
+  } else if (report) {
+    child.stdout?.setEncoding("utf8").on("data", (text: string) => report("stdout", text));
+  }
+  if (report)
+    child.stderr?.setEncoding("utf8").on("data", (text: string) => report("stderr", text));
+  if (child.stdout || child.stderr) {
     child.once("exit", () => {
-      // Background descendants can inherit stdout; don't wait forever for their pipe to close.
-      const timeout = setTimeout(() => output.destroy(), 1000);
+      // Background descendants can inherit the pipes; don't wait forever for them to close.
+      const timeout = setTimeout(() => {
+        child.stdout?.destroy();
+        child.stderr?.destroy();
+      }, 1000);
       child.once("close", () => clearTimeout(timeout));
     });
   }
   const done = new Promise<number | null>((resolve) => {
     child.once("error", (error) => {
-      console.error(errorMessage(error));
+      if (report) report("stderr", errorMessage(error) + "\n");
+      else console.error(errorMessage(error));
       resolve(1);
     });
     child.once("close", resolve);
@@ -108,11 +127,12 @@ function launch(args: string[], command = process.execPath, summarize = false) {
   return { child, done };
 }
 
-function launchScript(script: string, summarize = false) {
+function launchScript(script: string, summarize = false, report?: Report) {
   return launch(
     ["run", "--silent", script],
     bun ? process.execPath : windows ? "npm.cmd" : "npm",
     summarize,
+    report,
   );
 }
 
@@ -121,14 +141,19 @@ function announceWatchRun(message: string) {
   console.log(`Watching SDA for changes...\n\n${message}`);
 }
 
-function watchJob(job: Job, label: string, success: string) {
+function watchJob(job: Job, label: string, success: string, complete?: (code: number) => void) {
   running = job;
-  void job.done.then((result) => {
-    if (closing || checking || running !== job) return;
-    const outcome =
-      result === 0 ? success : result === null ? "stopped" : `failed (exit code ${result})`;
-    console.log(`\n${label} ${outcome}. Waiting for changes...`);
-  });
+  runInProgress = true;
+  void job.done
+    .then((result) => {
+      if (closing || checking || running !== job) return;
+      runInProgress = false;
+      complete?.(result ?? 1);
+      const outcome =
+        result === 0 ? success : result === null ? "stopped" : `failed (exit code ${result})`;
+      console.log(`\n${label} ${outcome}. Waiting for changes...`);
+    })
+    .catch(fail);
 }
 
 function refreshWatchers() {
@@ -202,11 +227,14 @@ async function stop(job: Job | undefined) {
 async function check() {
   if (closing || checking) return;
   const changed = changes.check();
-  if (!needsCheck && !changed) return;
+  needsCheck ||= changed;
+  const requests = watchRequests?.pending();
+  if (requests === null || (!needsCheck && (runInProgress || !requests?.length))) return;
   checking = true;
   needsCheck = false;
   await stop(running);
   running = undefined;
+  runInProgress = false;
   if (closing) return;
   refreshWatchers();
   if (watchingTests) {
@@ -218,7 +246,12 @@ async function check() {
     return;
   }
   announceWatchRun("Running SDA checks and analysis...");
-  fixer = launchScript("sda:fix", true);
+  const output: WatchOutput[] = [];
+  const report: Report = (stream, text) => {
+    process[stream].write(text);
+    output.push({ stream, text });
+  };
+  fixer = launchScript("sda:fix", true, report);
   const fixed = await fixer.done;
   if (closing) return;
   // Recheck edits made during fixes; ignore delayed events for unchanged file states.
@@ -226,16 +259,21 @@ async function check() {
   refreshWatchers();
   fixer = undefined;
   checking = false;
+  // Requests that arrived during fixes can use this run if the files are current.
+  const batch = watchRequests?.pending() ?? [];
+  const publish = (code: number) => watchRequests?.publish(batch, code, output);
   if (needsCheck) {
     schedule();
   } else if (fixed === 0) {
     console.log();
     watchJob(
-      launch(bun ? ["run", entry] : ["--env-file=.env", entry]),
+      launch(bun ? ["run", entry] : ["--env-file=.env", entry], process.execPath, false, report),
       "SDA analysis",
       "completed",
+      publish,
     );
   } else {
+    publish(fixed ?? 1);
     console.log("Fix failed. Waiting for changes...");
   }
 }
@@ -249,6 +287,7 @@ async function shutdown(code: number) {
   if (closing) return;
   closing = true;
   clearTimeout(timer);
+  clearInterval(requestTimer);
   for (const { watcher } of watchers.values()) watcher.close();
   await Promise.all([stop(fixer), stop(running)]);
   releaseLock?.();
@@ -289,7 +328,23 @@ async function runOnce() {
 }
 
 try {
-  if (!watchingTests) releaseLock = await acquireSdaLock(runCommand);
+  if (!watchingTests) {
+    const lock = await acquireSdaLock(runCommand, watching ? resolve(entry) : undefined);
+    releaseLock = lock.release;
+    if (watching && !closing) {
+      const requests = createWatchRequests(lock.directory);
+      watchRequests = requests;
+      requestTimer = setInterval(() => {
+        if (closing || checking || runInProgress) return;
+        try {
+          const pending = requests.pending();
+          if (pending && (needsCheck || pending.length)) schedule();
+        } catch (error) {
+          fail(error);
+        }
+      }, WATCH_REQUEST_POLL_MS);
+    }
+  }
   if (closing) releaseLock?.();
   else if (watching) {
     refreshWatchers();
@@ -298,5 +353,13 @@ try {
     void runOnce().catch(fail);
   }
 } catch (error) {
-  fail(new Error("Cannot start " + runCommand + ": " + errorMessage(error)));
+  if (!watching && error instanceof SdaLockBusyError && error.watcher?.entry === resolve(entry)) {
+    try {
+      process.exitCode = await requestWatchRun(error.watcher);
+    } catch (requestError) {
+      fail(requestError);
+    }
+  } else {
+    fail(new Error("Cannot start " + runCommand + ": " + errorMessage(error)));
+  }
 }
