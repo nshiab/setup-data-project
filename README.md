@@ -80,8 +80,10 @@ Use these commands (replace `npm run` with `bun run` for Bun projects):
 - `npm run sda:clean`: delete cached results and temporary files in `.sda-cache/`, `.journalism-cache/`, and `.tmp/`.
 - `npm run sda:fix`: format files, apply automatic lint fixes, and check types under `sda/`.
 - `npm run sda:docs`: refresh documentation for the installed library versions.
+- `npm run sda:preview`: serve a static site from `src/` and refresh the browser when its files change.
 
-The watcher comes from the installed setup-data-project package; no runner script is added to your project.
+For a web project, put `index.html` and its assets in `src/`, run the preview command, and open the local URL it prints. You can upload `src/` directly to a static host.
+The analysis watcher and preview server come from the installed setup-data-project package.
 SDA blocks simultaneous runs. Recovery after a forced termination is best effort.
 Lock records live in `.sda-cache/lock/`. The `sda:clean` command preserves that directory
 and its parent so an active run keeps its lock.

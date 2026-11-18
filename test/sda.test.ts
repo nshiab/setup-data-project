@@ -87,9 +87,10 @@ afterAll(() => {
   if (fixture) rmSync(fixture, { recursive: true, force: true });
 });
 
-test("the published package provides an executable watcher", () => {
+test("the published package provides executable watcher and preview commands", () => {
   expect(readFileSync(runner, "utf8")).toMatch(/^#!\/usr\/bin\/env node/);
   expect(existsSync(join(installedModules, ".bin/sda-run"))).toBe(true);
+  expect(existsSync(join(installedModules, ".bin/sda-preview"))).toBe(true);
   if (process.platform !== "win32") expect(statSync(runner).mode & 0o111).not.toBe(0);
   symlinkSync(installedModules, "node_modules", windows ? "junction" : "dir");
   // Adding a second binary must preserve package-name resolution for the setup command.
@@ -106,6 +107,96 @@ test("the published package provides an executable watcher", () => {
       }),
     ).toContain("--docs");
 });
+
+for (const runtime of ["node", "bun"] as const) {
+  test.skipIf(runtime === "bun" && !hasBun)(
+    `${runtime} site preview serves static files and sends reload events`,
+    async () => {
+      symlinkSync(installedModules, "node_modules", windows ? "junction" : "dir");
+      ProjectManifest.open().updateTasks(getProjectTasks(runtime));
+      expect(
+        execFileSync(
+          runtime === "bun" ? "bun" : npm,
+          runtime === "bun"
+            ? ["run", "sda:preview", "--help"]
+            : ["run", "sda:preview", "--", "--help"],
+          { encoding: "utf8", shell: windows && runtime === "node" },
+        ),
+      ).toContain("Serve src/ on localhost");
+
+      const page = '<!doctype html><body><script src="./assets/chart.js"></script></body>';
+      mkdirSync("src/assets", { recursive: true });
+      writeFileSync("src/index.html", page);
+      writeFileSync("src/assets/chart.js", "console.log('first');");
+      writeFileSync("src/.env", "PRIVATE=secret");
+      mkdirSync("private");
+      writeFileSync("private/data.json", "[]");
+      symlinkSync(resolve("private"), "src/outside", windows ? "junction" : "dir");
+
+      const entry = join(installedModules, "@nshiab/setup-data-project/dist/preview.mjs");
+      const child = spawn(runtime === "bun" ? "bun" : process.execPath, [entry]);
+      const closed = once(child, "close");
+      let output = "";
+      for (const stream of [child.stdout, child.stderr]) {
+        stream.on("data", (chunk: Buffer) => {
+          output += chunk.toString();
+        });
+      }
+      const abort = new AbortController();
+      try {
+        const base = await vi.waitFor(
+          () => {
+            const url = /http:\/\/127\.0\.0\.1:\d+/.exec(output)?.[0];
+            if (!url) throw new Error(`Preview did not report its URL. ${output}`);
+            return url;
+          },
+          { timeout: 5000 },
+        );
+        const get = (path: string) =>
+          fetch(base + path, {
+            signal: AbortSignal.any([abort.signal, AbortSignal.timeout(5000)]),
+          });
+        const index = await get("/");
+        expect(index.headers.get("content-type")).toContain("text/html");
+        expect(index.headers.get("cache-control")).toBe("no-store");
+        const html = await index.text();
+        const reloadPath = /new EventSource\("([^"]+)"\)/.exec(html)?.[1];
+        if (!reloadPath) throw new Error("Preview page is missing its reload listener.");
+        expect(html).toContain("location.reload()");
+        expect(readFileSync("src/index.html", "utf8")).toBe(page);
+        const script = await get("/assets/chart.js?v=1");
+        expect(script.headers.get("content-type")).toContain("text/javascript");
+        expect(await script.text()).toBe("console.log('first');");
+        for (const path of ["/.env", "/outside/data.json", "/%2e%2e%2fprivate/data.json"]) {
+          expect((await get(path)).status).toBe(404);
+        }
+
+        const events = await get(reloadPath);
+        expect(events.headers.get("content-type")).toBe("text/event-stream");
+        const reader = events.body?.getReader();
+        if (!reader) throw new Error("Preview did not open an event stream.");
+        const decoder = new TextDecoder();
+        let message = "";
+        const readUntil = async (event: string) => {
+          while (!message.includes(event)) {
+            const chunk = await reader.read();
+            if (chunk.done) throw new Error(`Reload stream closed before ${event}`);
+            message += decoder.decode(chunk.value, { stream: true });
+          }
+        };
+        await readUntil(": connected\n\n");
+        writeFileSync("src/assets/chart.js", "console.log('second');");
+        await readUntil("data: reload\n\n");
+        expect(await (await get("/assets/chart.js")).text()).toBe("console.log('second');");
+      } finally {
+        abort.abort();
+        child.kill();
+        await closed;
+      }
+    },
+    15000,
+  );
+}
 
 test.skipIf(!windows).each([
   ["node", "once"],

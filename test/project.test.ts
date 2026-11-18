@@ -71,6 +71,7 @@ test("opening manifests is read-only and setup preserves scripts and versions", 
     "sda:clean",
     "sda:fix",
     "sda:docs",
+    "sda:preview",
   ]);
   writeFileSync(
     "package.json",

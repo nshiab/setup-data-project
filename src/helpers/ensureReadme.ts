@@ -21,6 +21,7 @@ export function ensureReadme(runtime: Runtime, installedPackages: string[] = [])
 - \`${run} sda:clean\`: delete cached results and temporary files in .sda-cache/, .journalism-cache/, and .tmp/.
 - \`${run} sda:fix\`: format files, apply automatic lint fixes, and check types under sda/.
 - \`${run} sda:docs\`: refresh documentation for the installed library versions.
+- \`${run} sda:preview\`: serve a static site from src/ and refresh the browser when its files change.
 
 SDA blocks simultaneous runs. Recovery after a forced termination is best effort.
 Lock records live in .sda-cache/lock/. The sda:clean command preserves that directory and its parent so an active run keeps its lock.
