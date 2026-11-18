@@ -184,13 +184,18 @@ for (const runtime of ["node", "bun"] as const) {
         expect(index.headers.get("cache-control")).toBe("no-store");
         const html = await index.text();
         expect(html).toContain(page);
-        const reloadPath = /new EventSource\("([^"]+)"\)/.exec(html)?.[1];
-        if (!reloadPath) throw new Error("Preview page is missing its reload listener.");
-        expect(html).toContain("location.reload()");
+        const scriptTag = /<script src="(\/[^"\n]+)"><\/script>/.exec(html);
+        if (!scriptTag) throw new Error("Preview page is missing its local reload script.");
+        const reloadScript = await get(scriptTag[1]);
+        expect(reloadScript.headers.get("content-type")).toContain("text/javascript");
+        const listener = await reloadScript.text();
+        const reloadPath = /new EventSource\("([^"]+)"\)/.exec(listener)?.[1];
+        if (!reloadPath) throw new Error("Preview script is missing its reload listener.");
+        expect(listener).toContain("location.reload()");
         for (const [file, original] of Object.entries(additionalPages)) {
           const preview = await (await get(`/${file}`)).text();
           expect(preview).toContain(original);
-          expect(preview).toContain("location.reload()");
+          expect(preview).toContain(scriptTag[0]);
         }
         expect(readFileSync(join(site, "index.html"), "utf8")).toBe(page);
         const script = await get("/assets/chart.js?v=1");
@@ -817,7 +822,15 @@ if (label === "failure") process.exitCode = 7;
       try {
         await vi.waitFor(() => expect(live).toContain("analysis: initial"), { timeout: 5000 });
         const directory = join(".sda-cache/lock", readdirSync(".sda-cache/lock")[0]);
-        const result = join(directory, "watch-result.json");
+        const owner = join(directory, "owner.json");
+        const record = readFileSync(owner, "utf8");
+        const modified = statSync(owner).mtimeMs;
+        expect(JSON.parse(record)).toMatchObject({ watcherReady: true });
+        await vi.waitFor(() => expect(statSync(owner).mtimeMs).toBeGreaterThan(modified), {
+          timeout: 3000,
+        });
+        expect(readFileSync(owner, "utf8")).toBe(record);
+        const result = join(directory, "watch-result.jsonl");
         expect(existsSync(result)).toBe(false);
         writeFileSync("label.txt", "requested");
         const requester = spawn(manager, ["run", "sda"], { shell });
@@ -847,7 +860,7 @@ if (label === "failure") process.exitCode = 7;
         expect(stdout).not.toContain("analysis: initial");
         expect(stderr).toContain("stderr: requested");
         expect(readFileSync(result, "utf8")).toContain("analysis: requested");
-        expect(readdirSync(directory).sort()).toEqual(["owner.json", "watch-result.json"]);
+        expect(readdirSync(directory).sort()).toEqual(["owner.json", "watch-result.jsonl"]);
 
         writeFileSync("label.txt", "failure");
         const failed = spawnSync(manager, ["run", "sda"], {
@@ -859,7 +872,7 @@ if (label === "failure") process.exitCode = 7;
         expect(failed.stdout).toContain("analysis: failure");
         expect(failed.stderr).toContain("stderr: failure");
         expect(readFileSync(result, "utf8")).toContain("analysis: failure");
-        expect(readdirSync(directory).sort()).toEqual(["owner.json", "watch-result.json"]);
+        expect(readdirSync(directory).sort()).toEqual(["owner.json", "watch-result.jsonl"]);
         expect(readFileSync("runs.txt", "utf8")).toBe(
           "start initial\nend initial\nstart requested\nend requested\nstart failure\nend failure\n",
         );

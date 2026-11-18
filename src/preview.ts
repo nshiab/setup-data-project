@@ -8,7 +8,8 @@ import { parseArgs } from "node:util";
 
 const defaultSiteDirectory = "src/site";
 const reloadPath = "/__sda_preview_reload";
-const reloadScript = `<script>new EventSource("${reloadPath}").onmessage = () => location.reload();</script>`;
+const reloadScriptPath = `${reloadPath}.js`;
+const reloadScript = `new EventSource("${reloadPath}").onmessage = () => location.reload();`;
 const contentTypes: Record<string, string> = {
   ".html": "text/html; charset=utf-8",
   ".htm": "text/html; charset=utf-8",
@@ -75,6 +76,11 @@ async function main() {
       return;
     }
     const pathname = decodeURIComponent(new URL(request.url ?? "/", "http://localhost").pathname);
+    if (pathname === reloadScriptPath) {
+      response.writeHead(200, { "Content-Type": "text/javascript; charset=utf-8" });
+      response.end(request.method === "HEAD" ? undefined : reloadScript);
+      return;
+    }
     if (pathname === reloadPath && request.method === "GET") {
       response.writeHead(200, { "Content-Type": "text/event-stream" });
       response.write(": connected\n\n");
@@ -106,7 +112,7 @@ async function main() {
       }
       const html = await readFile(file, "utf8");
       // Append the preview script so tag text inside the page cannot change where it runs.
-      response.end(`${html}\n${reloadScript}`);
+      response.end(`${html}\n<script src="${reloadScriptPath}"></script>`);
       return;
     }
 

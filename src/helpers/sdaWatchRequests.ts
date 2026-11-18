@@ -1,7 +1,12 @@
 import { randomUUID } from "node:crypto";
+import { once } from "node:events";
 import {
+  appendFileSync,
+  copyFileSync,
+  createReadStream,
   existsSync,
-  readFileSync,
+  linkSync,
+  mkdirSync,
   readdirSync,
   renameSync,
   rmSync,
@@ -9,95 +14,156 @@ import {
   writeFileSync,
 } from "node:fs";
 import { join } from "node:path";
+import { createInterface } from "node:readline";
 import { setTimeout as delay } from "node:timers/promises";
 import { isObject } from "./jsonObject.ts";
 
 export const WATCH_REQUEST_POLL_MS = 100;
-const resultName = "watch-result.json";
-const requestName = /^request-[\da-f-]{36}$/;
+const resultName = "watch-result.jsonl";
+const requestName = /^request-(\d+)-[\da-f-]{36}$/;
+const acknowledgeTimeout = 5000;
+const heartbeatInterval = 1000;
+const heartbeatTimeout = 10000;
 
 export type WatchOutput = { stream: "stdout" | "stderr"; text: string };
 
-export function createWatchRequests(directory: string) {
-  let readers = new Set<string>();
-  let readDeadline = 0;
+function errorCode(error: unknown) {
+  return error instanceof Error && "code" in error ? error.code : undefined;
+}
 
-  function pending(): string[] | null {
-    const requests = readdirSync(directory).filter((name) => requestName.test(name));
-    for (const name of requests) {
-      if (!readers.has(name)) continue;
-      if (performance.now() < readDeadline) return null;
-      // A stopped requester must not hold up the watcher indefinitely.
-      rmSync(join(directory, name), { force: true });
+function processIsGone(pid: number) {
+  try {
+    process.kill(pid, 0);
+    return false;
+  } catch (error) {
+    if (errorCode(error) === "ESRCH") return true;
+    if (errorCode(error) === "EPERM") return false;
+    throw error;
+  }
+}
+
+function linkResult(source: string, target: string) {
+  try {
+    linkSync(source, target);
+  } catch (error) {
+    if (errorCode(error) === "ENOENT") return; // The requester left.
+    // Some filesystems do not support hard links. Keep the copy only until this requester reads it.
+    const temporary = target + ".tmp";
+    try {
+      copyFileSync(source, temporary);
+      renameSync(temporary, target);
+    } catch (copyError) {
+      if (errorCode(copyError) !== "ENOENT") throw copyError;
     }
-    return requests.filter((name) => !readers.has(name));
+  }
+}
+
+export function createWatchRequests(directory: string) {
+  const temporary = join(directory, "watch-result.tmp");
+  const latest = join(directory, resultName);
+
+  function pending() {
+    const requests: string[] = [];
+    for (const name of readdirSync(directory)) {
+      const match = requestName.exec(name);
+      if (!match) continue;
+      const pid = Number(match[1]);
+      if (!Number.isInteger(pid) || pid <= 0 || pid > 2147483647) continue;
+      const request = join(directory, name);
+      if (processIsGone(pid)) {
+        rmSync(request, { recursive: true, force: true });
+        continue;
+      }
+      if (existsSync(join(request, resultName))) continue;
+      const heartbeat = join(request, "heartbeat");
+      const last = statSync(heartbeat, { throwIfNoEntry: false });
+      if (!last || Date.now() - last.mtimeMs >= heartbeatInterval) {
+        try {
+          writeFileSync(heartbeat, "");
+        } catch (error) {
+          if (errorCode(error) === "ENOENT") continue;
+          throw error;
+        }
+      }
+      requests.push(request);
+    }
+    return requests;
   }
 
-  function publish(requests: string[], code: number, output: WatchOutput[]) {
-    const temporary = join(directory, "watch-result.tmp");
-    writeFileSync(temporary, JSON.stringify({ requests, code, output }));
-    renameSync(temporary, join(directory, resultName));
-    readers = new Set(requests);
-    readDeadline = performance.now() + 5000;
+  const start = () => writeFileSync(temporary, "");
+  const record = (chunk: WatchOutput) => appendFileSync(temporary, JSON.stringify(chunk) + "\n");
+
+  function publish(requests: string[], code: number) {
+    appendFileSync(temporary, JSON.stringify({ code }) + "\n");
+    renameSync(temporary, latest);
+    for (const request of requests) linkResult(latest, join(request, resultName));
   }
 
-  return { pending, publish };
+  return { pending, start, record, publish };
+}
+
+async function replay(result: string): Promise<number> {
+  const input = createReadStream(result, { encoding: "utf8" });
+  const lines = createInterface({ input, crlfDelay: Infinity });
+  const closed = new Promise<void>((resolve) => input.once("close", resolve));
+  let readError: Error | undefined;
+  input.on("error", (error) => {
+    readError = error;
+    lines.close();
+  });
+  try {
+    for await (const line of lines) {
+      const value: unknown = JSON.parse(line);
+      if (isObject(value)) {
+        if (typeof value.code === "number" && Number.isInteger(value.code)) return value.code;
+        if (
+          typeof value.text === "string" &&
+          (value.stream === "stdout" || value.stream === "stderr")
+        ) {
+          const output = process[value.stream];
+          if (!output.write(value.text)) await once(output, "drain");
+          continue;
+        }
+      }
+      throw new Error("The SDA watcher returned invalid output.");
+    }
+    if (readError) throw readError;
+    throw new Error("The SDA watcher result is missing its exit code.");
+  } finally {
+    lines.close();
+    input.destroy();
+    await closed;
+  }
 }
 
 export async function requestWatchRun(watcher: {
   directory: string;
   pid: number;
 }): Promise<number> {
-  const id = `request-${randomUUID()}`;
-  const request = join(watcher.directory, id);
-  const result = join(watcher.directory, resultName);
-  const clean = () => rmSync(request, { force: true });
-  writeFileSync(request, "", { flag: "wx" });
+  const request = join(watcher.directory, `request-${process.pid}-${randomUUID()}`);
+  const result = join(request, resultName);
+  const heartbeat = join(request, "heartbeat");
+  const clean = () => rmSync(request, { recursive: true, force: true });
+  mkdirSync(request);
   process.once("exit", clean);
   console.log(`Requesting an analysis run from the SDA watcher (PID ${watcher.pid})...`);
-  let lastRead: string | undefined;
+  let lastHeartbeat: number | undefined;
+  let deadline = performance.now() + acknowledgeTimeout;
   try {
     for (;;) {
-      try {
-        // The watcher replaces the whole result atomically. A completed result
-        // is held for its waiting requesters before the next run can replace it.
-        const info = statSync(result, { bigint: true, throwIfNoEntry: false });
-        const version = info && `${info.ino}:${info.mtimeNs}`;
-        if (version && version !== lastRead) {
-          const value: unknown = JSON.parse(readFileSync(result, "utf8"));
-          lastRead = version;
-          if (isObject(value) && Array.isArray(value.requests) && value.requests.includes(id)) {
-            if (
-              typeof value.code !== "number" ||
-              !Number.isInteger(value.code) ||
-              !Array.isArray(value.output)
-            ) {
-              throw new Error("The SDA watcher returned an invalid result.");
-            }
-            for (const chunk of value.output as unknown[]) {
-              if (
-                !isObject(chunk) ||
-                typeof chunk.text !== "string" ||
-                (chunk.stream !== "stdout" && chunk.stream !== "stderr")
-              ) {
-                throw new Error("The SDA watcher returned invalid output.");
-              }
-              process[chunk.stream].write(chunk.text);
-            }
-            return value.code;
-          }
-        }
-      } catch (error) {
-        if (!(error instanceof Error && "code" in error && error.code === "ENOENT")) throw error;
-      }
-      if (!existsSync(request))
-        throw new Error("The SDA watcher stopped or the run result expired. Try again.");
-      try {
-        process.kill(watcher.pid, 0);
-      } catch (error) {
-        if (!(error instanceof Error && "code" in error && error.code === "ESRCH")) throw error;
+      if (existsSync(result)) return await replay(result);
+      if (!existsSync(request) || processIsGone(watcher.pid))
         throw new Error("The SDA watcher stopped before completing the requested run. Try again.");
+
+      const modified = statSync(heartbeat, { throwIfNoEntry: false })?.mtimeMs;
+      if (modified !== undefined && modified !== lastHeartbeat) {
+        lastHeartbeat = modified;
+        deadline = performance.now() + heartbeatTimeout;
       }
+      if (performance.now() >= deadline)
+        throw new Error(
+          "The SDA watcher did not respond to the analysis request. Try again after checking the watcher.",
+        );
       await delay(WATCH_REQUEST_POLL_MS);
     }
   } finally {

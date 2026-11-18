@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process";
 import { readFileSync, readdirSync, realpathSync } from "node:fs";
 import { join } from "node:path";
 import { isObject } from "./jsonObject.ts";
-import { SDA_LOCK_DIRECTORY } from "./sdaLock.ts";
+import { hasFreshWatcherHeartbeat, SDA_LOCK_DIRECTORY } from "./sdaLock.ts";
 
 function errorCode(error: unknown) {
   return error instanceof Error && "code" in error ? error.code : undefined;
@@ -13,6 +13,8 @@ export function printSdaStatus(): number {
   const run = `${process.versions.bun ? "bun" : "npm"} run`;
   const retry = `${run} sda:status`;
   const watcherGuidance = `you can keep editing. The watcher formats source files, applies lint fixes, and reruns the analysis after changes. The user is likely watching the results live in their terminal while you work. Re-read a file before editing it again because the watcher may have changed it. Run ${run} sda to request a run from the watcher and receive its output and exit code when it finishes. Before handing off analysis code changes, start with ${run} sda:test. If formatting or lint checks fail, use ${run} sda:fix for automatic fixes. Resolve any remaining failures and rerun ${run} sda:test until it passes.`;
+  const watcherMessage = (pid: number) =>
+    `An SDA watcher is running (${run} sda:watch, PID ${pid}). While it runs, ${watcherGuidance}`;
   try {
     const claims = new Map<number, string[]>();
     try {
@@ -30,11 +32,21 @@ export function printSdaStatus(): number {
     for (const [pid, owners] of claims) {
       if (!Number.isInteger(pid) || pid <= 0 || pid > 2147483647)
         throw new Error("The recorded SDA PID is invalid.");
+      const hasHeartbeat = () =>
+        owners.length === 1 && hasFreshWatcherHeartbeat(join(SDA_LOCK_DIRECTORY, owners[0]));
       try {
         process.kill(pid, 0);
       } catch (error) {
         if (errorCode(error) === "ESRCH") continue;
+        if (errorCode(error) === "EPERM" && hasHeartbeat()) {
+          messages.push(watcherMessage(pid));
+          continue;
+        }
         throw error;
+      }
+      if (hasHeartbeat()) {
+        messages.push(watcherMessage(pid));
+        continue;
       }
       let command: string;
       if (process.platform === "win32") {
@@ -108,7 +120,7 @@ export function printSdaStatus(): number {
         throw new Error(`PID ${pid} could not be verified as this project's SDA process.`);
       messages.push(
         /(?:^|["\s])--watch(?:["\s]|$)/.test(command)
-          ? `An SDA watcher is running (${run} sda:watch, PID ${pid}). While it runs, ${watcherGuidance}`
+          ? watcherMessage(pid)
           : `SDA analysis is running (${run} sda, PID ${pid}). Wait for it to finish before editing. Recheck with ${retry} after 3 seconds. If it is still running, recheck after 9 seconds, then every 27 seconds until it finishes.`,
       );
     }

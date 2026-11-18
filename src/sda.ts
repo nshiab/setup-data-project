@@ -229,7 +229,7 @@ async function check() {
   const changed = changes.check();
   needsCheck ||= changed;
   const requests = watchRequests?.pending();
-  if (requests === null || (!needsCheck && (runInProgress || !requests?.length))) return;
+  if (!needsCheck && (runInProgress || !requests?.length)) return;
   checking = true;
   needsCheck = false;
   await stop(running);
@@ -246,10 +246,15 @@ async function check() {
     return;
   }
   announceWatchRun("Running SDA checks and analysis...");
-  const output: WatchOutput[] = [];
+  watchRequests?.start();
   const report: Report = (stream, text) => {
     process[stream].write(text);
-    output.push({ stream, text });
+    if (closing) return;
+    try {
+      watchRequests?.record({ stream, text });
+    } catch (error) {
+      fail(error);
+    }
   };
   fixer = launchScript("sda:fix", true, report);
   const fixed = await fixer.done;
@@ -261,7 +266,7 @@ async function check() {
   checking = false;
   // Requests that arrived during fixes can use this run if the files are current.
   const batch = watchRequests?.pending() ?? [];
-  const publish = (code: number) => watchRequests?.publish(batch, code, output);
+  const publish = (code: number) => watchRequests?.publish(batch, code);
   if (needsCheck) {
     schedule();
   } else if (fixed === 0) {
@@ -335,14 +340,15 @@ try {
       const requests = createWatchRequests(lock.directory);
       watchRequests = requests;
       requestTimer = setInterval(() => {
-        if (closing || checking || runInProgress) return;
+        if (closing) return;
         try {
           const pending = requests.pending();
-          if (pending && (needsCheck || pending.length)) schedule();
+          if (!checking && !runInProgress && (needsCheck || pending.length)) schedule();
         } catch (error) {
           fail(error);
         }
       }, WATCH_REQUEST_POLL_MS);
+      lock.startWatcherHeartbeat(fail);
     }
   }
   if (closing) releaseLock?.();

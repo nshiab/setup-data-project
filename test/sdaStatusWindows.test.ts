@@ -1,6 +1,14 @@
 import { beforeEach, expect, test, vi } from "vite-plus/test";
 import { execFileSync } from "node:child_process";
-import { mkdirSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
+import {
+  mkdirSync,
+  readFileSync,
+  realpathSync,
+  statSync,
+  utimesSync,
+  writeFileSync,
+} from "node:fs";
+import { resolve } from "node:path";
 import { randomUUID } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { printSdaStatus } from "../src/helpers/sdaStatus.ts";
@@ -42,6 +50,42 @@ test.each([
   );
   expect(readFileSync(`${claim}/owner.json`, "utf8")).toBe(before);
 });
+
+test.each(["ready", "stale", "starting"])(
+  "status checks a %s watcher record when PID access is denied",
+  (state) => {
+    const file = `${claim}/owner.json`;
+    const record = JSON.stringify({
+      ticket: 1,
+      command: "npm run sda:watch",
+      projectRoot: realpathSync(process.cwd()),
+      watchEntry: resolve("sda/main.ts"),
+      watcherReady: state !== "starting",
+    });
+    writeFileSync(file, record);
+    if (state === "stale") {
+      const old = new Date(Date.now() - 30000);
+      utimesSync(file, old, old);
+    }
+    const modified = statSync(file).mtimeMs;
+    vi.spyOn(process, "kill").mockImplementation(() => {
+      throw Object.assign(new Error("Operation not permitted"), { code: "EPERM" });
+    });
+
+    if (state === "ready") {
+      expect(printSdaStatus()).toBe(1);
+      expect(console.log).toHaveBeenCalledWith(expect.stringContaining("SDA watcher is running"));
+    } else {
+      expect(printSdaStatus()).toBe(2);
+      expect(console.error).toHaveBeenCalledWith(
+        expect.stringContaining("Unable to verify SDA status"),
+      );
+    }
+    expect(execFileSync).not.toHaveBeenCalled();
+    expect(readFileSync(file, "utf8")).toBe(record);
+    expect(statSync(file).mtimeMs).toBe(modified);
+  },
+);
 
 test.each([null, "", "node.exe unrelated.js", { CommandLine: "unexpected shape" }])(
   "Windows status leaves unreadable or unrelated live commands unverified: %j",

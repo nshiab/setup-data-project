@@ -48,6 +48,8 @@ Add focused tests for error-prone transformations, reusable logic with meaningfu
 
 To run the analysis once, use \`${run} sda\`. It fixes and checks code before running the analysis. If the analysis watcher is running, this command requests a run from the watcher and returns its output and exit code when it finishes.
 
+Watch mode captures analysis output through pipes and prints it live. Check whether the output stream is a terminal before using features such as cursor control or interactive progress displays.
+
 Run \`${run} sda:clean\` only when cached results and temporary files can be discarded.
 
 Before handing off analysis code changes, start with \`${run} sda:test\`. If formatting or lint checks fail, use \`${run} sda:fix\` for automatic fixes. Resolve any remaining failures and rerun \`${run} sda:test\` until it passes.
