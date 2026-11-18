@@ -124,9 +124,17 @@ for (const runtime of ["node", "bun"] as const) {
         ),
       ).toContain("Serve src/ on localhost");
 
-      const page = '<!doctype html><body><script src="./assets/chart.js"></script></body>';
+      const page =
+        '<!doctype html><body><p>İstanbul</p><script src="./assets/chart.js"></script></body>';
+      const additionalPages = {
+        "implicit-body.html":
+          '<!doctype html><title>Chart</title><script>const markup = "</body>";</script>',
+        "trailing-comment.html": "<!doctype html><body><p>Chart</p></body><!-- </body> -->",
+      };
       mkdirSync("src/assets", { recursive: true });
       writeFileSync("src/index.html", page);
+      for (const [file, html] of Object.entries(additionalPages))
+        writeFileSync(`src/${file}`, html);
       writeFileSync("src/assets/chart.js", "console.log('first');");
       writeFileSync("src/.env", "PRIVATE=secret");
       mkdirSync("private");
@@ -160,9 +168,15 @@ for (const runtime of ["node", "bun"] as const) {
         expect(index.headers.get("content-type")).toContain("text/html");
         expect(index.headers.get("cache-control")).toBe("no-store");
         const html = await index.text();
+        expect(html).toContain(page);
         const reloadPath = /new EventSource\("([^"]+)"\)/.exec(html)?.[1];
         if (!reloadPath) throw new Error("Preview page is missing its reload listener.");
         expect(html).toContain("location.reload()");
+        for (const [file, original] of Object.entries(additionalPages)) {
+          const preview = await (await get(`/${file}`)).text();
+          expect(preview).toContain(original);
+          expect(preview).toContain("location.reload()");
+        }
         expect(readFileSync("src/index.html", "utf8")).toBe(page);
         const script = await get("/assets/chart.js?v=1");
         expect(script.headers.get("content-type")).toContain("text/javascript");

@@ -96,12 +96,8 @@ async function main() {
         return;
       }
       const html = await readFile(file, "utf8");
-      const bodyEnd = html.toLowerCase().lastIndexOf("</body>");
-      response.end(
-        bodyEnd === -1
-          ? html + reloadScript
-          : html.slice(0, bodyEnd) + reloadScript + html.slice(bodyEnd),
-      );
+      // Append the preview script so tag text inside the page cannot change where it runs.
+      response.end(`${html}\n${reloadScript}`);
       return;
     }
 
