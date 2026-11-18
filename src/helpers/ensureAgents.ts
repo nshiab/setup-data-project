@@ -58,6 +58,8 @@ Before handing off analysis code changes, start with \`${run} sda:test\`. If for
 
 ## Web projects
 
+Default to a simple single page focused on the user's request. You don't need to build a full website; focus on the components that meet the user's needs.
+
 If the user asks for a web page, dashboard, or interactive visualization, create \`src/site/\` for the site unless the project calls for a different folder. Put \`index.html\` at the root of the site folder, keep all site assets inside it, and use relative URLs for local files so the folder can be uploaded directly to a static host. Use HTML, CSS, and vanilla JavaScript unless the user specifies a different stack.
 
 When the site needs data, prepare it in \`sda/\` and export only the data the site needs into the site folder, in a browser-readable format such as JSON. Load that export from the page and use browser JavaScript to render it and handle interactions such as filtering or highlighting.
