@@ -8,6 +8,20 @@ export function ensureAgents(
   installedPackages: string[] = Object.keys(docsMapping),
 ) {
   const run = runtime === "bun" ? "bun run" : "npm run";
+  const setup = `${runtime === "bun" ? "bunx --bun" : "npx"} @nshiab/setup-data-project`;
+  const analysisPackage = [
+    "@nshiab/simple-data-analysis",
+    "@nshiab/simple-data-analysis-core",
+  ].find((pkg) => installedPackages.includes(pkg));
+  const hasPlot = installedPackages.includes("@observablehq/plot");
+  const analysisGuidance = analysisPackage
+    ? `Use \`${analysisPackage}\` for loading, cleaning, joining, and aggregating data, and for other transformations.`
+    : `If the task needs data processing or transformation, suggest \`${setup} --sda\` to install Simple Data Analysis${hasPlot ? "" : " with Observable Plot"} and download versioned documentation.`;
+  const chartGuidance = hasPlot
+    ? `Otherwise, use the installed Observable Plot.
+
+When using Observable Plot, copy \`dist/plot.umd.min.js\` from the installed \`@observablehq/plot\` package and \`dist/d3.min.js\` from its installed \`d3\` dependency into \`src/\`. Look for both packages in \`node_modules/\`, including Plot's nested dependencies if D3 is not at the top level. Use relative script URLs to load D3 before Plot.`
+    : `Otherwise, suggest \`${setup} --sda\` to install Simple Data Analysis with Observable Plot and download their documentation. Use native browser APIs if the user prefers to keep the current dependencies.`;
   const links = getInstalledPackageConfigs(installedPackages).map((pkg) => {
     if (pkg.value === "@observablehq/plot")
       return `- Observable Plot charts and maps: start at \`docs/observable-plot/llms.txt\`, then read the relevant pages for browser charts or for use with \`writeChart\` and \`writeMap\`.`;
@@ -23,7 +37,7 @@ ${links.length ? `Documentation for these installed libraries is available local
 
 ## Data analysis
 
-Do data analysis and processing in \`sda/\`. When installed, use Simple Data Analysis (\`@nshiab/simple-data-analysis\`) or Simple Data Analysis Core (\`@nshiab/simple-data-analysis-core\`) for loading, cleaning, joining, and aggregating data, and for other transformations.
+Do data analysis and processing in \`sda/\`. ${analysisGuidance}
 
 Use \`sda/main.ts\` as the entry point and \`sda/helpers/\` for reusable helpers. Keep one function per helper file, with the file named after the function. Put source data in \`sda/data/\` and analysis results in \`sda/output/\`.
 
@@ -43,10 +57,10 @@ If the user asks for a web page, dashboard, or interactive visualization, create
 
 When the site needs data, prepare it in \`sda/\` and export only the data the site needs into \`src/\`, in a browser-readable format such as JSON. Load that export from the page and use browser JavaScript to render it and handle interactions such as filtering or highlighting.
 
-For charts, use the user's chosen library, Observable Plot if already installed, or native browser APIs, in that order. Add web dependencies only when the user explicitly requests them. If you use the installed Observable Plot, copy its browser bundle and its D3 dependency's browser bundle into \`src/\`. Load D3 before Plot.
+Add web dependencies only when the user explicitly requests them. For charts, use the user's chosen library. ${chartGuidance}
 
-Use \`${run} sda:preview\` to serve \`src/\` locally. Open the URL it prints. The browser refreshes when files in \`src/\` change. For a deliverable-specific command, use an alias for that script such as \`sda:dash\` for a dashboard, \`sda:interactive\` for a standalone interactive chart, or \`sda:web\` for a web page. Preserve existing scripts.
+In \`package.json\`, add a script that runs \`${run} sda:preview\`. Use \`sda:dash\` for a dashboard, \`sda:interactive\` for a standalone interactive visualization, or \`sda:web\` for other web pages. Reuse an existing alias if it runs the same command. If the preferred name is taken, preserve the existing script and choose an unused name.
 
-Verify the page and its interactions in a browser. Share the preview command and local URL, and tell the user that \`src/\` is ready to upload to a static host.`,
+Run the alias to start the preview server, open the local URL it prints in a browser, and check the page and its interactions. The browser refreshes when files in \`src/\` change. Share the alias command and local URL with the user.`,
   });
 }
