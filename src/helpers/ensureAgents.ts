@@ -16,7 +16,9 @@ export function ensureAgents(
   ].find((pkg) => installedPackages.includes(pkg));
   const hasPlot = installedPackages.includes("@observablehq/plot");
   const analysisGuidance = analysisPackage
-    ? `Prefer \`${analysisPackage}\` for loading, cleaning, joining, and aggregating data, and for other transformations.`
+    ? `Use \`${analysisPackage}\` methods whenever they fit. Reserve custom queries for gaps in those methods. Explain the gap to the user and offer to open a GitHub issue in the library's repository.
+
+For scripts using the default in-memory \`SimpleDB\`, let unexpected errors stop the run so the script can be rerun. Call \`await sdb.close()\` at the end of the normal execution path. Calling it from \`catch\` or \`finally\` after a failure can remove cached results for steps the script never reached. Add error handling when the code or the user requires it.`
     : `If the task needs data processing or transformation, suggest \`${setup} --sda\` to install Simple Data Analysis${hasPlot ? "" : " with Observable Plot"} and download versioned documentation.`;
   const chartGuidance = hasPlot
     ? `Otherwise, use the installed Observable Plot.
@@ -31,7 +33,7 @@ When using Observable Plot, copy \`dist/plot.umd.min.js\` from the installed \`@
   ensureManagedSection({
     path: "AGENTS.md",
     name: "agents",
-    createContent: (section) => section,
+    createContent: (section) => `# Project instructions\n\n${section}`,
     content: `Read README.md for project guidance and package.json for the installed libraries and scripts. Ask the user before adding a dependency.
 
 Keep changes focused on the user's request. Update README.md only when the user explicitly asks.
@@ -42,7 +44,9 @@ ${links.length ? `Local library documentation:\n\n${links.join("\n")}\n\n` : ""}
 
 ## Data analysis
 
-Do data analysis and processing in \`sda/\`. ${analysisGuidance}
+Do data analysis and processing in \`sda/\`. Prioritize code that is easy to understand and review.
+
+${analysisGuidance}
 
 Use \`sda/main.ts\` as the entry point and \`sda/helpers/\` for reusable helpers. Keep one function per helper file, with the file named after the function. Put source data in \`sda/data/\` and analysis results in \`sda/output/\`.
 
@@ -60,17 +64,19 @@ Before handing off analysis code changes, start with \`${run} sda:test\`. If for
 
 ## Web projects
 
-Default to a simple single page focused on the user's request. You don't need to build a full website; focus on the components that meet the user's needs.
+If the user asks for a web page, dashboard, or interactive visualization, create \`src/site/\` for the site unless the project calls for a different folder. Put \`index.html\` at the root, keep all required assets in the site folder, and use relative URLs. Use HTML, CSS, and vanilla JavaScript with classic script tags unless the user specifies a different stack.
 
-If the user asks for a web page, dashboard, or interactive visualization, create \`src/site/\` for the site unless the project calls for a different folder. Put \`index.html\` at the root of the site folder, keep all site assets inside it, and use relative URLs for local files so the folder can be uploaded directly to a static host. Use HTML, CSS, and vanilla JavaScript unless the user specifies a different stack.
+Default to one page. Use multiple pages when the user asks for them or when they make the site easier to navigate.
 
-When the site needs data, prepare it in \`sda/\` and export only the data the site needs into the site folder, in a browser-readable format such as JSON. Load that export from the page and use browser JavaScript to render it and handle interactions such as filtering or highlighting.
+Show a “Last updated” timestamp near the top of each page and refresh it when the content or data changes. Ask which name and email to display as the public contact if the user hasn’t already provided them.
+
+When the site needs data, prepare it in \`sda/\` and export only what the page needs as JSON to \`sda/output/\`. Generate a separate \`data.js\` in the site folder from that export and load it before the page code (so recipients can unzip the site and double-click \`index.html\` without a server).
 
 Add web dependencies only when the user explicitly requests them. For charts, use the user's chosen library. ${chartGuidance}
 
 In \`package.json\`, add a script that runs \`${run} sda:preview\`. Use \`sda:dash\` for a dashboard, \`sda:interactive\` for a standalone interactive visualization, or \`sda:web\` for other web pages. For a different site folder, pass its path with \`--dir\`, for example \`${previewOverride}\`. Reuse an existing alias if it runs the same command. If the preferred name is taken, preserve the existing script and choose an unused name.
 
-Run the alias to start the preview server, open the local URL it prints in a browser, and check the page and its interactions. The preview serves and watches only the site folder and refreshes the browser when its files change. Share the alias command and local URL with the user.
+Run the alias to start the preview server. Check the page and its interactions at the local URL it prints. The preview serves and watches only the site folder and refreshes the browser when its files change. Share the alias command and local URL with the user.
 
 The \`sda:fix\`, \`sda:test\`, \`sda:watch\`, and \`sda:test:watch\` scripts target analysis code in \`sda/\`. Use the browser preview to verify web changes. When adding automated web tests at the user's request or to cover complex behavior, create \`src/test/\` and add a matching \`package.json\` script such as \`sda:dash:test\` that runs only the web tests using the project's test runner.`,
   });
