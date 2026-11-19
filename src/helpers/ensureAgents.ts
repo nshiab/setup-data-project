@@ -21,10 +21,10 @@ export function ensureAgents(
 For scripts using the default in-memory \`SimpleDB\`, let unexpected errors stop the run so the script can be rerun. Call \`await sdb.close()\` at the end of the normal execution path. Calling it from \`catch\` or \`finally\` after a failure can remove cached results for steps the script never reached. Add error handling when the code or the user requires it.`
     : `If the task needs data processing or transformation, suggest \`${setup} --sda\` to install Simple Data Analysis${hasPlot ? "" : " with Observable Plot"} and download versioned documentation.`;
   const chartGuidance = hasPlot
-    ? `Otherwise, use the installed Observable Plot.
+    ? `For charts, use the installed Observable Plot or its D3 dependency unless the user explicitly requests a different library.
 
-When using Observable Plot, copy \`dist/plot.umd.min.js\` from the installed \`@observablehq/plot\` package and \`dist/d3.min.js\` from its installed \`d3\` dependency into the site folder. Look for both packages in \`node_modules/\`, including Plot's nested dependencies if D3 is not at the top level. Use relative script URLs to load D3 before Plot.`
-    : `Otherwise, suggest \`${setup} --sda\` to install Simple Data Analysis with Observable Plot and download their documentation. Use native browser APIs if the user prefers to keep the current dependencies.`;
+When using Plot or D3, copy the required browser bundles into the site folder. Use \`dist/plot.umd.min.js\` from \`@observablehq/plot\` for Plot and \`dist/d3.min.js\` from \`d3\` for D3. If D3 is nested, look in Plot's \`node_modules/\`. Use relative script URLs and load D3 before Plot when using Plot.`
+    : `For charts, use the library the user explicitly requests. Otherwise, suggest \`${setup} --sda\` to install Simple Data Analysis with Observable Plot and download their documentation. Use native browser APIs if the user prefers to keep the current dependencies.`;
   const links = getInstalledPackageConfigs(installedPackages).map((pkg) => {
     const name =
       pkg.value === "@observablehq/plot" ? "observable-plot" : pkg.value.slice("@nshiab/".length);
@@ -56,8 +56,6 @@ Add focused tests for error-prone transformations, reusable logic with meaningfu
 
 To run the analysis once, use \`${run} sda\`. It fixes and checks code before running the analysis. If the analysis watcher is running, this command requests a run from the watcher and returns its output and exit code when it finishes.
 
-Watch mode captures analysis output through pipes and prints it live. Check whether the output stream is a terminal before using features such as cursor control or interactive progress displays.
-
 Run \`${run} sda:clean\` only when cached results and temporary files can be discarded.
 
 Before handing off analysis code changes, start with \`${run} sda:test\`. If formatting or lint checks fail, use \`${run} sda:fix\` for automatic fixes. Resolve any remaining failures and rerun \`${run} sda:test\` until it passes.
@@ -66,13 +64,15 @@ Before handing off analysis code changes, start with \`${run} sda:test\`. If for
 
 If the user asks for a web page, dashboard, or interactive visualization, create \`src/site/\` for the site unless the project calls for a different folder. Put \`index.html\` at the root, keep all required assets in the site folder, and use relative URLs. Use HTML, CSS, and vanilla JavaScript with classic script tags unless the user specifies a different stack.
 
-Default to one page. Use multiple pages when the user asks for them or when they make the site easier to navigate.
+Default to one page unless the user requests or approves multiple pages.
 
-Show a “Last updated” timestamp near the top of each page and refresh it when the content or data changes. Ask which name and email to display as the public contact if the user hasn’t already provided them.
+At the top of each page, show the public contact’s name and email and a “Last updated” timestamp. Ask the user which name and email to display if they haven’t already provided them. Refresh the timestamp when the page’s content or data changes.
+
+Build the requested page components alongside the contact and timestamp. Include logos, navigation bars, footers, and methodology paragraphs or boxes only when the user explicitly requests them or they are essential to fulfilling the request.
 
 When the site needs data, prepare it in \`sda/\` and export only what the page needs as JSON to \`sda/output/\`. Generate a separate \`data.js\` in the site folder from that export and load it before the page code (so recipients can unzip the site and double-click \`index.html\` without a server).
 
-Add web dependencies only when the user explicitly requests them. For charts, use the user's chosen library. ${chartGuidance}
+Add web dependencies only when the user explicitly requests them. ${chartGuidance}
 
 In \`package.json\`, add a script that runs \`${run} sda:preview\`. Use \`sda:dash\` for a dashboard, \`sda:interactive\` for a standalone interactive visualization, or \`sda:web\` for other web pages. For a different site folder, pass its path with \`--dir\`, for example \`${previewOverride}\`. Reuse an existing alias if it runs the same command. If the preferred name is taken, preserve the existing script and choose an unused name.
 
