@@ -126,7 +126,7 @@ test("reruns preserve source, .env and unmanaged documentation while updating ma
   writeFileSync("README.md", `Custom intro\n${readme}\nCustom footer`);
   writeFileSync("AGENTS.md", `Custom policy\n${agents}`);
   ensureReadme("bun", ["@nshiab/simple-data-analysis-core"]);
-  ensureAgents({}, "bun", ["@nshiab/simple-data-analysis-core"]);
+  ensureAgents({}, "bun", ["@nshiab/simple-data-analysis-core", "@observablehq/plot"]);
   expect(readFileSync("README.md", "utf8")).toContain("Custom footer");
   expect(readFileSync("README.md", "utf8")).toContain("bun run sda:docs");
   expect(readFileSync("README.md", "utf8")).toContain("bun run sda:test:watch");
@@ -135,6 +135,7 @@ test("reruns preserve source, .env and unmanaged documentation while updating ma
   expect(readFileSync("AGENTS.md", "utf8")).toContain("Prefer the runtime's built-in test runner.");
   expect(readFileSync("AGENTS.md", "utf8")).not.toContain("vite-plus/test");
   expect(readFileSync("AGENTS.md", "utf8")).toContain("docs/simple-data-analysis-core/llms.txt");
+  expect(readFileSync("AGENTS.md", "utf8")).toContain("docs/observable-plot/llms.txt");
   expect(readFileSync(".gitignore", "utf8")).toContain("docs/");
   expect(readFileSync(".env", "utf8")).toBe("SECRET=preserved");
   expect(readFileSync("sda/main.ts", "utf8")).toBe("// custom analysis");

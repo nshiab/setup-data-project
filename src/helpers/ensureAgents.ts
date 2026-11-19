@@ -16,7 +16,7 @@ export function ensureAgents(
   ].find((pkg) => installedPackages.includes(pkg));
   const hasPlot = installedPackages.includes("@observablehq/plot");
   const analysisGuidance = analysisPackage
-    ? `Use \`${analysisPackage}\` for loading, cleaning, joining, and aggregating data, and for other transformations.`
+    ? `Prefer \`${analysisPackage}\` for loading, cleaning, joining, and aggregating data, and for other transformations.`
     : `If the task needs data processing or transformation, suggest \`${setup} --sda\` to install Simple Data Analysis${hasPlot ? "" : " with Observable Plot"} and download versioned documentation.`;
   const chartGuidance = hasPlot
     ? `Otherwise, use the installed Observable Plot.
@@ -24,19 +24,21 @@ export function ensureAgents(
 When using Observable Plot, copy \`dist/plot.umd.min.js\` from the installed \`@observablehq/plot\` package and \`dist/d3.min.js\` from its installed \`d3\` dependency into the site folder. Look for both packages in \`node_modules/\`, including Plot's nested dependencies if D3 is not at the top level. Use relative script URLs to load D3 before Plot.`
     : `Otherwise, suggest \`${setup} --sda\` to install Simple Data Analysis with Observable Plot and download their documentation. Use native browser APIs if the user prefers to keep the current dependencies.`;
   const links = getInstalledPackageConfigs(installedPackages).map((pkg) => {
-    if (pkg.value === "@observablehq/plot")
-      return `- Observable Plot charts and maps: start at \`docs/observable-plot/llms.txt\`, then read the relevant pages for browser charts or for use with \`writeChart\` and \`writeMap\`.`;
-    return `- \`${pkg.value}\`: start at \`docs/${pkg.value.slice("@nshiab/".length)}/llms.txt\`, then read the relevant API pages and examples.`;
+    const name =
+      pkg.value === "@observablehq/plot" ? "observable-plot" : pkg.value.slice("@nshiab/".length);
+    return `- \`${pkg.value}\` — \`docs/${name}/llms.txt\``;
   });
   ensureManagedSection({
     path: "AGENTS.md",
     name: "agents",
     createContent: (section) => section,
-    content: `Read README.md for project guidance and package.json for the installed libraries and scripts. Use the installed libraries. Ask the user before adding a dependency.
+    content: `Read README.md for project guidance and package.json for the installed libraries and scripts. Ask the user before adding a dependency.
 
 Keep changes focused on the user's request. Update README.md only when the user explicitly asks.
 
-${links.length ? `Documentation for these installed libraries is available locally:\n\n${links.join("\n")}\n\n` : ""}Before making changes or running project commands, run \`${run} sda:status\` and follow its instructions.
+Before writing or changing code, search the documentation of relevant installed libraries. Prefer their classes, functions, and methods when they fit the task. If you find a missing feature or a bug, tell the user and offer to open a GitHub issue in the library's repository.
+
+${links.length ? `Local library documentation:\n\n${links.join("\n")}\n\n` : ""}Before making changes or running project commands, run \`${run} sda:status\` and follow its instructions.
 
 ## Data analysis
 
