@@ -46,6 +46,8 @@ Before writing or changing code, search the documentation of relevant installed 
 
 ${links.length ? `Local library documentation:\n\n${links.join("\n")}\n\n` : ""}Before making changes or running project commands, run \`${run} sda:status\` and follow its instructions.
 
+When asking the user questions, use plain chat messages even if a questionnaire tool is available. Group related questions and label them \`Q1\`, \`Q2\`, and so on. When suggested answers would help, label the choices \`A\`, \`B\`, \`C\`, and so on. Tell the user they can reply with labels like \`Q1 A, Q2 D\` or answer in their own words.
+
 ## Research methodology
 
 Follow the steps below when starting or extending an investigation to answer questions with data. Build on what the user has already shared. For standalone file-processing requests such as cleaning, formatting, or converting a file, go straight to the Data analysis instructions and deliver the requested output.
