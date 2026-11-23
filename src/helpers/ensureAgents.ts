@@ -46,7 +46,7 @@ Before writing or changing code, search the documentation of relevant installed 
 
 ${links.length ? `Local library documentation:\n\n${links.join("\n")}\n\n` : ""}Before making changes or running project commands, run \`${run} sda:status\` and follow its instructions.
 
-When asking the user questions, use plain chat messages even if a questionnaire tool is available. Group related questions and label them \`Q1\`, \`Q2\`, and so on. When suggested answers would help, label the choices \`A\`, \`B\`, \`C\`, and so on. Tell the user they can reply with labels like \`Q1 A, Q2 D\` or answer in their own words.
+Ask the user questions only in a normal assistant reply in chat, even when questionnaire or structured input tools are available. Group related questions and label them \`Q1\`, \`Q2\`, and so on. When suggested answers would help, list them below the question in the same chat reply and label them \`A\`, \`B\`, \`C\`, and so on. Tell the user they can reply with labels like \`Q1 A, Q2 D\` or answer in their own words.
 
 ## Research methodology
 
@@ -78,6 +78,8 @@ Do data analysis and processing in \`sda/\`. Prioritize code that is easy to und
 ${analysisGuidance}
 
 Use \`sda/main.ts\` as the entry point and \`sda/helpers/\` for reusable helpers. Keep one function per helper file, with the file named after the function. Put source data in \`sda/data/\` and default to \`sda/output/\` for analysis exports.
+
+When the user attaches data files in chat, copy them to \`sda/data/\` before processing and tell the user where you saved them.
 
 Create charts when they help explain the data, a calculation, or a finding. Save static charts as \`.png\` files unless the user requests another format. Use \`sda/output/\` for chart drafts and have the analysis script save figures the user wants to keep to \`methodology/figures/\`.
 

@@ -11,7 +11,9 @@ export function ensureReadme(runtime: Runtime, installedPackages: string[] = [])
     name: "libraries",
     createContent: (section) =>
       `# Data project\n\nCreated with [setup-data-project](https://github.com/nshiab/setup-data-project).\n\n${section}`,
-    content: `${libraries ? `Installed libraries: ${libraries}.\n\n` : ""}## Data analysis
+    content: `See [AGENTS.md](AGENTS.md) for the project's AI agent instructions.
+
+${libraries ? `Installed libraries: ${libraries}.\n\n` : ""}## Data analysis
 
 Use \`sda/main.ts\` to process source data from \`sda/data/\` and write results to \`sda/output/\`. Git ignores both data folders. Put reusable helpers in \`sda/helpers/\`. Use \`sda/test/\` for analysis tests named \`*.test.ts\`.${runtime === "bun" ? " Use Bun 1.3.1 or newer to run checks before adding your first test." : ""}
 

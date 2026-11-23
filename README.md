@@ -66,6 +66,12 @@ Existing source files, environment values, scripts, tooling configuration,
 and unmanaged documentation are preserved.
 Remove the generated section or its markers from README.md or AGENTS.md to stop updates to that file.
 
+The generated `AGENTS.md` explains how an AI agent works with you. The agent asks
+questions and offers choices in chat, handles straightforward file processing
+directly, and records research methods and findings in `methodology/methodology.md`
+when you’re investigating a question. For websites, the agent shares a live
+preview early so you can follow along.
+
 Generated projects run TypeScript directly with Node or Bun. Oxfmt and Oxlint
 provide formatting, linting, and TypeScript checking through oxlint-tsgolint.
 Name tests `*.test.ts` and place them under `sda/`. Use `sda/test/` to keep tests
