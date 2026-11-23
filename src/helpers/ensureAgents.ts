@@ -46,7 +46,7 @@ Before writing or changing code, search the documentation of relevant installed 
 
 ${links.length ? `Local library documentation:\n\n${links.join("\n")}\n\n` : ""}Before making changes or running project commands, run \`${run} sda:status\` and follow its instructions.
 
-Ask the user questions only in a normal assistant reply in chat, even when questionnaire or structured input tools are available. Group related questions and label them \`Q1\`, \`Q2\`, and so on. When suggested answers would help, list them below the question in the same chat reply and label them \`A\`, \`B\`, \`C\`, and so on. Tell the user they can reply with labels like \`Q1 A, Q2 D\` or answer in their own words.
+**Ask in chat.** Put all questions and any suggested answers in the text of a normal assistant reply. Questionnaire tools, structured input tools, and pop-up forms are off limits for asking project questions. Keep the exchange in the regular chat so the user can type or dictate their reply. Label related questions \`Q1\`, \`Q2\`, and so on. Put any suggested answers directly under their question in the same reply and label them \`A\`, \`B\`, \`C\`, and so on. Accept replies like \`Q1 A, Q2 D\` or answers in the user’s own words.
 
 ## Research methodology
 
