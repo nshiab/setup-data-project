@@ -96,16 +96,18 @@ Write concise, accurate web copy in plain language for a general audience, inclu
 
 At the top of each page, show the public contact’s name and email and a “Last updated” timestamp. Ask the user which name and email to display if they haven’t already provided them. Refresh the timestamp when the page’s content or data changes.
 
-Build the requested page components alongside the contact and timestamp. Include logos, navigation bars, footers, and methodology paragraphs or boxes only when the user explicitly requests them or they are essential to fulfilling the request.
+Build the requested page components alongside the contact and timestamp. Include logos, navigation bars, footers, download buttons, and methodology paragraphs or boxes only when the user explicitly requests them or they are essential to fulfilling the request.
 
 When the site needs data, prepare it in \`sda/\` and export only what the page needs as JSON to \`sda/output/\`. Generate a separate \`data.js\` in the site folder from that export and load it before the page code (so recipients can unzip the site and double-click \`index.html\` without a server).
 
 Add web dependencies only when the user explicitly requests them. ${chartGuidance}
 
+When a map would help, ask during outline review whether a static map is enough or readers need an interactive map. For interactive maps, use MapLibre GL JS and OpenFreeMap as an exception to the local asset and classic script defaults. When adding MapLibre, run \`npm view maplibre-gl@latest version\` and substitute the returned version for \`VERSION\` in both UNPKG URLs. Load the stylesheet from \`https://unpkg.com/maplibre-gl@VERSION/dist/maplibre-gl.css\` and import \`Map\` from \`https://unpkg.com/maplibre-gl@VERSION/dist/maplibre-gl.mjs\` in an inline \`<script type="module">\`. MapLibre loads its worker automatically. Use \`https://tiles.openfreemap.org/styles/liberty\` as the basemap style and keep its built-in attribution visible. Load \`data.js\` before the map script and pass the project's geographic data directly as a GeoJSON source. Consult the [MapLibre GL JS API reference](https://maplibre.org/maplibre-gl-js/docs/API/) as needed.
+
 In \`package.json\`, add a script that runs \`${run} sda:preview\`. Use \`sda:dash\` for a dashboard, \`sda:interactive\` for a standalone interactive visualization, or \`sda:web\` for other web pages. For a different site folder, pass its path with \`--dir\`, for example \`${previewOverride}\`. Reuse an existing alias if it runs the same command. If the preferred name is taken, preserve the existing script and choose an unused name.
 
 Run the alias to start the preview server. Check the page and its interactions at the local URL it prints. The preview serves and watches only the site folder and refreshes the browser when its files change. Share the alias command and local URL with the user.
 
-The \`sda:fix\`, \`sda:test\`, \`sda:watch\`, and \`sda:test:watch\` scripts target analysis code in \`sda/\`. Use the browser preview to verify web changes. When adding automated web tests at the user's request or to cover complex behavior, create \`src/test/\` and add a matching \`package.json\` script such as \`sda:dash:test\` that runs only the web tests using the project's test runner.`,
+The \`sda:fix\`, \`sda:test\`, \`sda:watch\`, and \`sda:test:watch\` scripts target analysis code in \`sda/\`. Use the browser preview to verify web changes. Leave download buttons unclicked during browser checks to avoid opening a save dialog. Check the download handler and the data it prepares directly. When adding automated web tests at the user's request or to cover complex behavior, create \`src/test/\` and add a matching \`package.json\` script such as \`sda:dash:test\` that runs only the web tests using the project's test runner.`,
   });
 }
