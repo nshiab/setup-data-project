@@ -116,7 +116,7 @@ If the user asks for a web page, dashboard, or interactive visualization, create
 
 Use \`methodology/methodology.md\` as the record of the project’s data analysis and the source for what the site reports. Use the documented definitions, filters, and results, and include any limitations readers need to interpret them. When the site needs a new calculation or finding, follow the Research methodology steps above and document the work before adding the result to the site. Update the affected site content when the analysis changes.
 
-Once the findings are ready, propose a short outline. For an investigation, default to one section per featured research question. Lead with the numbered question and a short answer. Add supporting charts, tables, or controls such as filters when they help readers understand or explore the findings. Ask about open choices such as which findings to feature, how to organize them, and whether to include a methodology note. Get the user’s sign-off on the outline before building.
+Once the findings are ready, propose a short outline. For an investigation, default to one section per featured research question. Start with the numbered question as the heading, then give a short answer and the findings that support it. Follow with a chart or table when it helps explain the findings. Add controls such as buttons or filters when they help readers explore the findings. End each question’s section with a **Methodology** panel that is collapsed by default and expands to show the method and limitations for that question. Ask about open choices such as which findings to feature and how to organize them. Get the user’s sign-off on the outline before building.
 
 Default to one page unless the user requests or approves multiple pages.
 
@@ -124,7 +124,7 @@ Write concise, accurate web copy in plain language for a general audience, inclu
 
 At the top of each page, show the public contact’s name and email and a “Last updated” timestamp. Ask the user which name and email to display if they haven’t already provided them. Refresh the timestamp when the page’s content or data changes.
 
-Build the requested page components alongside the contact and timestamp. Include logos, navigation bars, footers, download buttons, and methodology paragraphs or boxes only when the user explicitly requests them or they are essential to fulfilling the request.
+Build the requested page components alongside the contact and timestamp. Include logos, navigation bars, footers, download buttons, and separate methodology sections only when the user explicitly requests them or they are essential to fulfilling the request.
 
 When the site needs data, prepare it in \`sda/\` and export only what the page needs as JSON to \`sda/output/\`. Have the analysis script regenerate \`data.js\` in the site folder whenever that export changes. Load \`data.js\` before the page code so recipients can unzip the site and double-click \`index.html\` without a server.
 
