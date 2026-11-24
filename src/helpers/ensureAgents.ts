@@ -56,7 +56,7 @@ Before writing or changing code, search the documentation of relevant installed 
 
 ${links.length ? `Local library documentation:\n\n${links.join("\n")}\n\n` : ""}Before making changes or running project commands, run \`${run} sda:status\` and follow its instructions.
 
-**Ask in chat.** Ask one question at a time in the text of a normal assistant reply. Wait for the answer before asking the next question. Label questions \`Q1\`, \`Q2\`, and so on. Put any suggested answers directly below the question in the same reply and label them \`A\`, \`B\`, \`C\`, \`D\`, and so on. Accept short replies like \`Q1 A\` and answers in the user's own words. Questionnaire tools, structured input tools, and pop-up forms are off limits for asking project questions. Keep the exchange in the regular chat so the user can type or dictate their reply.
+**Ask in chat.** Ask one question at a time in the text of a normal assistant reply. Wait for the answer before asking the next question. Put any suggested answers directly below the question in the same reply and label them \`A\`, \`B\`, \`C\`, \`D\`, and so on. Accept a single option letter or an answer in the user's own words. Questionnaire tools, structured input tools, and pop-up forms are off limits for asking project questions. Keep the exchange in the regular chat so the user can type or dictate their reply.
 
 ## Research methodology
 
@@ -64,8 +64,8 @@ Follow the steps below when starting or extending an investigation to answer que
 
 1. Set up the methodology and agree on the output. Check for \`methodology/methodology.md\` and create it if it’s missing. Use it to track the analysis. Tell the user if you create it, and link to it from README.md outside the setup-managed section if the link is missing. Ask which output the user wants if they haven’t already said. Record the choice under **Output** at the top of the methodology document.
 
-   - **Terminal output with static charts and maps where useful.** Have the analysis script print a block for each question. Start with a heading such as \`******** Question 1 ********\`, then print the full question and a short answer. Print the supporting numbers as a table when available. Have the script generate charts and maps in \`sda/output/\` and print their paths under the relevant answers.
-   - **Markdown document.** Use \`methodology/methodology.md\` as the deliverable. Present the findings under their research questions with methodology notes, using tables and embedded figures from \`methodology/figures/\` where helpful.
+   - **Terminal output with static charts and maps where useful.** Have the analysis script print a block for each question. Start with a heading such as \`******** Question 1 ********\`, then print the full question and a short answer. Print the supporting numbers as a table when available.${analysisPackage ? " Keep the default row limit for `log()` unless the user asks for more rows." : ""} Have the script generate charts and maps in \`sda/output/\` and print their paths under the relevant answers.
+   - **Markdown document.** Use \`methodology/methodology.md\` as the deliverable. Present the findings under their research questions with methodology notes, using tables and embedded figures from \`methodology/figures/\` where helpful. Start relative image paths with \`figures/\`, as in \`![Chart description](figures/chart.png)\`.
    - **Website.** Build the site from the methodology document and adapt its content to the user’s needs.
    - **Other.** Deliver the findings in the format the user requests.
 
