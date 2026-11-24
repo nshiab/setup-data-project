@@ -24,7 +24,9 @@ export function ensureAgents(
 
 A \`cache()\` hit reuses the earlier result without rereading the source file or fetching the URL again. When the user asks for fresh data or supplies updated files, run \`${run} sda:clean\` before rerunning the analysis.
 
-For scripts using the default in-memory \`SimpleDB\`, let unexpected errors stop the run so the script can be rerun. Call \`await sdb.close()\` at the end of the normal execution path. Calling it from \`catch\` or \`finally\` after a failure can remove cached results for steps the script never reached. Add error handling when the code or the user requires it.`
+For scripts using the default in-memory \`SimpleDB\`, let unexpected errors stop the run so the script can be rerun. Call \`await sdb.close()\` at the end of the normal execution path. Calling it from \`catch\` or \`finally\` after a failure can remove cached results for steps the script never reached. Add error handling when the code or the user requires it.
+
+Reserve \`.tmp/\` for SDA scratch files. Closing an in-memory \`SimpleDB\` deletes that entire directory by default, even with \`pruneCache: false\`. If you set \`tempDir\`, use a directory dedicated to that database.`
     : `If the task needs data processing or transformation, suggest \`${setup} --sda\` to install Simple Data Analysis${hasPlot ? "" : " with Observable Plot"} and download versioned documentation.`;
   const chartGuidance = hasPlot
     ? `For charts, use the installed Observable Plot or its D3 dependency unless the user explicitly requests a different library.
