@@ -20,7 +20,9 @@ export function ensureAgents(
   ].find((pkg) => installedPackages.includes(pkg));
   const hasPlot = installedPackages.includes("@observablehq/plot");
   const analysisGuidance = analysisPackage
-    ? `Prioritize the classes and methods in \`${analysisPackage}\`. Reserve custom queries for gaps in those methods. Explain the gap to the user and offer to open a GitHub issue in the library's repository.
+    ? `Prioritize the classes and methods in \`${analysisPackage}\`. Reserve custom queries for gaps in those methods. Explain the gap to the user and offer to open a GitHub issue in the library's repository. Use the table’s \`cache()\` method inside helpers that load remote data or perform expensive computations so reruns can reuse the results. Pass any settings or helper functions from outside the callback that affect the result as \`cache()\` inputs.
+
+A \`cache()\` hit reuses the earlier result without rereading the source file or fetching the URL again. When the user asks for fresh data or supplies updated files, run \`${run} sda:clean\` before rerunning the analysis.
 
 For scripts using the default in-memory \`SimpleDB\`, let unexpected errors stop the run so the script can be rerun. Call \`await sdb.close()\` at the end of the normal execution path. Calling it from \`catch\` or \`finally\` after a failure can remove cached results for steps the script never reached. Add error handling when the code or the user requires it.`
     : `If the task needs data processing or transformation, suggest \`${setup} --sda\` to install Simple Data Analysis${hasPlot ? "" : " with Observable Plot"} and download versioned documentation.`;
@@ -38,7 +40,13 @@ When using Plot or D3, copy the required browser bundles into the site folder. U
     path: "AGENTS.md",
     name: "agents",
     createContent: (section) => `# Project instructions\n\n${section}`,
-    content: `Read README.md for project guidance and package.json for the installed libraries and scripts. Ask the user before adding a dependency.
+    content: `Help the user process, explore, and analyze data so they understand what it can tell them. When the goal is to answer questions with data, start by agreeing on clear, focused questions. Use them to guide what you measure, how you analyze it, and how you present the findings. Check the assumptions behind the method and verify that the evidence supports each conclusion. When a data gap or a proposed analysis choice could lead to a misleading answer, raise it with the user, explain why it matters in plain language, and suggest how to address it.
+
+Assume the user may review any code, Markdown, or output you produce. Keep code easy to read and maintain. Use plain, accessible language in documents, terminal output, tables, charts, and websites.
+
+When it would help the user move the work forward, suggest the next step based on the workflow below. If that step needs the user’s input, ask one focused question in chat. Continue with work the user has already authorized.
+
+Read README.md for project guidance and package.json for the installed libraries and scripts. Ask the user before adding a dependency.
 
 Keep changes focused on the user's request. Update README.md only when the user explicitly asks or when adding the methodology link described below.
 
@@ -46,30 +54,35 @@ Before writing or changing code, search the documentation of relevant installed 
 
 ${links.length ? `Local library documentation:\n\n${links.join("\n")}\n\n` : ""}Before making changes or running project commands, run \`${run} sda:status\` and follow its instructions.
 
-**Ask in chat.** Put all questions and any suggested answers in the text of a normal assistant reply. Questionnaire tools, structured input tools, and pop-up forms are off limits for asking project questions. Keep the exchange in the regular chat so the user can type or dictate their reply. Label related questions \`Q1\`, \`Q2\`, and so on. Put any suggested answers directly under their question in the same reply and label them \`A\`, \`B\`, \`C\`, and so on. Accept replies like \`Q1 A, Q2 D\` or answers in the user’s own words.
+**Ask in chat.** Ask one question at a time in the text of a normal assistant reply. Wait for the answer before asking the next question. Label questions \`Q1\`, \`Q2\`, and so on. Put any suggested answers directly below the question in the same reply and label them \`A\`, \`B\`, \`C\`, \`D\`, and so on. Accept short replies like \`Q1 A\` and answers in the user's own words. Questionnaire tools, structured input tools, and pop-up forms are off limits for asking project questions. Keep the exchange in the regular chat so the user can type or dictate their reply.
 
 ## Research methodology
 
 Follow the steps below when starting or extending an investigation to answer questions with data. Build on what the user has already shared. For standalone file-processing requests such as cleaning, formatting, or converting a file, go straight to the Data analysis instructions and deliver the requested output.
 
-1. Set up the methodology and agree on the output. Check for \`methodology/methodology.md\` and create it if it’s missing. Use it to track questions, methods, limitations, and findings. Tell the user if you create it, and link to it from README.md outside the setup-managed section if the link is missing. Ask which output the user wants if they haven’t already said. Record the choice under **Output** at the top of the methodology document.
+1. Set up the methodology and agree on the output. Check for \`methodology/methodology.md\` and create it if it’s missing. Use it to track the analysis. Tell the user if you create it, and link to it from README.md outside the setup-managed section if the link is missing. Ask which output the user wants if they haven’t already said. Record the choice under **Output** at the top of the methodology document.
 
-   - **Static charts.** As you work toward an answer, save draft charts to \`sda/output/\`, which Git ignores. When the user confirms the answer or you think the chart is close to what they need, ask whether they want to keep it. Save the charts they choose to \`methodology/figures/\` so they can be committed.
-   - **Markdown document.** Use \`methodology/methodology.md\` as the deliverable. Present the findings under their research questions with methodology notes, using tables and embedded figures saved in \`methodology/figures/\` where they help explain the answers.
+   - **Terminal output with static charts and maps where useful.** Have the analysis script print a block for each question. Start with a heading such as \`******** Question 1 ********\`, then print the full question and a short answer. Print the supporting numbers as a table when available. Have the script generate charts and maps in \`sda/output/\` and print their paths under the relevant answers.
+   - **Markdown document.** Use \`methodology/methodology.md\` as the deliverable. Present the findings under their research questions with methodology notes, using tables and embedded figures from \`methodology/figures/\` where helpful.
    - **Website.** Build the site from the methodology document and adapt its content to the user’s needs.
-   - **Other.** Deliver the findings in the format the user requests, such as a spreadsheet or data export.
+   - **Other.** Deliver the findings in the format the user requests.
 
-2. Agree on the research questions with the user. Keep each question focused and write it in plain language. If a question is too broad or complicated, suggest breaking it into smaller questions that can be answered separately. Ask a few targeted follow-up questions if needed to settle what each question should answer. Record each agreed question as its own heading in the methodology document. Revisit the questions with the user whenever their needs or the analysis suggest a change. When you agree on a revision, replace the question in place and update its method, limitations, and findings to match.
-3. Answer each question with the user, following the Data analysis instructions below. Share what you find along the way and agree with the user on choices that could change the answer. If the analysis points to a more useful angle, a more focused question, or a gap that leaves the question unanswered, discuss that with the user.
-4. Keep track of the work as you go in \`methodology/methodology.md\`. Use these sections under each research question.
+2. Agree on each research question and how to answer it. Ask follow-up questions in chat until each question is clear and focused. Write questions in plain language and suggest breaking broad or complicated questions into smaller ones that can be answered separately. Check the project’s documentation and data as you go to guide the conversation and see which indicators and methods the data can support. Ask the user before searching the web.
 
-   - **Method.** Record the data sources and their URLs when available. If a source’s origin is unclear, ask the user where it came from and whether they have a link. List the columns or fields used, and verify what each row represents and how the source defines those fields. Record transformations, filters, and exclusions, and tell the user what you filtered or excluded and why. Explain in plain language how you used the data to answer the question.
+   Before running the analysis, agree in chat on each question, any indicators, and the method. Record the agreed plan in the methodology. Give each question its own heading, numbered \`Question 1\`, \`Question 2\`, and so on. Use the same question numbers and wording wherever those questions appear in the terminal, Markdown document, or website.
+
+3. Run the analysis and document the work. Follow the Data analysis instructions below and share what you find along the way. If the analysis points to a more useful angle, a narrower question, or a gap that leaves the question unanswered, discuss it with the user. Explain proposed changes to a question, indicator, or method and get confirmation in chat before applying them. If the findings change, share the revised answer and supporting evidence with the user and confirm the answer with them before finalizing it.
+
+   Keep \`methodology/methodology.md\` up to date by revising the affected sections in place. Use these sections under each research question.
+
+   - **Indicators.** When a question uses measures, give each indicator a clear name and define what it measures. Include what counts, the unit, the time period, and the denominator where relevant. Use the same indicator names across outputs.
+   - **Findings.** Answer the question directly and summarize the supporting evidence. Explain what the indicators show about the question where relevant. If the data supports only a partial answer, say what it can establish.
+   - **Method.** Record the data sources and their URLs when available. If a source’s origin is unclear, ask the user where it came from and whether they have a link. List the columns or fields used, and verify what each row represents and how the source defines those fields. Record transformations, filters, and exclusions, and tell the user what you filtered or excluded and why. Explain in plain language how the analysis uses the data to calculate the indicators or otherwise answer the question.
    - **Limitations.** Discuss missing values, gaps in coverage, and other limitations with the user. Record how they affect the answer. If the answer remains uncertain or the data is too limited, offer to search the web for data or documentation that could help.
-   - **Findings.** Summarize what the analysis shows and the evidence that supports the answer.
 
-5. Deliver the agreed output. If the output is a web page, dashboard, or interactive chart, follow the Web projects instructions below. Update **Output** if the user changes their choice, and link to any separate deliverable from the question it answers.
+4. Deliver the agreed output. If the output is a web page, dashboard, or interactive chart, follow the Web projects instructions below. Update **Output** if the user changes their choice, and link to any separate deliverable from the question it answers.
 
-Write concise, accurate methodology text in plain language. Keep paragraphs short. Use bullet lists for related points and tables when they make information easier to scan or compare. Use jargon only if the user has used it, and explain technical terms that readers need to understand the analysis.
+Write the methodology as a standalone report in concise, accurate, plain language. Describe the analysis and its decisions in impersonal terms, such as “The analysis covers projects completed in 2025.” Keep paragraphs short. Use bullet lists for related points and tables when they make information easier to scan or compare. Explain technical terms that readers need to understand the analysis.
 
 ## Data analysis
 
@@ -77,13 +90,17 @@ Do data analysis and processing in \`sda/\`. Prioritize code that is easy to und
 
 ${analysisGuidance}
 
-Use \`sda/main.ts\` for the project’s analysis. If it already runs an unrelated analysis, put the standalone file-processing task in a clearly named script under \`sda/\`, such as \`sda/cleanFile.ts\`. Run that script explicitly with \`sda-run\`. Use \`sda/helpers/\` for reusable helpers. Keep one function per helper file, with the file named after the function. Put source data in \`sda/data/\` and default to \`sda/output/\` for analysis exports.
+Use \`sda/main.ts\` for the project’s analysis. Keep one function per helper file in \`sda/helpers/\` and name the file after the function. Put source data in \`sda/data/\` and default to \`sda/output/\` for analysis exports.
+
+For each research question, write a helper in \`sda/helpers/\` that returns the table or value used to answer it. Name the function for what it calculates. In \`sda/main.ts\`, put a comment with the question number and full wording directly above the helper call.
 
 When the user attaches data files in chat, copy them to \`sda/data/\` before processing and tell the user where you saved them.
 
-Create charts when they help explain the data, a calculation, or a finding. Save static charts as \`.png\` files unless the user requests another format. Use \`sda/output/\` for chart drafts and have the analysis script save figures the user wants to keep to \`methodology/figures/\`.
+Create charts when they help explain the data, a calculation, or a finding. Save static charts as \`.png\` files unless the user requests another format. Use \`sda/output/\` for chart drafts. When the Markdown document is the chosen output, have the analysis script save any figures embedded in the document to \`methodology/figures/\`.
 
-Add focused tests under \`sda/test/\` for error-prone transformations, reusable logic with meaningful edge cases, and bug fixes. When a test needs to check specific values at a step in the analysis, use a helper under \`sda/helpers/\` that runs that step and returns the relevant table or value. Call the same helper from the analysis and from its test. Keep assertions in test files. Mirror source paths under \`sda/test/\`. For example, \`sda/helpers/cleanRows.ts\` maps to \`sda/test/helpers/cleanRows.test.ts\`. Prefer the runtime's built-in test runner.
+Add focused tests under \`sda/test/\` for helper functions in \`sda/helpers/\`. Cover error-prone transformations, meaningful edge cases, and bug fixes. Call the same helper from the analysis and from its test. Keep assertions in test files. Mirror source paths under \`sda/test/\`. For example, \`sda/helpers/cleanRows.ts\` maps to \`sda/test/helpers/cleanRows.test.ts\`. Prefer the runtime's built-in test runner. When closing a \`SimpleDB\` in a test, always use \`await sdb.close({ pruneCache: false })\`.
+
+When useful, test the research question’s helper with the same data used for the analysis and assert the expected answer. If the user agrees to a revised method, check what the helper should return for the same data and update the test’s expected answer if needed. To check whether a data refresh changed the answer, compare the fresh result with the previously agreed result and review any difference with the user.
 
 To run the analysis once, use \`${run} sda\`. It fixes and checks code before running the analysis. If the analysis watcher is running, this command requests a run from the watcher and returns its output and exit code when it finishes.
 
@@ -97,11 +114,11 @@ If the user asks for a web page, dashboard, or interactive visualization, create
 
 Use \`methodology/methodology.md\` as the record of the project’s data analysis and the source for what the site reports. Use the documented definitions, filters, and results, and include any limitations readers need to interpret them. When the site needs a new calculation or finding, follow the Research methodology steps above and document the work before adding the result to the site. Update the affected site content when the analysis changes.
 
-Once the findings are ready, propose a short outline. Ask about open choices such as which findings to feature, how to organize them, which charts or tables to include, and whether to include a methodology note. Get the user’s sign-off on the outline before building. When useful, add a **Web** subsection under a research question in the methodology to record which findings, charts, or tables the site will show. Keep it up to date as the page changes.
+Once the findings are ready, propose a short outline. For an investigation, default to one section per featured research question. Lead with the numbered question and a short answer. Add supporting charts, tables, or controls such as filters when they help readers understand or explore the findings. Ask about open choices such as which findings to feature, how to organize them, and whether to include a methodology note. Get the user’s sign-off on the outline before building.
 
 Default to one page unless the user requests or approves multiple pages.
 
-Write concise, accurate web copy in plain language for a general audience, including chart labels and captions. Use jargon only if the user has used it, and explain terms the audience may find unfamiliar.
+Write concise, accurate web copy in plain language for a general audience, including chart labels and captions. Explain terms the audience may find unfamiliar.
 
 At the top of each page, show the public contact’s name and email and a “Last updated” timestamp. Ask the user which name and email to display if they haven’t already provided them. Refresh the timestamp when the page’s content or data changes.
 
