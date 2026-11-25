@@ -90,6 +90,8 @@ Follow the steps below when starting or extending an investigation to answer que
    - **Method.** Record the data sources and their URLs when available. If a source’s origin is unclear, ask the user where it came from and whether they have a link. List the columns or fields used, and verify what each row represents and how the source defines those fields. Record transformations, filters, and exclusions, and tell the user what you filtered or excluded and why. Explain in plain language how the analysis uses the data to calculate the indicators or otherwise answer the question.
    - **Limitations.** Discuss missing values, gaps in coverage, and other limitations with the user. Record how they affect the answer. If the answer remains uncertain or the data is too limited, offer to search the web for data or documentation that could help.
 
+   When the same agreed cleaning rules apply to more than one research question, add a **Data preparation** section before the first question. Briefly explain what changed, why, and any unresolved cases. Record question-specific cleaning under **Method**.
+
 4. Deliver the agreed output. If the output is a web page, dashboard, or interactive chart, follow the Web projects instructions below. Update **Output** if the user changes their choice, and link to any separate deliverable from the question it answers.
 
 Write the methodology as a standalone report in concise, accurate, plain language. Describe the analysis and its decisions in impersonal terms, such as “The analysis covers projects completed in 2025.” Keep paragraphs short. Use bullet lists for related points and tables when they make information easier to scan or compare. Explain technical terms that readers need to understand the analysis.
@@ -103,6 +105,8 @@ Do data analysis and processing in \`sda/\`. Prioritize code that is easy to und
 ${analysisGuidance}
 
 Use \`sda/main.ts\` for the project’s analysis. Keep one function per helper file in \`sda/helpers/\` and name the file after the function. Put source data in \`sda/data/\` and default to \`sda/output/\` for analysis exports.
+
+Before calculating results, inspect the fields the analysis relies on. For fields used to group, join, or filter rows, review the distinct values and their counts. Explain any proposed cleaning or changes to the data in plain language, including label standardization. Show examples where helpful and confirm the proposed rules with the user before applying them. Apply the agreed changes in code and preserve the original data.
 
 For each research question, write a helper in \`sda/helpers/\` that returns the table or value used to answer it. Name the function for what it calculates. In \`sda/main.ts\`, put a comment with the question number and full wording directly above the helper call.
 
@@ -127,6 +131,8 @@ If the user asks for a web page, dashboard, or interactive visualization, create
 Use \`methodology/methodology.md\` as the record of the project’s data analysis and the source for what the site reports. Use the documented definitions, filters, and results, and include any limitations readers need to interpret them. When the site needs a new calculation or finding, follow the Research methodology steps above and document the work before adding the result to the site. Update the affected site content when the analysis changes.
 
 Once the findings are ready, propose a short outline. For an investigation, start the outline with a short **Summary of findings**, followed by one section per featured research question by default. Start each question’s section with the numbered question as the heading, then give a short answer and the findings that support it. Follow with a chart or table when it helps explain the findings. Add controls such as buttons or filters when they help readers explore the findings. End each question’s section with a **Methodology** panel that is collapsed by default and expands to show the method and limitations for that question. Ask about open choices such as which findings to feature and how to organize them. Get the user’s sign-off on the outline before building.
+
+When the same agreed cleaning rules affect how readers interpret findings from more than one research question, propose a short **Data preparation** section before the first question in the website outline. Cover question-specific cleaning in the relevant **Methodology** panels.
 
 Default to one page unless the user requests or approves multiple pages.
 
