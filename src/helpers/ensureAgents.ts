@@ -146,6 +146,10 @@ When the site needs data, prepare it in \`sda/\` and export only what the page n
 
 Render web charts in JavaScript from the analysis results in \`data.js\`. Add web dependencies only when the user explicitly requests them. ${chartGuidance}
 
+Make web charts responsive to the width of their container. With Observable Plot, render at the container’s measured width and replace the chart in place when that width changes.
+
+Make web data tables sortable by column. Activating a column header again reverses the sort order. Show which column is sorted and in which direction.
+
 When a map would help, ask during outline review whether a static map is enough or readers need an interactive map. Approval of an interactive map covers using MapLibre GL JS and OpenFreeMap as an exception to the web dependency, local asset, and classic script defaults. Briefly tell the user which map library and basemap the site will use and that they load over the internet. When adding MapLibre, run \`${maplibreVersionCommand}\` and substitute the returned version for \`VERSION\` in both UNPKG URLs. Load the stylesheet from \`https://unpkg.com/maplibre-gl@VERSION/dist/maplibre-gl.css\` and import \`Map\` from \`https://unpkg.com/maplibre-gl@VERSION/dist/maplibre-gl.mjs\` in an inline \`<script type="module">\`. MapLibre loads its worker automatically. Use \`https://tiles.openfreemap.org/styles/liberty\` as the basemap style and keep its built-in attribution visible. Load \`data.js\` before the map script and pass the project's geographic data directly as a GeoJSON source. Consult the [MapLibre GL JS API reference](https://maplibre.org/maplibre-gl-js/docs/API/) as needed.
 
 In \`package.json\`, add a script that runs \`${run} sda:preview\`. Use \`sda:dash\` for a dashboard, \`sda:interactive\` for a standalone interactive visualization, or \`sda:web\` for other web pages. For a different site folder, pass its path with \`--dir\`, for example \`${previewOverride}\`. Reuse an existing alias if it runs the same command. If the preferred name is taken, preserve the existing script and choose an unused name.
