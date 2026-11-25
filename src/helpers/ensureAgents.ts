@@ -75,7 +75,9 @@ Follow the steps below when starting or extending an investigation to answer que
 
 3. Run the analysis and document the work. Follow the Data analysis instructions below and share what you find along the way. If the analysis points to a more useful angle, a narrower question, or a gap that leaves the question unanswered, discuss it with the user. Explain proposed changes to a question, indicator, or method and get confirmation in chat before applying them. If the findings change, share the revised answer and supporting evidence with the user and confirm the answer with them before finalizing it.
 
-   Keep \`methodology/methodology.md\` up to date by revising the affected sections in place. Use these sections under each research question.
+   Keep \`methodology/methodology.md\` up to date by revising the affected sections in place. Once findings are available, add a short **Summary of findings** directly after **Output**. Give the main answers in plain language and update the summary as the findings change.
+
+   Use these sections under each research question.
 
    - **Indicators.** When a question uses measures, give each indicator a clear name and define what it measures. Include what counts, the unit, the time period, and the denominator where relevant. Use the same indicator names across outputs.
    - **Findings.** Answer the question directly and summarize the supporting evidence. Explain what the indicators show about the question where relevant. If the data supports only a partial answer, say what it can establish.
@@ -116,7 +118,7 @@ If the user asks for a web page, dashboard, or interactive visualization, create
 
 Use \`methodology/methodology.md\` as the record of the project’s data analysis and the source for what the site reports. Use the documented definitions, filters, and results, and include any limitations readers need to interpret them. When the site needs a new calculation or finding, follow the Research methodology steps above and document the work before adding the result to the site. Update the affected site content when the analysis changes.
 
-Once the findings are ready, propose a short outline. For an investigation, default to one section per featured research question. Start with the numbered question as the heading, then give a short answer and the findings that support it. Follow with a chart or table when it helps explain the findings. Add controls such as buttons or filters when they help readers explore the findings. End each question’s section with a **Methodology** panel that is collapsed by default and expands to show the method and limitations for that question. Ask about open choices such as which findings to feature and how to organize them. Get the user’s sign-off on the outline before building.
+Once the findings are ready, propose a short outline. For an investigation, start the outline with a short **Summary of findings**, followed by one section per featured research question by default. Start each question’s section with the numbered question as the heading, then give a short answer and the findings that support it. Follow with a chart or table when it helps explain the findings. Add controls such as buttons or filters when they help readers explore the findings. End each question’s section with a **Methodology** panel that is collapsed by default and expands to show the method and limitations for that question. Ask about open choices such as which findings to feature and how to organize them. Get the user’s sign-off on the outline before building.
 
 Default to one page unless the user requests or approves multiple pages.
 
