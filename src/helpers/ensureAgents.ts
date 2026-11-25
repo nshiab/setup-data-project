@@ -58,6 +58,12 @@ ${links.length ? `Local library documentation:\n\n${links.join("\n")}\n\n` : ""}
 
 **Ask in chat.** Ask one question at a time in the text of a normal assistant reply. Wait for the answer before asking the next question. Put any suggested answers directly below the question in the same reply and label them \`A\`, \`B\`, \`C\`, \`D\`, and so on. Accept a single option letter or an answer in the user's own words. Questionnaire tools, structured input tools, and pop-up forms are off limits for asking project questions. Keep the exchange in the regular chat so the user can type or dictate their reply.
 
+## Git history
+
+If Git is available, check whether the project is already in a Git repository. Reuse the existing repository if there is one. Otherwise, run \`git init\` in the project root and tell the user.
+
+Make a local commit after each meaningful milestone, such as completing setup, verifying an analysis, or finishing a deliverable. Before committing, review the diff and any already staged changes. Respect \`.gitignore\` and commit only your changes for that milestone. Use a short message that describes what changed.
+
 ## Research methodology
 
 Follow the steps below when starting or extending an investigation to answer questions with data. Build on what the user has already shared. For standalone file-processing requests such as cleaning, formatting, or converting a file, go straight to the Data analysis instructions and deliver the requested output.
@@ -75,11 +81,11 @@ Follow the steps below when starting or extending an investigation to answer que
 
 3. Run the analysis and document the work. Follow the Data analysis instructions below and share what you find along the way. If the analysis points to a more useful angle, a narrower question, or a gap that leaves the question unanswered, discuss it with the user. Explain proposed changes to a question, indicator, or method and get confirmation in chat before applying them. If the findings change, share the revised answer and supporting evidence with the user and confirm the answer with them before finalizing it.
 
-   Keep \`methodology/methodology.md\` up to date by revising the affected sections in place. Once findings are available, add a short **Summary of findings** directly after **Output**. Give the main answers in plain language and update the summary as the findings change.
+   Keep \`methodology/methodology.md\` up to date by revising the affected sections in place. Once findings are available, add a **Summary of findings** directly after **Output**. Use a few short bullets in plain language, each stating one main finding. Include a key number or qualification when it matters. Update the summary as the findings change.
 
    Use these sections under each research question.
 
-   - **Indicators.** When a question uses measures, give each indicator a clear name and define what it measures. Include what counts, the unit, the time period, and the denominator where relevant. Use the same indicator names across outputs.
+   - **Indicators.** When a question uses measures, list one bullet per indicator with a clear name and a short, plain-language definition. Include what counts, the unit, the time period, and the denominator where relevant. Use the same indicator names across outputs.
    - **Findings.** Answer the question directly and summarize the supporting evidence. Explain what the indicators show about the question where relevant. If the data supports only a partial answer, say what it can establish.
    - **Method.** Record the data sources and their URLs when available. If a source’s origin is unclear, ask the user where it came from and whether they have a link. List the columns or fields used, and verify what each row represents and how the source defines those fields. Record transformations, filters, and exclusions, and tell the user what you filtered or excluded and why. Explain in plain language how the analysis uses the data to calculate the indicators or otherwise answer the question.
    - **Limitations.** Discuss missing values, gaps in coverage, and other limitations with the user. Record how they affect the answer. If the answer remains uncertain or the data is too limited, offer to search the web for data or documentation that could help.

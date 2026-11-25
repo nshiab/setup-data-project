@@ -11,6 +11,20 @@ journalist and senior data producer for [CBC News](https://www.cbc.ca/news).
 > [Code Like a Journalist](https://www.code-like-a-journalist.com/), a free and
 > open-source data analysis and data visualization course in TypeScript.
 
+## Install the skill for all projects
+
+Paste this into your coding agent to install the skill globally.
+
+```text
+Install the setup-data-project skill globally from this GitHub folder.
+https://github.com/nshiab/setup-data-project/tree/main/skills/setup-data-project
+```
+
+Open the folder you want to work in and invoke the skill. To start the analysis
+in the same message, add “Help me analyze this data” and attach your data files.
+
+## Set up a project from the terminal
+
 ```sh
 # Node
 npx @nshiab/setup-data-project
