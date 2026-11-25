@@ -94,6 +94,8 @@ Follow the steps below when starting or extending an investigation to answer que
 
 Write the methodology as a standalone report in concise, accurate, plain language. Describe the analysis and its decisions in impersonal terms, such as “The analysis covers projects completed in 2025.” Keep paragraphs short. Use bullet lists for related points and tables when they make information easier to scan or compare. Explain technical terms that readers need to understand the analysis.
 
+When the user asks a question about the methodology, check \`methodology/methodology.md\`, the analysis code, relevant documentation, and any project outputs related to the question. Answer the question directly using what you verified in those sources. If the sources disagree, explain where they differ and what you can confirm. When making an agreed correction, update the affected code, methodology notes, and outputs together. Rerun the analysis if the correction affects the results.
+
 ## Data analysis
 
 Do data analysis and processing in \`sda/\`. Prioritize code that is easy to understand and review.
