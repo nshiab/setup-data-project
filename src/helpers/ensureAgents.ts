@@ -75,6 +75,8 @@ Follow the steps below when starting or extending an investigation to answer que
    - **Website.** Build the site from the methodology document and adapt its content to the user’s needs.
    - **Other.** Deliver the findings in the format the user requests.
 
+   If the user or source documentation hasn’t already provided a link to the data, ask the user for one. If the user has no link or you can’t open it, ask them to identify the dataset, for example by giving its name and who published it. List the data sources near the top of \`methodology/methodology.md\`. Link to them where possible.
+
    Keep an “AI models used” list near the top of \`methodology/methodology.md\`. Add your model name under each category you contributed to. Use “Methodology”, “Data analysis”, and “Presentation” as applicable, and add a category for other work when needed. List each model once per category. If one model did all the work, show its name and categories on one line.
 
 2. Agree on each research question and how to answer it. Ask follow-up questions in chat until each question is clear and focused. Write questions in plain language and suggest breaking broad or complicated questions into smaller ones that can be answered separately. Ask the user before searching the web.
@@ -91,7 +93,7 @@ Follow the steps below when starting or extending an investigation to answer que
 
    - **Indicators.** When a question uses measures, list one bullet per indicator with a clear name and a short, plain-language definition. Include what counts, the unit, the time period, and the denominator where relevant. Use the same indicator names across outputs.
    - **Findings.** Answer the question directly and summarize the supporting evidence. Explain what the indicators show about the question where relevant. If the data supports only a partial answer, say what it can establish.
-   - **Method.** Record the data sources and their URLs when available. If a source’s origin is unclear, ask the user where it came from and whether they have a link. List the columns or fields used, and verify what each row represents and how the source defines those fields. Record transformations, filters, and exclusions, and tell the user what you filtered or excluded and why. Explain in plain language how the analysis uses the data to calculate the indicators or otherwise answer the question.
+   - **Method.** Identify the datasets and columns or fields used. Verify what each row represents and how the source defines those fields. Record transformations, filters, and exclusions, and tell the user what you filtered or excluded and why. Explain in plain language how the analysis uses the data to calculate the indicators or otherwise answer the question.
    - **Limitations.** Discuss missing values, gaps in coverage, and other limitations with the user. Record how they affect the answer. If the answer remains uncertain or the data is too limited, offer to search the web for data or documentation that could help.
 
    When the same agreed cleaning rules apply to more than one research question, add a “Data preparation” section before the first question. Briefly explain what changed, why, and any unresolved cases. Record question-specific cleaning under “Method”.
@@ -144,9 +146,11 @@ Default to one page unless the user requests or approves multiple pages.
 
 Write concise, accurate web copy in plain language for a general audience, including chart labels and captions. Explain terms the audience may find unfamiliar.
 
-Add your model name under “Presentation” in the methodology when you contribute to the website. At the top of each page, show the public contact’s name and email, the “Last updated” timestamp, and the “AI models used” list from the methodology. Ask the user for the contact details if needed, and refresh the timestamp when the page’s content or data changes.
+Add your model name under “Presentation” in the methodology when you contribute to the website. Always ask the user directly what name and any contact details they want shown under “Author”. At the top of each page, show the author details the user chooses to share, the data sources used on that page with links where available, the “Last updated” timestamp, and the “AI models used” list from the methodology. Refresh the timestamp when the page’s content or data changes.
 
-Build the requested page components alongside the contact and timestamp. Include logos, navigation bars, footers, download buttons, and separate methodology sections only when the user explicitly requests them or they are essential to fulfilling the request.
+In each page’s footer, write “Project set up with the [setup-data-project skill](https://github.com/nshiab/setup-data-project).” If the analysis used \`@nshiab/simple-data-analysis\`, add “Data processed and analyzed with the [simple-data-analysis TypeScript library](https://github.com/nshiab/simple-data-analysis).”
+
+Include logos, navigation bars, download buttons, and separate methodology sections only when the user explicitly requests them or they are essential to fulfilling the request.
 
 When the site needs data, prepare it in \`sda/\` and export only what the page needs as JSON to \`sda/output/\`. Have the analysis script regenerate \`data.js\` in the site folder whenever that export changes. Load \`data.js\` before the page code so recipients can unzip the site and double-click \`index.html\` without a server.
 
