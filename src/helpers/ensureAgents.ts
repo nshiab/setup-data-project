@@ -26,7 +26,7 @@ A \`cache()\` hit reuses the earlier result without rereading the source file or
 
 For scripts using the default in-memory \`SimpleDB\`, let unexpected errors stop the run so the script can be rerun. Call \`await sdb.close()\` at the end of the normal execution path. Calling it from \`catch\` or \`finally\` after a failure can remove cached results for steps the script never reached. Add error handling when the code or the user requires it.
 
-Reserve \`.tmp/\` for SDA scratch files. Closing an in-memory \`SimpleDB\` deletes that entire directory by default, even with \`pruneCache: false\`. If you set \`tempDir\`, use a directory dedicated to that database.`
+Use the database’s temporary directory (\`.tmp/\` by default for in-memory databases) only for scratch files. \`SimpleDB.close()\` deletes the entire directory, even with \`pruneCache: false\`.`
     : `If the task needs data processing or transformation, suggest \`${setup} --sda\` to install Simple Data Analysis${hasPlot ? "" : " with Observable Plot"} and download versioned documentation.`;
   const chartGuidance = hasPlot
     ? `For charts, use the installed Observable Plot or its D3 dependency unless the user explicitly requests a different library.
@@ -56,7 +56,7 @@ Before writing or changing code, search the documentation of relevant installed 
 
 ${links.length ? `Local library documentation:\n\n${links.join("\n")}\n\n` : ""}Before making changes or running project commands, run \`${run} sda:status\` and follow its instructions.
 
-**Ask in chat.** Ask one question at a time in the text of a normal assistant reply. Wait for the answer before asking the next question. Put any suggested answers directly below the question in the same reply and label them \`A\`, \`B\`, \`C\`, \`D\`, and so on. Accept a single option letter or an answer in the user's own words. Questionnaire tools, structured input tools, and pop-up forms are off limits for asking project questions. Keep the exchange in the regular chat so the user can type or dictate their reply.
+**Ask in chat.** Ask one question at a time in the text of a normal assistant reply. Wait for the answer before asking the next question. Put any suggested answers directly below the question in the same reply and label them \`A\`, \`B\`, \`C\`, \`D\`, and so on. For every question with suggested answers, recommend one and put \`[Recommended]\` between its letter and answer text, as in \`C [Recommended] Markdown document\`. Accept a single option letter or an answer in the user's own words. Questionnaire tools, structured input tools, and pop-up forms are off limits for asking project questions. Keep the exchange in the regular chat so the user can type or dictate their reply.
 
 ## Git history
 
@@ -68,14 +68,18 @@ Make a local commit after each meaningful milestone, such as completing setup, v
 
 Follow the steps below when starting or extending an investigation to answer questions with data. Build on what the user has already shared. For standalone file-processing requests such as cleaning, formatting, or converting a file, go straight to the Data analysis instructions and deliver the requested output.
 
-1. Set up the methodology and agree on the output. Check for \`methodology/methodology.md\` and create it if it’s missing. Use it to track the analysis. Tell the user if you create it, and link to it from README.md outside the setup-managed section if the link is missing. Ask which output the user wants if they haven’t already said. Record the choice under **Output** at the top of the methodology document.
+1. Set up the methodology and agree on the output. Check for \`methodology/methodology.md\` and create it if it’s missing. Use it to track the analysis. Tell the user if you create it, and link to it from README.md outside the setup-managed section if the link is missing. Ask which output the user wants if they haven’t already said. Record the choice under **Output**, below **AI models used**.
 
    - **Terminal output with static charts and maps where useful.** Have the analysis script print a block for each question. Start with a heading such as \`******** Question 1 ********\`, then print the full question and a short answer. Print the supporting numbers as a table when available.${analysisPackage ? " Keep the default row limit for `log()` unless the user asks for more rows." : ""} Have the script generate charts and maps in \`sda/output/\` and print their paths under the relevant answers.
    - **Markdown document.** Use \`methodology/methodology.md\` as the deliverable. Present the findings under their research questions with methodology notes, using tables and embedded figures from \`methodology/figures/\` where helpful. Start relative image paths with \`figures/\`, as in \`![Chart description](figures/chart.png)\`.
    - **Website.** Build the site from the methodology document and adapt its content to the user’s needs.
    - **Other.** Deliver the findings in the format the user requests.
 
-2. Agree on each research question and how to answer it. Ask follow-up questions in chat until each question is clear and focused. Write questions in plain language and suggest breaking broad or complicated questions into smaller ones that can be answered separately. Check the project’s documentation and data as you go to guide the conversation and see which indicators and methods the data can support. Ask the user before searching the web.
+   Keep an **AI models used** list near the top of \`methodology/methodology.md\`. Add your model name under each category you contributed to. Use **Methodology**, **Data analysis**, and **Presentation** as applicable, and add a category for other work when needed. List each model once per category. If one model did all the work, show its name and categories on one line.
+
+2. Agree on each research question and how to answer it. Ask follow-up questions in chat until each question is clear and focused. Write questions in plain language and suggest breaking broad or complicated questions into smaller ones that can be answered separately. Ask the user before searching the web.
+
+   When working with the user to define a research question or indicator, check the available source documentation and the relevant data columns. Review column types and summarize missing-value counts, date and numeric ranges, distinct values, and distributions. Run any other checks needed to determine what the data can support. If a limitation affects which questions the data can answer or how the results should be interpreted, explain it before settling on the question or indicator and suggest an option the data can support. Record the assumptions, decisions, and limitations that matter to the analysis in \`methodology/methodology.md\`.
 
    Before running the analysis, agree in chat on each question, any indicators, and the method. Record the agreed plan in the methodology. Give each question its own heading, numbered \`Question 1\`, \`Question 2\`, and so on. Use the same question numbers and wording wherever those questions appear in the terminal, Markdown document, or website.
 
@@ -106,7 +110,7 @@ ${analysisGuidance}
 
 Use \`sda/main.ts\` for the project’s analysis. Keep one function per helper file in \`sda/helpers/\` and name the file after the function. Put source data in \`sda/data/\` and default to \`sda/output/\` for analysis exports.
 
-Before calculating results, verify what one row represents. Check the fields the analysis relies on for missing or invalid values. Look for exact duplicate rows, and check for repeated identifiers where you expect one record per entity or event. For fields used to group, join, or filter rows, review the distinct values and their counts. When joining tables, check for unmatched records and unexpected increases in row counts. Explain any proposed cleaning or changes to the data in plain language, including label standardization. Show examples where helpful and confirm the proposed rules with the user before applying them. Apply the agreed changes in code and preserve the original data. After applying the agreed cleaning rules, compare row counts and relevant totals before and after cleaning. Explain any material differences to the user.
+Before calculating results, read the relevant **Method** and **Limitations** sections in \`methodology/methodology.md\` if they exist for the task. Check whether the current data meets the assumptions of the method you’ll use, reusing earlier checks that still apply. If the current data differs from what the methodology describes, tell the user what you found and how it affects the analysis. Agree with them on how to resolve the discrepancy before calculating results. Confirm what one row represents and check for missing or invalid values in the fields the analysis relies on. Look for exact duplicate rows and repeated identifiers where you expect one record per entity or event. Review distinct values and their counts for fields used to group, join, or filter. When joining tables, check for unmatched records and unexpected increases in row counts. Explain proposed cleaning rules in plain language, including any label standardization, show examples where helpful, and get the user’s agreement before applying them. Apply the agreed changes in code and preserve the original data. Compare row counts and relevant totals before and after cleaning, and explain any material differences to the user.
 
 For each research question, write a helper in \`sda/helpers/\` that returns the table or value used to answer it. Name the function for what it calculates. In \`sda/main.ts\`, put a comment with the question number and full wording directly above the helper call.
 
@@ -124,6 +128,8 @@ Run \`${run} sda:clean\` only when cached results and temporary files can be dis
 
 Before handing off analysis code changes, start with \`${run} sda:test\`. If formatting or lint checks fail, use \`${run} sda:fix\` for automatic fixes. Resolve any remaining failures and rerun \`${run} sda:test\` until it passes.
 
+If \`methodology/methodology.md\` exists, add your model name under **Data analysis** in its **AI models used** list.
+
 ## Web projects
 
 If the user asks for a web page, dashboard, or interactive visualization, create \`src/site/\` for the site. Put \`index.html\` at the root, keep all required assets in the site folder, and use relative URLs. Use HTML, CSS, and vanilla JavaScript with classic script tags unless the user specifies a different stack.
@@ -138,7 +144,7 @@ Default to one page unless the user requests or approves multiple pages.
 
 Write concise, accurate web copy in plain language for a general audience, including chart labels and captions. Explain terms the audience may find unfamiliar.
 
-At the top of each page, show the public contact’s name and email and a “Last updated” timestamp. Ask the user which name and email to display if they haven’t already provided them. Refresh the timestamp when the page’s content or data changes.
+Add your model name under **Presentation** in the methodology when you contribute to the website. At the top of each page, show the public contact’s name and email, the **Last updated** timestamp, and the **AI models used** list from the methodology. Ask the user for the contact details if needed, and refresh the timestamp when the page’s content or data changes.
 
 Build the requested page components alongside the contact and timestamp. Include logos, navigation bars, footers, download buttons, and separate methodology sections only when the user explicitly requests them or they are essential to fulfilling the request.
 
