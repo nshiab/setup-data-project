@@ -13,6 +13,9 @@ journalist and senior data producer for [CBC News](https://www.cbc.ca/news).
 
 ## Install the skill for all projects
 
+This repository includes the `setup-data-project` skill, which lets your coding
+agent set up TypeScript data projects for you using this library.
+
 Paste this into your coding agent to install the skill globally.
 
 ```text
@@ -20,8 +23,17 @@ Install the setup-data-project skill globally from this GitHub folder.
 https://github.com/nshiab/setup-data-project/tree/main/skills/setup-data-project
 ```
 
-Open the folder you want to work in and invoke the skill. To start the analysis
-in the same message, add “Help me analyze this data” and attach your data files.
+If you prefer to install the skill from the terminal, run this with Node.js
+22.20 or later and select your coding agent when prompted.
+
+```sh
+npx skills add nshiab/setup-data-project --skill setup-data-project --global
+```
+
+Once the skill is installed, open the folder you want to work in and invoke
+`setup-data-project`. To start an analysis in the same message, attach your
+data files and add a request like “Help me analyze this data” or “Summarize
+sales by month.”
 
 ## Set up a project from the terminal
 
