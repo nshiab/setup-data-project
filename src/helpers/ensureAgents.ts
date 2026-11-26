@@ -68,14 +68,14 @@ Make a local commit after each meaningful milestone, such as completing setup, v
 
 Follow the steps below when starting or extending an investigation to answer questions with data. Build on what the user has already shared. For standalone file-processing requests such as cleaning, formatting, or converting a file, go straight to the Data analysis instructions and deliver the requested output.
 
-1. Set up the methodology and agree on the output. Check for \`methodology/methodology.md\` and create it if it’s missing. Use it to track the analysis. Tell the user if you create it, and link to it from README.md outside the setup-managed section if the link is missing. Ask which output the user wants if they haven’t already said. Record the choice under **Output**.
+1. Set up the methodology and agree on the output. Check for \`methodology/methodology.md\` and create it if it’s missing. Use it to track the analysis. Tell the user if you create it, and link to it from README.md outside the setup-managed section if the link is missing. Ask which output the user wants if they haven’t already said. Record the choice under “Output”.
 
    - **Terminal output with static charts and maps where useful.** Have the analysis script print a block for each question. Start with a heading such as \`******** Question 1 ********\`, then print the full question and a short answer. Print the supporting numbers as a table when available.${analysisPackage ? " Keep the default row limit for `log()` unless the user asks for more rows." : ""} Have the script generate charts and maps in \`sda/output/\` and print their paths under the relevant answers.
    - **Markdown document.** Use \`methodology/methodology.md\` as the deliverable. Present the findings under their research questions with methodology notes, using tables and embedded figures from \`methodology/figures/\` where helpful. Start relative image paths with \`figures/\`, as in \`![Chart description](figures/chart.png)\`.
    - **Website.** Build the site from the methodology document and adapt its content to the user’s needs.
    - **Other.** Deliver the findings in the format the user requests.
 
-   Keep an **AI models used** list near the top of \`methodology/methodology.md\`. Add your model name under each category you contributed to. Use **Methodology**, **Data analysis**, and **Presentation** as applicable, and add a category for other work when needed. List each model once per category. If one model did all the work, show its name and categories on one line.
+   Keep an “AI models used” list near the top of \`methodology/methodology.md\`. Add your model name under each category you contributed to. Use “Methodology”, “Data analysis”, and “Presentation” as applicable, and add a category for other work when needed. List each model once per category. If one model did all the work, show its name and categories on one line.
 
 2. Agree on each research question and how to answer it. Ask follow-up questions in chat until each question is clear and focused. Write questions in plain language and suggest breaking broad or complicated questions into smaller ones that can be answered separately. Ask the user before searching the web.
 
@@ -85,7 +85,7 @@ Follow the steps below when starting or extending an investigation to answer que
 
 3. Run the analysis and document the work. Follow the Data analysis instructions below and share what you find along the way. If the analysis points to a more useful angle, a narrower question, or a gap that leaves the question unanswered, discuss it with the user. Explain proposed changes to a question, indicator, or method and get confirmation in chat before applying them. If the findings change, share the revised answer and supporting evidence with the user and confirm the answer with them before finalizing it.
 
-   Keep \`methodology/methodology.md\` up to date by revising the affected sections in place. Once findings are available, add a **Summary of findings** directly after **Output**. Use a few short bullets in plain language, each stating one main finding. Include a key number or qualification when it matters. Update the summary as the findings change.
+   Keep \`methodology/methodology.md\` up to date by revising the affected sections in place. Once findings are available, add a “Summary of findings” directly after “Output”. Use a few short bullets in plain language, each stating one main finding. Include a key number or qualification when it matters. Update the summary as the findings change.
 
    Use these sections under each research question.
 
@@ -94,9 +94,9 @@ Follow the steps below when starting or extending an investigation to answer que
    - **Method.** Record the data sources and their URLs when available. If a source’s origin is unclear, ask the user where it came from and whether they have a link. List the columns or fields used, and verify what each row represents and how the source defines those fields. Record transformations, filters, and exclusions, and tell the user what you filtered or excluded and why. Explain in plain language how the analysis uses the data to calculate the indicators or otherwise answer the question.
    - **Limitations.** Discuss missing values, gaps in coverage, and other limitations with the user. Record how they affect the answer. If the answer remains uncertain or the data is too limited, offer to search the web for data or documentation that could help.
 
-   When the same agreed cleaning rules apply to more than one research question, add a **Data preparation** section before the first question. Briefly explain what changed, why, and any unresolved cases. Record question-specific cleaning under **Method**.
+   When the same agreed cleaning rules apply to more than one research question, add a “Data preparation” section before the first question. Briefly explain what changed, why, and any unresolved cases. Record question-specific cleaning under “Method”.
 
-4. Deliver the agreed output. If the output is a web page, dashboard, or interactive chart, follow the Web projects instructions below. Update **Output** if the user changes their choice, and link to any separate deliverable from the question it answers.
+4. Deliver the agreed output. If the output is a web page, dashboard, or interactive chart, follow the Web projects instructions below. Update “Output” if the user changes their choice, and link to any separate deliverable from the question it answers.
 
 Write the methodology as a standalone report in concise, accurate, plain language. Describe the analysis and its decisions in impersonal terms, such as “The analysis covers projects completed in 2025.” Keep paragraphs short. Use bullet lists for related points and tables when they make information easier to scan or compare. Explain technical terms that readers need to understand the analysis.
 
@@ -110,7 +110,7 @@ ${analysisGuidance}
 
 Use \`sda/main.ts\` for the project’s analysis. Keep one function per helper file in \`sda/helpers/\` and name the file after the function. Put source data in \`sda/data/\` and default to \`sda/output/\` for analysis exports.
 
-Before calculating results, read the relevant **Method** and **Limitations** sections in \`methodology/methodology.md\` if they exist for the task. Check whether the current data meets the assumptions of the method you’ll use, reusing earlier checks that still apply. If the current data differs from what the methodology describes, tell the user what you found and how it affects the analysis. Agree with them on how to resolve the discrepancy before calculating results. Confirm what one row represents and check for missing or invalid values in the fields the analysis relies on. Look for exact duplicate rows and repeated identifiers where you expect one record per entity or event. Review distinct values and their counts for fields used to group, join, or filter. When joining tables, check for unmatched records and unexpected increases in row counts. Explain proposed cleaning rules in plain language, including any label standardization, show examples where helpful, and get the user’s agreement before applying them. Apply the agreed changes in code and preserve the original data. Compare row counts and relevant totals before and after cleaning, and explain any material differences to the user.
+Before calculating results, read the relevant “Method” and “Limitations” sections in \`methodology/methodology.md\` if they exist for the task. Check whether the current data meets the assumptions of the method you’ll use, reusing earlier checks that still apply. If the current data differs from what the methodology describes, tell the user what you found and how it affects the analysis. Agree with them on how to resolve the discrepancy before calculating results. Confirm what one row represents and check for missing or invalid values in the fields the analysis relies on. Look for exact duplicate rows and repeated identifiers where you expect one record per entity or event. Review distinct values and their counts for fields used to group, join, or filter. When joining tables, check for unmatched records and unexpected increases in row counts. Explain proposed cleaning rules in plain language, including any label standardization, show examples where helpful, and get the user’s agreement before applying them. Apply the agreed changes in code and preserve the original data. Compare row counts and relevant totals before and after cleaning, and explain any material differences to the user.
 
 For each research question, write a helper in \`sda/helpers/\` that returns the table or value used to answer it. Name the function for what it calculates. In \`sda/main.ts\`, put a comment with the question number and full wording directly above the helper call.
 
@@ -128,7 +128,7 @@ Run \`${run} sda:clean\` only when cached results and temporary files can be dis
 
 Before handing off analysis code changes, start with \`${run} sda:test\`. If formatting or lint checks fail, use \`${run} sda:fix\` for automatic fixes. Resolve any remaining failures and rerun \`${run} sda:test\` until it passes.
 
-If \`methodology/methodology.md\` exists, add your model name under **Data analysis** in its **AI models used** list.
+If \`methodology/methodology.md\` exists, add your model name under “Data analysis” in its “AI models used” list.
 
 ## Web projects
 
@@ -136,15 +136,15 @@ If the user asks for a web page, dashboard, or interactive visualization, create
 
 Use \`methodology/methodology.md\` as the record of the project’s data analysis and the source for what the site reports. Use the documented definitions, filters, and results, and include any limitations readers need to interpret them. When the site needs a new calculation or finding, follow the Research methodology steps above and document the work before adding the result to the site. Update the affected site content when the analysis changes.
 
-Once the findings are ready, propose a short outline. For an investigation, start the outline with a short **Summary of findings**, followed by one section per featured research question by default. Start each question’s section with the numbered question as the heading, then give a short answer and the findings that support it. Follow with a chart or table when it helps explain the findings. Add controls such as buttons or filters when they help readers explore the findings. End each question’s section with a **Methodology** panel that is collapsed by default and expands to show the method and limitations for that question. Ask about open choices such as which findings to feature and how to organize them. Get the user’s sign-off on the outline before building.
+Once the findings are ready, propose a short outline. For an investigation, start the outline with a short “Summary of findings”, followed by one section per featured research question by default. Start each question’s section with the numbered question as the heading, then give a short answer and the findings that support it. Follow with a chart or table when it helps explain the findings. Add controls such as buttons or filters when they help readers explore the findings. End each question’s section with a “Methodology” panel that is collapsed by default and expands to show the method and limitations for that question. Ask about open choices such as which findings to feature and how to organize them. Get the user’s sign-off on the outline before building.
 
-When the same agreed cleaning rules affect how readers interpret findings from more than one research question, propose a short **Data preparation** section before the first question in the website outline. Cover question-specific cleaning in the relevant **Methodology** panels.
+When the same agreed cleaning rules affect how readers interpret findings from more than one research question, propose a short “Data preparation” section before the first question in the website outline. Cover question-specific cleaning in the relevant “Methodology” panels.
 
 Default to one page unless the user requests or approves multiple pages.
 
 Write concise, accurate web copy in plain language for a general audience, including chart labels and captions. Explain terms the audience may find unfamiliar.
 
-Add your model name under **Presentation** in the methodology when you contribute to the website. At the top of each page, show the public contact’s name and email, the **Last updated** timestamp, and the **AI models used** list from the methodology. Ask the user for the contact details if needed, and refresh the timestamp when the page’s content or data changes.
+Add your model name under “Presentation” in the methodology when you contribute to the website. At the top of each page, show the public contact’s name and email, the “Last updated” timestamp, and the “AI models used” list from the methodology. Ask the user for the contact details if needed, and refresh the timestamp when the page’s content or data changes.
 
 Build the requested page components alongside the contact and timestamp. Include logos, navigation bars, footers, download buttons, and separate methodology sections only when the user explicitly requests them or they are essential to fulfilling the request.
 
