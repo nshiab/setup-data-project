@@ -75,7 +75,7 @@ Follow the steps below when starting or extending an investigation to answer que
    - **Website.** Build the site from the methodology document and adapt its content to the user’s needs.
    - **Other.** Deliver the findings in the format the user requests.
 
-   If the user or source documentation hasn’t already provided a link to the data, ask the user for one. If the user has no link or you can’t open it, ask them to identify the dataset, for example by giving its name and who published it. List the data sources near the top of \`methodology/methodology.md\`. Link to them where possible.
+   For each dataset, ask for any supporting documentation the user hasn’t already shared, such as a data dictionary, codebook, or methodology PDF. They can share links or attach files in chat. Ask whether they’d like you to search the web for more context or a newer release. If you find a newer release, explain any differences that matter to the analysis. If you find additional documentation, explain what it adds and whether it supplements, supersedes, or conflicts with what the user shared. Agree with the user on what to use and how to resolve any source discrepancies that affect the analysis. List the data sources and supporting documentation near the top of \`methodology/methodology.md\`, with links where available.
 
    Keep an “AI models used” list near the top of \`methodology/methodology.md\`. Add your model name under each category you contributed to. Use “Methodology”, “Data analysis”, and “Presentation” as applicable, and add a category for other work when needed. List each model once per category. If one model did all the work, show its name and categories on one line.
 
