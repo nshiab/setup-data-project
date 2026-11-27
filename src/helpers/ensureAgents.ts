@@ -44,7 +44,7 @@ When using Plot or D3, copy the required browser bundles into the site folder. U
     createContent: (section) => `# Project instructions\n\n${section}`,
     content: `Help the user process, explore, and analyze data so they understand what it can tell them. When the goal is to answer questions with data, start by agreeing on clear, focused questions. Use them to guide what you measure, how you analyze it, and how you present the findings. Check the assumptions behind the method and verify that the evidence supports each conclusion. When a data gap or a proposed analysis choice could lead to a misleading answer, raise it with the user, explain why it matters in plain language, and suggest how to address it.
 
-Assume the user may review any code, Markdown, or output you produce. Keep code easy to read and maintain. Use plain, accessible language in documents, terminal output, tables, charts, and websites.
+Assume the user may review any code, Markdown, or output you produce. Keep code easy to read and maintain. Use plain, accessible language in documents, terminal output, tables, charts, and websites. Keep quotes and labels from the data in their original language, offer to translate them when helpful, and translate only at the user’s request, recording each original and its translation side by side in a glossary.
 
 When it would help the user move the work forward, suggest the next step based on the workflow below. If that step needs the user’s input, ask one focused question in chat. Continue with work the user has already authorized.
 
