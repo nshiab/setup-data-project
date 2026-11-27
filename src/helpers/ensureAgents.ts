@@ -65,6 +65,8 @@ ${links.length ? `Local library documentation:\n\n${links.join("\n")}\n\n` : ""}
 
 Assume the user may review any code, Markdown, or output you produce. Keep code easy to read and maintain. Use plain, accessible language in documents, terminal output, tables, charts, and websites. Keep quotes and labels from the data in their original language, offer to translate them when helpful, and translate only at the user’s request, recording each original and its translation side by side in a glossary.
 
+Keep source data in \`sda/data/\`. Before using data or supporting documentation shared in chat, copy attachments into that folder and save pasted content there. For pasted content, choose a format that fits the material, such as CSV for tables, JSON for nested records, or Markdown for a prose data dictionary. Tell the user where you saved each file and explain your choice of format for pasted content.
+
 ### Ask in chat
 
 When you need the user’s input, ask one focused question at a time in a normal assistant reply and wait for the answer before asking another.
@@ -90,7 +92,7 @@ When Git is available and you complete setup, a workflow stage, or another meani
 
 Check for \`methodology/methodology.md\` and create it if it’s missing. Use it to track the investigation and build on what the user has already shared. Tell the user if you create it, and link to it from README.md outside the setup-managed section if the link is missing.
 
-For each dataset, establish where it came from, what it covers, and how it was collected or produced. Ask for any supporting documentation the user hasn’t already shared, such as a data dictionary, codebook, or methodology PDF. Tell them they can share links or attach files in the chat. Ask whether they’d like you to search the web for more context or a newer release. If you find a newer release or additional documentation, agree with the user on what to use. List the agreed data sources and supporting documentation near the top of \`methodology/methodology.md\`, with links where available.
+For each dataset, establish where it came from, what it covers, and how it was collected or produced. Ask for any supporting documentation the user hasn’t already shared, such as a data dictionary, codebook, or methodology PDF. Tell them they can paste the material, share links, or attach files in chat. Ask whether they’d like you to search the web for more context or a newer release. If you find a newer release or additional documentation, agree with the user on what to use. List the agreed data sources and supporting documentation near the top of \`methodology/methodology.md\`, with links where available.
 
 Ask what the user wants to learn from the data and suggest research questions that fit their goals. Ask follow-up questions in chat until each research question is clear and focused. Write questions in plain language and suggest breaking broad or complicated questions into smaller ones that can be answered separately. When relevant, ask whether the user wants you to search the web for more context or published analyses.
 
@@ -116,7 +118,7 @@ Work in \`sda/\` and prioritize code that is easy to understand and review.
 
 ${analysisGuidance}
 
-Use \`sda/main.ts\` for the project’s analysis. Keep one function per helper file in \`sda/helpers/\` and name the file after the function. For each research question, write a helper that returns the table or value used to answer it. Name the function for what it calculates. In \`sda/main.ts\`, put a comment with the question number and full wording directly above the helper call. Put source data in \`sda/data/\` and default to \`sda/output/\` for analysis exports. When the user attaches data files in chat, copy them to \`sda/data/\` before processing and tell the user where you saved them. Use exploratory charts when they help you check the data, verify a calculation, or explain a finding to the user. Save drafts in \`sda/output/\`.
+Use \`sda/main.ts\` for the project’s analysis. Keep one function per helper file in \`sda/helpers/\` and name the file after the function. For each research question, write a helper that returns the table or value used to answer it. Name the function for what it calculates. In \`sda/main.ts\`, put a comment with the question number and full wording directly above the helper call. Default to \`sda/output/\` for analysis exports. Use exploratory charts when they help you check the data, verify a calculation, or explain a finding to the user. Save drafts in \`sda/output/\`.
 
 Before calculating results, read the relevant “Method” and “Limitations” sections in \`methodology/methodology.md\` if they exist for the task. Check whether the current data meets the assumptions of the method you’ll use. Reuse earlier check results if the relevant data and assumptions are unchanged. If the current data differs from what the methodology describes, tell the user what you found and how it affects the analysis. Agree with them on how to resolve the discrepancy before calculating results. Confirm what one row represents and check for missing or invalid values in the fields the analysis relies on.
 
